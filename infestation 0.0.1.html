@@ -418,7 +418,43 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
       <button id="cheatsBtn"   class="bottomBtn cheatsBtn" style="display:none;">Cheats</button>
     </div>
   </aside>
+<!-- CHARACTER overlay -->
+<div id="btnChar-overlay" class="overlay">
+  <div class="overlayHeader">Character</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody">
+    <div id="char-buttons" style="display: flex; justify-content: space-between; margin-bottom: 1rem; gap: 0.5rem;">
+        <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('status')">Status</button>
+        <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('skills')">Skills</button>
+        <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('stats')">Stats</button>
+    </div>
+    <div id="char-status" class="char-tab"></div>
+    <div id="char-skills" class="char-tab" style="display: none;"></div>
+    <div id="char-stats" class="char-tab" style="display: none;"></div>
+  </div>
+</div>
 
+
+<!-- SOCIAL overlay -->
+<div id="btnSocial-overlay" class="overlay">
+  <div class="overlayHeader">Social</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody"></div>
+</div>
+
+<!-- JOURNAL overlay -->
+<div id="btnJournal-overlay" class="overlay">
+  <div class="overlayHeader">Journal</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody"></div>
+</div>
+
+<!-- SAVES overlay -->
+<div id="btnSaves-overlay" class="overlay">
+  <div class="overlayHeader">Saves</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody"></div>
+</div>
   <!-- ---------- Main area (events / rooms) ---------- -->
   <main id="mainArea">
     <!-- Content will be injected by JavaScript -->
@@ -490,7 +526,48 @@ const state = {
 
   /* -------------------- Flags -------------------- */
   showCorruption: false,   // toggled from Cheats overlay
-  cheatsEnabled: false     // set by Settings → Enable Cheats
+  cheatsEnabled: false,     // set by Settings → Enable Cheats
+
+  /* -------------------- Skills ------------------- */
+  skills: {
+    "PH skill 1": { level: 1, exp: 0 }, "PH skill 2": { level: 1, exp: 0 }, "PH skill 3": { level: 1, exp: 0 }, "PH skill 4": { level: 1, exp: 0 }, "PH skill 5": { level: 1, exp: 0 },
+    "PH skill 6": { level: 1, exp: 0 }, "PH skill 7": { level: 1, exp: 0 }, "PH skill 8": { level: 1, exp: 0 }, "PH skill 9": { level: 1, exp: 0 }, "PH skill 10": { level: 1, exp: 0 },
+    "PH skill 11": { level: 1, exp: 0 }, "PH skill 12": { level: 1, exp: 0 }, "PH skill 13": { level: 1, exp: 0 }, "PH skill 14": { level: 1, exp: 0 }, "PH skill 15": { level: 1, exp: 0 },
+    "PH skill 16": { level: 1, exp: 0 }, "PH skill 17": { level: 1, exp: 0 }, "PH skill 18": { level: 1, exp: 0 }, "PH skill 19": { level: 1, exp: 0 }, "PH skill 20": { level: 1, exp: 0 },
+    "PH skill 21": { level: 1, exp: 0 }, "PH skill 22": { level: 1, exp: 0 }, "PH skill 23": { level: 1, exp: 0 }, "PH skill 24": { level: 1, exp: 0 }, "PH skill 25": { level: 1, exp: 0 },
+    "PH skill 26": { level: 1, exp: 0 }, "PH skill 27": { level: 1, exp: 0 }, "PH skill 28": { level: 1, exp: 0 }, "PH skill 29": { level: 1, exp: 0 }, "PH skill 30": { level: 1, exp: 0 },
+    "PH skill 31": { level: 1, exp: 0 }, "PH skill 32": { level: 1, exp: 0 }, "PH skill 33": { level: 1, exp: 0 }, "PH skill 34": { level: 1, exp: 0 }, "PH skill 35": { level: 1, exp: 0 },
+    "PH skill 36": { level: 1, exp: 0 }, "PH skill 37": { level: 1, exp: 0 }, "PH skill 38": { level: 1, exp: 0 }, "PH skill 39": { level: 1, exp: 0 }, "PH skill 40": { level: 1, exp: 0 },
+    "PH skill 41": { level: 1, exp: 0 }, "PH skill 42": { level: 1, exp: 0 }, "PH skill 43": { level: 1, exp: 0 }, "PH skill 44": { level: 1, exp: 0 }, "PH skill 45": { level: 1, exp: 0 },
+    "PH skill 46": { level: 1, exp: 0 }, "PH skill 47": { level: 1, exp: 0 }, "PH skill 48": { level: 1, exp: 0 }, "PH skill 49": { level: 1, exp: 0 }, "PH skill 50": { level: 1, exp: 0 }
+  },
+
+  /* -------------------- Stats -------------------- */
+  stats: {
+    timesSlept: 0,
+    questsCompleted: 0,
+    itemsCrafted: 0,
+    distanceWalked: 0
+  },
+
+  /* -------------------- NPCs --------------------- */
+  npcs: {
+    "Leah": { relationship: 50, trust: 30, fear: 0, attraction: 20, hidden: true },
+    "Amir": { relationship: 40, trust: 60, fear: 10, attraction: 10, hidden: true },
+    "Toby": { relationship: 25, trust: 20, fear: 0, attraction: 5, hidden: true }
+  },
+
+  /* -------------------- Journal ------------------ */
+  journal: {
+    quests: [
+      { title: "Uncover the Truth", description: "Find out more about the alien parasite and its origins.", complete: false }
+    ],
+    reminders: [],
+    notes: "I can write my own notes here."
+  },
+
+  /* -------------------- Game Location ------------------ */
+  currentLocation: 'event_intro'
 };
 
 /* ==============================================================
@@ -504,6 +581,178 @@ function advanceTime(){
   state.currentTime = new Date(state.currentTime.getTime() + 30_000);
   updateHeader();
 }
+
+/* ==============================================================
+   SKILL SYSTEM UTILS
+   ============================================================== */
+function getExpForLevel(level) {
+  if (level >= 20) return Infinity;
+  return 8 * Math.pow(2, level - 1);
+}
+
+function addSkillExp(skillName, amount) {
+  const skill = state.skills[skillName];
+  if (!skill || skill.level >= 20) return;
+
+  skill.exp += amount;
+  let expToLevelUp = getExpForLevel(skill.level);
+
+  while (skill.exp >= expToLevelUp) {
+    skill.level++;
+    skill.exp -= expToLevelUp;
+    
+    if (skill.level >= 20) {
+      skill.exp = getExpForLevel(19);
+      return; 
+    }
+    expToLevelUp = getExpForLevel(skill.level);
+  }
+}
+
+/* ==============================================================
+   CHARACTER WINDOW
+   ============================================================== */
+function showCharTab(tabName) {
+    document.querySelectorAll('.char-tab').forEach(t => t.style.display = 'none');
+    const tab = document.getElementById(`char-${tabName}`);
+    if (tab) tab.style.display = 'block';
+    
+    if (tabName === 'status') updateCharStatusTab();
+    else if (tabName === 'skills') updateCharSkillsTab();
+    else if (tabName === 'stats') updateCharStatsTab();
+}
+
+function updateCharStatusTab() {
+    const statusDiv = document.getElementById('char-status');
+    if (!statusDiv) return;
+    let text = "Maya is feeling ";
+    const tirednessPct = getFillPct('tiredness');
+    if (tirednessPct <= 20) text += "exhausted";
+    else if (tirednessPct <= 50) text += "tired";
+    else text += "well-rested";
+
+    const stressPct = getFillPct('stress');
+    if (stressPct > 80) text += " and is panicking.";
+    else if (stressPct > 50) text += " and feels very stressed.";
+    else text += ".";
+    
+    statusDiv.textContent = text;
+}
+
+function updateCharSkillsTab() {
+    const skillsDiv = document.getElementById('char-skills');
+    if (!skillsDiv) return;
+    let html = '<div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">';
+
+    for (const skillName in state.skills) {
+        const skill = state.skills[skillName];
+        const expForNextLevel = getExpForLevel(skill.level);
+        const progress = skill.level >= 20 ? 100 : Math.round((skill.exp / expForNextLevel) * 100);
+
+        html += `
+            <div style="border: 1px solid #444; padding: 0.5rem; width: 120px; box-sizing: border-box; text-align: center;">
+                <div style="font-size: 0.8rem;">${skillName}<br>(Lvl ${skill.level})</div>
+                <div style="background: #333; height: 10px; margin-top: 5px; border-radius: 2px; overflow: hidden;">
+                    <div style="width: ${progress}%; height: 100%; background: lightblue; border-radius: 2px;"></div>
+                </div>
+            </div>
+        `;
+    }
+    html += '</div>';
+    skillsDiv.innerHTML = html;
+}
+
+function updateCharStatsTab() {
+    const statsDiv = document.getElementById('char-stats');
+    if (!statsDiv) return;
+    let html = '<ul style="list-style-position: inside;">';
+    for (const statName in state.stats) {
+        const statValue = state.stats[statName];
+        const formattedName = statName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+        html += `<li>${formattedName}: ${statValue}</li>`;
+    }
+    html += '</ul>';
+    statsDiv.innerHTML = html;
+}
+
+/* ==============================================================
+   SOCIAL
+   ============================================================== */
+function buildSocialOverlay() {
+    const body = document.querySelector('#btnSocial-overlay .overlayBody');
+    if (!body) return;
+
+    let html = '<div class="npc-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; align-content: flex-start; height: 100%; overflow-y: auto;">';
+
+    for (const npcName in state.npcs) {
+        const npc = state.npcs[npcName];
+        
+        html += `<div class="npc-plate" style="border: 1px solid #444; padding: 1rem; width: 22%; box-sizing: border-box; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between;">`;
+        
+        html += `<div><h4>${npcName}</h4>`;
+
+        if (npc.hidden) {
+            html += `<p style="font-size: 0.9em; color: #aaa;">Stats are hidden.</p>`;
+        } else {
+            // Using placeholder colors here.
+            html += createNpcStatBar('Love', npc.relationship, '#ff0000'); // Red
+            html += createNpcStatBar('Lust', npc.attraction, '#ff69b4');   // Hot Pink
+            html += createNpcStatBar('Trust', npc.trust, '#1e90ff');     // Dodger Blue
+            html += createNpcStatBar('Fear', npc.fear, '#9932cc');       // Dark Orchid
+        }
+        html += `</div>`;
+
+        if (npc.hidden) {
+            const buttonId = `reveal-btn-${npcName.replace(/\s/g, '-')}`;
+            html += `<button id="${buttonId}" class="overlayBtn" style="width: 100%; margin-top: 1rem;">Reveal Stats</button>`;
+        }
+        
+        html += `</div>`;
+    }
+    html += '</div>';
+
+    body.innerHTML = html;
+
+    // --- Attach Event Listeners ---
+    for (const npcName in state.npcs) {
+        if (state.npcs[npcName].hidden) {
+            const buttonId = `reveal-btn-${npcName.replace(/\s/g, '-')}`;
+            const btn = document.getElementById(buttonId);
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    if (state.npcs[npcName]) {
+                        state.npcs[npcName].hidden = false;
+                        buildSocialOverlay();
+                    }
+                });
+            }
+        }
+    }
+}
+
+function createNpcStatBar(statName, value, barColor = '#4a90e2') {
+    const percentage = Math.max(0, Math.min(100, value));
+
+    return `
+        <div class="npc-stat-bar-container" style="display: flex; align-items: center; margin-bottom: 0.3rem;">
+            <span style="width: 80px; font-size: 0.9em; text-align: right; margin-right: 5px;">${statName}</span>
+            <div class="bar" style="flex-grow: 1; height: 8px; background: #444; border-radius: 2px;">
+                <div class="fill" style="width: ${percentage}%; height: 100%; background: ${barColor}; border-radius: 2px;"></div>
+            </div>
+        </div>
+    `;
+}
+function cheatAddAllSkillsExp(amount) {
+    for (const skillName in state.skills) {
+        addSkillExp(skillName, amount);
+    }
+    // Visually update the character screen if it's open
+    if (document.getElementById('btnChar-overlay').style.display === 'block') {
+        updateCharSkillsTab();
+    }
+}
+
+
 
 /* ==============================================================
    HEADER (date | time | money)
@@ -541,11 +790,17 @@ function updateNeedsUI(){
     const fill = el.querySelector('.fill');
     const line = el.querySelector('.needLine');
 
-    /* ---------- colour (original dynamic logic) ---------- */
-    const inverted = ['stress','trauma','arousal'].includes(k);
+/* ---------- colour (custom logic) ---------- */
+const inverted = ['stress','trauma','arousal'].includes(k);
+const barColor =
+  k === 'corruption' ? 'purple' :
+  k === 'alcohol' ? 'orange' :
+  k === 'drugs' ? 'lightsalmon' :
+  (() => {
     const r = Math.round(255 * (inverted ? pct/100 : 1-pct/100));
     const g = Math.round(255 * (inverted ? 1-pct/100 : pct/100));
-    const barColor = `rgb(${r},${g},0)`;
+    return `rgb(${r},${g},0)`;
+  })();
 
     fill.style.width = pct + '%';
     fill.style.background = barColor;               // thin bar colour
@@ -726,12 +981,18 @@ function openOverlay(btnId){
   const ov = document.getElementById(`${btnId}-overlay`);
   if(!ov) return;
 
-  // toggle visibility
   if(ov.style.display === 'block'){
     ov.style.display = 'none';
   }else{
     closeAllOverlays();
     ov.style.display = 'block';
+
+    // Populate overlays with dynamic content when they are opened
+    if (btnId === 'btnChar') {
+        showCharTab('status');
+    } else if (btnId === 'btnSocial') {
+        buildSocialOverlay();
+    }
   }
 }
 
@@ -755,92 +1016,165 @@ function toggleCheats(cb){
 }
 
 /* --------------------------------------------------------------
-   CHEAT OVERLAY – centered layout with live values
+   CHEAT OVERLAY & HELPERS
    -------------------------------------------------------------- */
-function buildCheatOverlay(){
-  const body = document.querySelector('#cheatsBtn-overlay .overlayBody');
-  body.innerHTML = '';   // clear any previous content
-
-  // helper: creates a row for a single need
-  const needRow = (key) => {
-    const label = key.charAt(0).toUpperCase() + key.slice(1);
-    const max   = state.ranges[key];
-    const cur   = state.needs[key];
-    const pct   = Math.round((cur / max) * 100);   // current % value
-
-    // each row is a flex container: [-10%] [value] [+10%]
-    return `
-      <div class="cheatRow" data-key="${key}"
-           style="display:flex;justify-content:center;align-items:center;margin:.6rem 0;">
-        <button class="overlayBtn cheatMinus"
-                onclick="cheatModifyNeed('${key}', -${Math.round(max*0.10)})">
-          ‑10 %
-        </button>
-
-        <span class="cheatValue" style="min-width:4ch;text-align:center;">
-          ${pct} %
-        </span>
-
-        <button class="overlayBtn cheatPlus"
-                onclick="cheatModifyNeed('${key}',  ${Math.round(max*0.10)})">
-          +10 %
-        </button>
-      </div>`;
-  };
-
-  // Title centred
-  body.innerHTML += `<h3 style="text-align:center;margin-bottom:1rem;">Cheats</h3>`;
-
-  // Add a row for each need (including the special ones)
-  [
-    'tiredness','stress','trauma','happiness',
-    'arousal','corruption','alcohol','drugs'
-  ].forEach(k => body.innerHTML += needRow(k));
-
-  // Corruption visibility toggle (below the rows)
-  body.innerHTML += `
-    <div style="text-align:center;margin-top:1rem;">
-      <label style="display:inline-flex;align-items:center;gap:.4rem;">
-        <input type="checkbox" id="showCorrChk"
-               onchange="toggleCorruptionDisplay(this)" ${state.showCorruption?'checked':''}>
-        Show Corruption Bar
-      </label>
-    </div>`;
+function cheatModifyNpcStat(npcName, stat, amount) {
+    if (state.npcs[npcName]) {
+        state.npcs[npcName][stat] = Math.max(0, Math.min(100, state.npcs[npcName][stat] + amount));
+        buildCheatOverlay(); // Redraw cheats to update value
+        if (document.getElementById('btnSocial-overlay').style.display === 'block') {
+            buildSocialOverlay();
+        }
+    }
 }
 
-/* --------------------------------------------------------------
-   UPDATE VALUES in the cheat overlay when a need changes
-   -------------------------------------------------------------- */
-function refreshCheatValues(){
-  const rows = document.querySelectorAll('.cheatRow');
-  rows.forEach(row=>{
-    const key   = row.dataset.key;
-    const max   = state.ranges[key];
-    const cur   = state.needs[key];
-    const pct   = Math.round((cur / max) * 100);
-    row.querySelector('.cheatValue').textContent = `${pct} %`;
-  });
-}
-
-/* --------------------------------------------------------------
-   Hook the refresh into the existing need‑update flow
-   -------------------------------------------------------------- */
-function cheatModifyNeed(key, delta){
-  const max = state.ranges[key];
-  const min = 0;
-  state.needs[key] = Math.min(max, Math.max(min, state.needs[key] + delta));
-  updateNeedsUI();          // existing UI update
-  refreshCheatValues();     // keep cheat overlay in sync
-}
-
-/* --------------------------------------------------------------
-   CHEAT HELPERS
-   -------------------------------------------------------------- */
-function cheatModifyNeed(key, delta){
+function cheatModifyNeed(key, delta) {
   const max = state.ranges[key];
   const min = 0;
   state.needs[key] = Math.min(max, Math.max(min, state.needs[key] + delta));
   updateNeedsUI();
+  buildCheatOverlay(); // Redraw cheats to update value
+}
+
+// This helper function creates the new standardized row for any cheat
+function createCheatControlRow(config) {
+    // config: { label, value, neg_actions, pos_actions }
+    return `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.2rem; border-bottom: 1px solid #333;">
+            <span style="flex-basis: 30%; font-size: 0.9em;">${config.label}</span>
+            <div style="flex-basis: 70%; display: flex; justify-content: flex-end; align-items: center; gap: 0.3rem;">
+                <button class="overlayBtn" onclick="${config.neg_actions[0].onclick}">${config.neg_actions[0].label}</button>
+                <button class="overlayBtn" onclick="${config.neg_actions[1].onclick}">${config.neg_actions[1].label}</button>
+                <button class="overlayBtn" onclick="${config.neg_actions[2].onclick}">${config.neg_actions[2].label}</button>
+                <span style="min-width: 6ch; text-align: center; font-weight: bold;">${config.value}</span>
+                <button class="overlayBtn" onclick="${config.pos_actions[0].onclick}">${config.pos_actions[0].label}</button>
+                <button class="overlayBtn" onclick="${config.pos_actions[1].onclick}">${config.pos_actions[1].label}</button>
+                <button class="overlayBtn" onclick="${config.pos_actions[2].onclick}">${config.pos_actions[2].label}</button>
+            </div>
+        </div>
+    `;
+}
+
+function showCheatTab(tabName) {
+    document.querySelectorAll('.cheat-tab-content').forEach(el => el.style.display = 'none');
+    document.getElementById(`cheat-tab-${tabName}`).style.display = 'block';
+}
+
+function buildCheatOverlay() {
+    const body = document.querySelector('#cheatsBtn-overlay .overlayBody');
+    body.style.height = 'calc(100% - 2rem)';
+    body.style.overflowY = 'hidden';
+
+    // --- Tab Setup ---
+    body.innerHTML = `
+        <div id="cheat-tabs" style="display: flex; justify-content: center; margin-bottom: 1rem; gap: 0.5rem;">
+            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('general')">General</button>
+            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('skills')">Skills</button>
+            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('npcs')">NPCs</button>
+        </div>
+        <div id="cheat-tab-general" class="cheat-tab-content" style="height: 90%; overflow-y: auto;"></div>
+        <div id="cheat-tab-skills" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
+        <div id="cheat-tab-npcs" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
+    `;
+
+    // --- Build General Tab ---
+    const generalTab = document.getElementById('cheat-tab-general');
+    let generalContent = '<div style="display: flex; gap: 2rem;">';
+
+    // Left Column
+    let leftCol = '<div style="flex-basis: 50%;">';
+    leftCol += '<h4 style="text-align: center;">Needs</h4>';
+    for (const key in state.needs) {
+        const max = state.ranges[key];
+        leftCol += createCheatControlRow({
+            label: key.charAt(0).toUpperCase() + key.slice(1),
+            value: `${state.needs[key].toFixed(0)}`,
+            neg_actions: [ { label: '-50%', onclick: `cheatModifyNeed('${key}', -${max*0.5})` }, { label: '-10%', onclick: `cheatModifyNeed('${key}', -${max*0.1})` }, { label: '-1%', onclick: `cheatModifyNeed('${key}', -${max*0.01})` } ],
+            pos_actions: [ { label: '+1%', onclick: `cheatModifyNeed('${key}', ${max*0.01})` }, { label: '+10%', onclick: `cheatModifyNeed('${key}', ${max*0.1})` }, { label: '+50%', onclick: `cheatModifyNeed('${key}', ${max*0.5})` } ]
+        });
+    }
+    leftCol += '</div>';
+
+    // Right Column
+    let rightCol = '<div style="flex-basis: 50%;">';
+    rightCol += '<h4 style="text-align: center;">Money & Toggles</h4>';
+    rightCol += createCheatControlRow({
+        label: "Money", value: `$${state.money.toFixed(2)}`,
+        neg_actions: [ { label: '-1k', onclick: `cheatMoney(-1000)` }, { label: '-100', onclick: `cheatMoney(-100)` }, { label: '-10', onclick: `cheatMoney(-10)` } ],
+        pos_actions: [ { label: '+10', onclick: `cheatMoney(10)` }, { label: '+100', onclick: `cheatMoney(100)` }, { label: '+1k', onclick: `cheatMoney(1000)` } ]
+    });
+    rightCol += `<div style="text-align: center; padding: 1rem;"><label><input type="checkbox" onchange="toggleCorruptionDisplay(this)" ${state.showCorruption?'checked':''}> Show Corruption Bar</label></div>`;
+    rightCol += '</div>';
+
+    generalContent += leftCol + rightCol + '</div>';
+    generalTab.innerHTML = generalContent;
+
+
+    // --- Build Skills Tab (2 columns) ---
+    const skillsTab = document.getElementById('cheat-tab-skills');
+    let skillsHtml = '<h4 style="text-align: center;">Skills</h4><div style="display: flex; gap: 1rem;">';
+    const skills = Object.keys(state.skills);
+    const mid = Math.ceil(skills.length / 2);
+    const col1 = skills.slice(0, mid);
+    const col2 = skills.slice(mid);
+    let col1Html = '<div style="flex-basis: 50%;">';
+    col1.forEach(skillName => {
+        col1Html += createCheatControlRow({
+            label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
+            neg_actions: [ {label: '-64', onclick:`addSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`addSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`addSkillExp('${skillName}', -1)`} ],
+            pos_actions: [ {label: '+1', onclick:`addSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`addSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`addSkillExp('${skillName}', 64)`} ],
+        });
+    });
+    col1Html += '</div>';
+    let col2Html = '<div style="flex-basis: 50%;">';
+    col2.forEach(skillName => {
+        col2Html += createCheatControlRow({
+            label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
+            neg_actions: [ {label: '-64', onclick:`addSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`addSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`addSkillExp('${skillName}', -1)`} ],
+            pos_actions: [ {label: '+1', onclick:`addSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`addSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`addSkillExp('${skillName}', 64)`} ],
+        });
+    });
+    col2Html += '</div>';
+    skillsTab.innerHTML = skillsHtml + col1Html + col2Html + '</div>';
+
+    // --- Build NPCs Tab (2 columns) ---
+    const npcsTab = document.getElementById('cheat-tab-npcs');
+    let npcsHtml = '<h4 style="text-align: center;">NPCs</h4><div style="display: flex; gap: 1rem;">';
+    const npcs = Object.keys(state.npcs);
+    const npcMid = Math.ceil(npcs.length / 2);
+    const npcCol1 = npcs.slice(0, npcMid);
+    const npcCol2 = npcs.slice(npcMid);
+    let npcCol1Html = '<div style="flex-basis: 50%;">';
+    npcCol1.forEach(npcName => {
+        npcCol1Html += `<h5 style="text-align:center;">${npcName}</h5>`;
+        for(const stat in state.npcs[npcName]) {
+            if(typeof state.npcs[npcName][stat] === 'number') {
+                npcCol1Html += createCheatControlRow({
+                    label: stat.charAt(0).toUpperCase() + stat.slice(1), value: state.npcs[npcName][stat],
+                    neg_actions: [ {label: '-25', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', -25)`}, {label: '-5', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', -5)`}, {label: '-1', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', -1)`} ],
+                    pos_actions: [ {label: '+1', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', 1)`}, {label: '+5', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', 5)`}, {label: '+25', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', 25)`} ]
+                });
+            }
+        }
+    });
+    npcCol1Html += '</div>';
+    let npcCol2Html = '<div style="flex-basis: 50%;">';
+    npcCol2.forEach(npcName => {
+        npcCol2Html += `<h5 style="text-align:center;">${npcName}</h5>`;
+        for(const stat in state.npcs[npcName]) {
+            if(typeof state.npcs[npcName][stat] === 'number') {
+                npcCol2Html += createCheatControlRow({
+                    label: stat.charAt(0).toUpperCase() + stat.slice(1), value: state.npcs[npcName][stat],
+                    neg_actions: [ {label: '-25', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', -25)`}, {label: '-5', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', -5)`}, {label: '-1', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', -1)`} ],
+                    pos_actions: [ {label: '+1', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', 1)`}, {label: '+5', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', 5)`}, {label: '+25', onclick:`cheatModifyNpcStat('${npcName}', '${stat}', 25)`} ]
+                });
+            }
+        }
+    });
+    npcCol2Html += '</div>';
+    npcsTab.innerHTML = npcsHtml + npcCol1Html + npcCol2Html + '</div>';
+
+    showCheatTab('general');
 }
 
 /* optional money cheat – keeps two‑decimal precision */
