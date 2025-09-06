@@ -28,7 +28,15 @@ body{
 }
 #startScreen h1{font-size:3rem;margin-bottom:.5rem;}
 #startScreen p{font-size:1.2rem;max-width:500px;text-align:center;}
-#startBtn{
+#ascii-title{
+  font-family:monospace;
+  font-size:.5vw;
+  line-height:.8;
+  color:#00ff00;
+  margin-bottom:1rem;
+  text-shadow: 2px 2px 2px #000, 1px 1px 0px #f0f, -1px -1px 0px #0ff;
+}
+#startBtn, #loadBtn{
   margin-top:2rem;padding:.8rem 1.6rem;font-size:1.2rem;
   background:#00ff00;color:#000;border:none;cursor:pointer;
   border-radius:.4rem;
@@ -47,6 +55,7 @@ body{
   padding:1rem;
   box-sizing:border-box;
   overflow-y:auto;
+  position:relative;
 }
 
 /* ----- Header row (date | time | money) ----- */
@@ -56,6 +65,12 @@ body{
   font-size:.9rem;
   margin-bottom:1rem;
 }
+#headerRow span{
+  flex:1;
+  text-align:center;
+}
+#headerRow #date{text-align:left;}
+#headerRow #money{text-align:right;}
 
 /* ----- Character description ----- */
 #charDesc{
@@ -158,8 +173,10 @@ body{
 #bottomButtons{
   display:flex;
   flex-direction:column;          /* stack vertically */
-  margin-top:9rem;
   gap:.4rem;
+  position:absolute;
+  bottom:1rem;
+  width:calc(100% - 2rem);        /* parent padding is 1rem on each side */
 }
 
 /* generic button – fills the whole row */
@@ -302,13 +319,31 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <!-- ==================== START SCREEN ==================== -->
 <section id="startScreen" class="screen active">
-  <h1>Infestation</h1>
+  <pre id="ascii-title">
+░▒▓█▓▒░▒▓███████▓▒░░▒▓████████▓▒░▒▓████████▓▒░░▒▓███████▓▒░▒▓████████▓▒░▒▓██████▓▒░▒▓████████▓▒░▒▓█▓▒░░▒▓██████▓▒░░▒▓███████▓▒░
+░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░         ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
+░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░         ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
+░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓██████▓▒░ ░▒▓██████▓▒░  ░▒▓██████▓▒░   ░▒▓█▓▒░  ░▒▓████████▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
+░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░             ░▒▓█▓▒░  ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
+░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░             ░▒▓█▓▒░  ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
+░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓████████▓▒░▒▓███████▓▒░   ░▒▓█▓▒░  ░▒▓█▓▒░░▒▓█▓▒░ ░▒▓█▓▒░   ░▒▓█▓▒░░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░
+  </pre>
   <p>
     Maya has been unlucky enough to become host to a worm‑like alien parasite.
     Manage her physical and mental state while she tries to uncover the truth.
   </p>
-  <button id="startBtn">Begin</button>
+  <div id="start-buttons-container" style="display: flex; gap: 1rem;">
+      <button id="startBtn">Begin</button>
+      <button id="loadBtn">Load Game</button>
+  </div>
 </section>
+
+<!-- ==================== LOAD OVERLAY (from Start Screen) ==================== -->
+<div id="loadBtn-overlay" class="overlay">
+  <div class="overlayHeader">Load Game</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody"></div>
+</div>
 
 <!-- ==================== MAIN GAME SCREEN ==================== -->
 <section id="gameScreen" class="screen">
@@ -427,10 +462,14 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('status')">Status</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('skills')">Skills</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('stats')">Stats</button>
+        <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('equipment')">Equipment</button>
+        <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('inventory')">Inventory</button>
     </div>
     <div id="char-status" class="char-tab"></div>
     <div id="char-skills" class="char-tab" style="display: none;"></div>
     <div id="char-stats" class="char-tab" style="display: none;"></div>
+    <div id="char-equipment" class="char-tab" style="display: none;"></div>
+    <div id="char-inventory" class="char-tab" style="display: none;"></div>
   </div>
 </div>
 
@@ -470,6 +509,24 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
       <input type="checkbox" id="cheatsChk" onchange="toggleCheats(this)">
       Enable Cheats
     </label>
+    <hr style="margin: 1rem 0;">
+    <div style="margin-bottom: 1rem;">
+      <strong>Font Family</strong>
+      <div id="font-options" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+        <label><input type="radio" name="font" value="Arial, Helvetica, sans-serif" onchange="changeFont(this.value)"> Arial</label>
+        <label><input type="radio" name="font" value="'Times New Roman', Times, serif" onchange="changeFont(this.value)"> Times New Roman</label>
+        <label><input type="radio" name="font" value="'Courier New', Courier, monospace" onchange="changeFont(this.value)"> Courier New</label>
+        <label><input type="radio" name="font" value="Verdana, Geneva, sans-serif" onchange="changeFont(this.value)"> Verdana</label>
+      </div>
+    </div>
+    <div>
+      <strong>Font Size</strong>
+      <div id="fontsize-options" style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+        <label><input type="radio" name="fontsize" value="0.9rem" onchange="changeFontSize(this.value)"> Small</label>
+        <label><input type="radio" name="fontsize" value="1rem" onchange="changeFontSize(this.value)"> Medium</label>
+        <label><input type="radio" name="fontsize" value="1.2rem" onchange="changeFontSize(this.value)"> Large</label>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -481,7 +538,122 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
     <!-- Cheat controls will be inserted by JS later -->
   </div>
 </div>
+
+<!-- ==================== SUB-OVERLAY for item selection etc. ==================== -->
+<div id="sub-overlay" class="overlay" style="width: 30vw; height: auto; max-height: 70vh;">
+  <div class="overlayHeader"></div>
+  <div class="overlayClose" onclick="document.getElementById('sub-overlay').style.display='none'">✖</div>
+  <div class="overlayBody"></div>
+</div>
+
 <script>
+/* ==============================================================
+   CLASSES
+   ============================================================== */
+class BodyPart {
+    constructor(id, name, adjectives = [], size = 'average') {
+        this.id = id; // e.g., 'left_thigh'
+        this.name = name; // e.g., 'Left Thigh'
+        this.adjectives = adjectives; // e.g., ['strong', 'scarred']
+        this.size = size;
+        // Tattoos, piercings, etc. can be added here later
+    }
+}
+
+class EquipmentSlot {
+    constructor(id, name, layers = ['skin', 'middle', 'outer']) {
+        this.id = id;
+        this.name = name;
+        layers.forEach(layer => {
+            this[layer] = null;
+        });
+    }
+}
+
+class HandHeldSlot {
+    constructor() {
+        this.left = null;
+        this.right = null;
+    }
+}
+
+class BackSlot {
+    constructor() {
+        this.item = null;
+    }
+}
+
+class ClothingItem {
+    constructor({
+        id,
+        name,
+        slot, // The ID of the EquipmentSlot it goes into
+        layer, // 'skin', 'middle', or 'outer'
+        covers, // Array of BodyPart IDs it covers
+        bonusStats = {} // e.g., { warmth: 5, style: 10 }
+    }) {
+        this.id = id;
+        this.name = name;
+        this.slot = slot;
+        this.layer = layer;
+        this.covers = covers;
+        this.bonusStats = bonusStats;
+    }
+}
+
+/* ==============================================================
+   FACTORIES
+   ============================================================== */
+function createPlayerBody(sex = 'female') {
+    const body = {};
+    const addPart = (id, name) => {
+        body[id] = new BodyPart(id, name);
+    };
+    const addPairedParts = (baseId, baseName) => {
+        addPart(`left_${baseId}`, `Left ${baseName}`);
+        addPart(`right_${baseId}`, `Right ${baseName}`);
+    };
+
+    // Head & Face
+    addPart('head', 'Head');
+    addPart('neck', 'Neck');
+    addPart('face', 'Face');
+    addPart('forehead', 'Forehead');
+    addPairedParts('eye', 'Eye');
+    addPairedParts('ear', 'Ear');
+    addPart('nose', 'Nose');
+    addPart('tongue', 'Tongue');
+
+    // Torso
+    addPart('chest', 'Chest');
+    addPart('belly', 'Belly');
+    addPart('upper_back', 'Upper Back');
+    addPart('lower_back', 'Lower Back');
+
+    // Groin & Butt
+    addPart('groin', 'Groin');
+    addPart('butt', 'Buttocks');
+    addPairedParts('ass_cheek', 'Ass Cheek');
+    addPart('anus', 'Anus');
+
+    // Limbs
+    addPairedParts('arm', 'Arm');
+    addPairedParts('hand', 'Hand');
+    addPairedParts('thigh', 'Thigh');
+    addPairedParts('calf', 'Calf');
+    addPairedParts('foot', 'Foot');
+
+    // Conditional parts based on sex
+    if (sex === 'female') {
+        addPairedParts('breast', 'Breast');
+        addPart('vagina', 'Vagina');
+    } else if (sex === 'male') {
+        addPart('penis', 'Penis');
+    }
+
+    return body;
+}
+
 /* ==============================================================
    GLOBAL STATE
    ============================================================== */
@@ -496,9 +668,9 @@ const state = {
   eventIndex: 0,
   events: [
     {title:"Meet Maya",text:"Maya Alvarez, a marine biologist, woke up feeling a strange pressure in her abdomen. An alien worm‑like parasite has taken residence inside her, feeding off her nervous system."},
-    {title:"Friend – Leah",text:"Leah Patel, Maya’s longtime friend, calls to check in. She senses something is off but Maya brushes it aside."},
-    {title:"Friend – Amir",text:"Dr. Amir Khan, a neuro‑biology researcher, offers to run scans. He warns Maya about the risks of unknown pathogens."},
-    {title:"Friend – Toby",text:"Toby, the lab’s tech specialist, jokes about “alien pets.” He hands Maya a bottle of energy drink."}
+    {title:"Friend – Leah",text:"Leah Patel, Maya’s longtime friend, calls to check in. She senses something is off but Maya brushes it aside.", reveals: "Leah"},
+    {title:"Friend – Amir",text:"Dr. Amir Khan, a neuro‑biology researcher, offers to run scans. He warns Maya about the risks of unknown pathogens.", reveals: "Amir"},
+    {title:"Friend – Toby",text:"Toby, the lab’s tech specialist, jokes about “alien pets.” He hands Maya a bottle of energy drink.", reveals: "Toby"}
   ],
 
   /* -------------------- Needs ------------------- */
@@ -527,6 +699,7 @@ const state = {
   /* -------------------- Flags -------------------- */
   showCorruption: false,   // toggled from Cheats overlay
   cheatsEnabled: false,     // set by Settings → Enable Cheats
+  storyEventActive: false, // disables stat-triggered events
 
   /* -------------------- Skills ------------------- */
   skills: {
@@ -542,33 +715,257 @@ const state = {
     "PH skill 46": { level: 1, exp: 0 }, "PH skill 47": { level: 1, exp: 0 }, "PH skill 48": { level: 1, exp: 0 }, "PH skill 49": { level: 1, exp: 0 }, "PH skill 50": { level: 1, exp: 0 }
   },
 
+  /* -------------------- Character Physicality -------------------- */
+  sex: 'female',
+  playerBody: {}, // Will be populated by factory
+  equipment: {
+    head: new EquipmentSlot('head', 'Head'),
+    upper: new EquipmentSlot('upper', 'Upper Body'),
+    lower: new EquipmentSlot('lower', 'Lower Body'),
+    waist: new EquipmentSlot('waist', 'Waist'),
+    arms: new EquipmentSlot('arms', 'Arms'),
+    hands: new EquipmentSlot('hands', 'Hands'),
+    legs: new EquipmentSlot('legs', 'Legs'),
+    feet: new EquipmentSlot('feet', 'Feet'),
+    'hand-held': new HandHeldSlot(),
+    back: new BackSlot()
+  },
+  inventory: [
+      new ClothingItem({id: 'labcoat', name: 'Lab Coat', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'left_thigh', 'right_thigh']}),
+      new ClothingItem({id: 'sneakers', name: 'Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot']})
+  ],
+
   /* -------------------- Stats -------------------- */
   stats: {
     timesSlept: 0,
     questsCompleted: 0,
     itemsCrafted: 0,
-    distanceWalked: 0
+    distanceWalked: 0,
+    timesCollapsedFromStress: 0,
+    timesClimaxed: 0
   },
 
   /* -------------------- NPCs --------------------- */
   npcs: {
-    "Leah": { relationship: 50, trust: 30, fear: 0, attraction: 20, hidden: true },
-    "Amir": { relationship: 40, trust: 60, fear: 10, attraction: 10, hidden: true },
-    "Toby": { relationship: 25, trust: 20, fear: 0, attraction: 5, hidden: true }
+    "Leah": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true },
+    "Amir": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true },
+    "Toby": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true }
   },
 
   /* -------------------- Journal ------------------ */
   journal: {
     quests: [
-      { title: "Uncover the Truth", description: "Find out more about the alien parasite and its origins.", complete: false }
+      { title: "Uncover the Truth", description: "Find out more about the alien parasite and its origins.", complete: false },
+      { title: "Get some rest", description: "You were feeling exhausted, but you took a nap.", complete: true }
     ],
-    reminders: [],
+    reminders: ["Appointment with Dr. Amir next Tuesday at 2pm."],
     notes: "I can write my own notes here."
   },
 
+  settings: {
+    fontFamily: 'Arial, Helvetica, sans-serif',
+    fontSize: '1rem'
+  },
+
   /* -------------------- Game Location ------------------ */
-  currentLocation: 'event_intro'
+  currentLocation: 'event_intro',
+  locationBeforeEvent: '',
+
+  scenes: {
+    'foyer': {
+      title: 'Laboratory Foyer',
+      description: 'The foyer is dimly lit, metal doors line the walls, and a low hum of equipment reverberates through the concrete floor. A faint smell of antiseptic hangs in the air.',
+      nav: [
+        { text: 'Kitchen', action: "goToScene('kitchen', 30)" },
+        { text: 'Lounge', action: "goToScene('lounge', 30)" },
+        { text: 'Bathroom', action: "goToScene('bathroom', 30)" },
+        {
+          text: 'Check in with Leah',
+          action: "goToScene('leah_love_event', 0)",
+          condition: { type: 'npc_relationship', npc: 'Leah', operator: '>=', value: 50 }
+        },
+        {
+          text: 'Check in with Amir',
+          action: "goToScene('amir_love_event', 0)",
+          condition: { type: 'npc_relationship', npc: 'Amir', operator: '>=', value: 50 }
+        },
+        {
+          text: 'Check in with Toby',
+          action: "goToScene('toby_love_event', 0)",
+          condition: { type: 'npc_relationship', npc: 'Toby', operator: '>=', value: 50 }
+        }
+      ],
+      randomEvents: [
+        { chance: 0.2, scene: 'random_foyer_1' }
+      ]
+    },
+    'kitchen': {
+      title: 'Kitchen',
+      description: 'Stainless steel counters glint under harsh fluorescent lights. A coffee maker gurgles, and a half-eaten sandwich rests on a plate. The scent of stale coffee lingers. The fridge hums softly, casting a faint blue glow across the tiled floor.',
+      nav: [
+        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" }
+      ],
+      randomEvents: [
+        { chance: 0.2, scene: 'random_kitchen_1' }
+      ]
+    },
+    'lounge': {
+      title: 'Lounge',
+      description: 'Plush chairs face a wall-mounted screen playing calming nature footage. Shelves hold scientific journals and a few well-worn novels. Soft ambient music drifts.',
+      nav: [
+        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
+        { text: 'Relax', action: "goToScene('relaxing', 0)" }
+      ],
+      randomEvents: [
+        { chance: 0.2, scene: 'random_lounge_1' }
+      ]
+    },
+    'bathroom': {
+      title: 'Bathroom',
+      description: 'White tiles line the walls, a single sink flickers with a weak bulb. The mirror fogs slightly as warm air circulates. A small cabinet holds basic toiletries.',
+      nav: [
+        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
+        { text: 'Take a shower', action: "goToScene('showering', 0)" }
+      ],
+      randomEvents: [
+        { chance: 0.2, scene: 'random_bathroom_1' }
+      ]
+    },
+    'showering': {
+      title: 'Shower',
+      description: 'You undress and take a shower.',
+      nav: [
+        { text: 'Finish', action: "finishShower()" }
+      ]
+    },
+    'relaxing': {
+      title: 'Relaxing',
+      description: 'You sit back and relax for a while.',
+      nav: [
+        { text: 'Finish', action: "finishRelaxing()" }
+      ]
+    },
+    'random_foyer_1': {
+      title: 'A Glimmer',
+      description: 'You notice a strange glimmer near the air vent, but it vanishes as you approach.',
+      nav: [
+        { text: 'Continue', action: "goToScene('foyer', 0)" }
+      ]
+    },
+    'random_kitchen_1': {
+      title: 'A Strange Smell',
+      description: 'A strange, sickly sweet smell emanates from the drain. You make a mental note to get it checked out.',
+      nav: [
+        { text: 'Continue', action: "goToScene('kitchen', 0)" }
+      ]
+    },
+    'random_lounge_1': {
+      title: 'A Flicker on the Screen',
+      description: 'For a brief moment, the calming nature footage on the screen is replaced by a flash of static and what looks like alien text.',
+      nav: [
+        { text: 'Continue', action: "goToScene('lounge', 0)" }
+      ]
+    },
+    'random_bathroom_1': {
+      title: 'A Puddle',
+      description: 'You notice a small, iridescent puddle forming under the sink, but it evaporates before you can get a closer look.',
+      nav: [
+        { text: 'Continue', action: "goToScene('bathroom', 0)" }
+      ]
+    },
+    'leah_love_event': {
+      title: 'A Moment with Leah',
+      description: 'Placeholder text for a special moment with Leah.',
+      nav: [
+        { text: 'Return to Foyer', action: "goToScene('foyer', 0)" }
+      ]
+    },
+    'amir_love_event': {
+      title: 'A Moment with Amir',
+      description: 'Placeholder text for a special moment with Amir.',
+      nav: [
+        { text: 'Return to Foyer', action: "goToScene('foyer', 0)" }
+      ]
+    },
+    'toby_love_event': {
+      title: 'A Moment with Toby',
+      description: 'Placeholder text for a special moment with Toby.',
+      nav: [
+        { text: 'Return to Foyer', action: "goToScene('foyer', 0)" }
+      ]
+    },
+    'stress_collapse_event': {
+      title: 'Overwhelmed',
+      description: 'The weight of everything becomes too much. The world spins and fades to black as you collapse from the stress.',
+      nav: [
+        { text: 'Wake up later...', action: "recoverFromStressCollapse()" }
+      ]
+    },
+    'arousal_max_event': {
+      title: 'Overcome',
+      description: 'A wave of intense pleasure washes over you, so powerful it leaves you breathless and trembling on the floor.',
+      nav: [
+        { text: 'Recover...', action: "recoverFromArousalMax()" }
+      ]
+    }
+  }
 };
+
+/* ==============================================================
+   CLOTHING HELPERS
+   ============================================================== */
+function updateCharDesc() {
+    const equippedItems = [];
+    for (const slotId in state.equipment) {
+        const slot = state.equipment[slotId];
+        // Handle layered slots
+        if (slot.skin || slot.middle || slot.outer) {
+            if(slot.skin) equippedItems.push(slot.skin.name);
+            if(slot.middle) equippedItems.push(slot.middle.name);
+            if(slot.outer) equippedItems.push(slot.outer.name);
+        }
+        // Handle hand-held slots
+        if (slot.left || slot.right) {
+            if(slot.left) equippedItems.push(slot.left.name);
+            if(slot.right) equippedItems.push(slot.right.name);
+        }
+        // Handle single-item back slot
+        if (slot.item) {
+            equippedItems.push(slot.item.name);
+        }
+    }
+
+    const descEl = document.getElementById('charDesc');
+    if (equippedItems.length > 0) {
+        descEl.textContent = `Wearing: ${equippedItems.join(', ')}`;
+    } else {
+        descEl.textContent = 'Wearing: nothing';
+    }
+}
+
+function equipItem(itemId) {
+    const itemIndex = state.inventory.findIndex(i => i.id === itemId);
+    if (itemIndex === -1) {
+        console.error(`Item with id "${itemId}" not found in inventory.`);
+        return;
+    }
+
+    const item = state.inventory[itemIndex];
+    const slot = state.equipment[item.slot];
+
+    if (!slot) {
+        console.error(`Equipment slot "${item.slot}" does not exist.`);
+        return;
+    }
+
+    // For now, simple logic. We can add layer conflict checks later.
+    if (slot[item.layer] === null) {
+        slot[item.layer] = item;
+        state.inventory.splice(itemIndex, 1); // Remove from inventory
+    } else {
+        console.error(`Layer "${item.layer}" in slot "${item.slot}" is already occupied.`);
+    }
+}
 
 /* ==============================================================
    UTILS
@@ -576,10 +973,397 @@ const state = {
 function fmtHM(d){ return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false}); }
 function fmtDate(d){ return d.toLocaleDateString(); }
 
-/* Add 30 seconds to the clock and refresh the header */
-function advanceTime(){
-  state.currentTime = new Date(state.currentTime.getTime() + 30_000);
+function formatMoney(amount) {
+    if (amount >= 10000000) {
+        return `$${(amount / 1000000).toFixed(0)}M`;
+    } else if (amount >= 10000) {
+        return `$${(amount / 1000).toFixed(0)}k`;
+    } else if (amount >= 1000) {
+        return `$${amount.toFixed(0)}`;
+    } else {
+        return `$${amount.toFixed(2)}`;
+    }
+}
+
+function applySettings() {
+  const settings = state.settings;
+  document.body.style.fontFamily = settings.fontFamily;
+  document.body.style.fontSize = settings.fontSize;
+}
+
+function changeFont(font) {
+  state.settings.fontFamily = font;
+  applySettings();
+}
+
+function changeFontSize(size) {
+  state.settings.fontSize = size;
+  applySettings();
+}
+
+function forceGlobalUIRefresh() {
   updateHeader();
+  updateNeedsUI();
+}
+
+function checkStatTriggers() {
+  if (state.storyEventActive) {
+    return; // Don't interrupt story events
+  }
+
+  // Check for Stress max-out
+  if (state.needs.stress >= state.ranges.stress) {
+    state.locationBeforeEvent = state.currentLocation;
+    goToScene('stress_collapse_event', 0);
+  }
+
+  // Check for Arousal max-out
+  if (state.needs.arousal >= state.ranges.arousal) {
+    state.locationBeforeEvent = state.currentLocation;
+    goToScene('arousal_max_event', 0);
+  }
+}
+
+/* Advance time by a given number of seconds and refresh the header */
+function advanceTime(seconds, updateUI = true) {
+  if (typeof seconds !== 'number' || seconds < 0) return;
+
+  const needs = state.needs;
+  const ranges = state.ranges;
+
+  // --- CALCULATE DECREASES ---
+
+  // Fatigue (tiredness) decreases over time. 10000 points over 24 hours (86400s)
+  const fatigueDecrease = seconds * (10000 / 86400);
+  needs.tiredness = Math.max(0, needs.tiredness - fatigueDecrease);
+
+  // Stress recovers over time: 1 point every 30 seconds
+  const stressDecrease = seconds * (1 / 30);
+  needs.stress = Math.max(0, needs.stress - stressDecrease);
+
+  // Trauma recovers very slowly: 1 point every hour (3600s)
+  const traumaDecrease = seconds * (1 / 3600);
+  needs.trauma = Math.max(0, needs.trauma - traumaDecrease);
+
+  // Alcohol metabolizes: 12 points every hour (3600s)
+  const alcoholDecrease = seconds * (12 / 3600);
+  needs.alcohol = Math.max(0, needs.alcohol - alcoholDecrease);
+
+  // Drugs wear off: 6 points every hour (3600s)
+  const drugsDecrease = seconds * (6 / 3600);
+  needs.drugs = Math.max(0, needs.drugs - drugsDecrease);
+
+  // Arousal has two-tier decay
+  const arousal50PctMark = ranges.arousal / 2;
+  if (needs.arousal >= arousal50PctMark) {
+    // Rate for >=50%: 500 points over 10 mins (600s)
+    const arousalDecrease = seconds * (500 / 600);
+    needs.arousal = Math.max(arousal50PctMark, needs.arousal - arousalDecrease);
+  } else {
+    // Rate for <50%: 500 points over 5 mins (300s)
+    const arousalDecrease = seconds * (500 / 300);
+    needs.arousal = Math.max(0, needs.arousal - arousalDecrease);
+  }
+
+  state.currentTime = new Date(state.currentTime.getTime() + (seconds * 1000));
+  if (updateUI) {
+    forceGlobalUIRefresh();
+  }
+  checkStatTriggers();
+}
+
+/* ==============================================================
+   JOURNAL
+   ============================================================== */
+function buildJournalOverlay() {
+    const body = document.querySelector('#btnJournal-overlay .overlayBody');
+    if (!body) return;
+
+    // Make body scrollable
+    body.style.height = 'calc(100% - 3rem)';
+    body.style.overflowY = 'auto';
+
+    // --- Active Quests ---
+    let activeQuestsHtml = '<ul>';
+    const activeQuests = state.journal.quests.filter(q => !q.complete);
+    if (activeQuests.length > 0) {
+        activeQuests.forEach(q => {
+            activeQuestsHtml += `<li><strong>${q.title}:</strong> ${q.description}</li>`;
+        });
+    } else {
+        activeQuestsHtml += '<li>No active quests.</li>';
+    }
+    activeQuestsHtml += '</ul>';
+
+    // --- Completed Quests ---
+    let completedQuestsHtml = '<ul>';
+    const completedQuests = state.journal.quests.filter(q => q.complete);
+    if (completedQuests.length > 0) {
+        completedQuests.forEach(q => {
+            completedQuestsHtml += `<li><s><strong>${q.title}:</strong> ${q.description}</s></li>`;
+        });
+    } else {
+        completedQuestsHtml += '<li>No completed quests yet.</li>';
+    }
+    completedQuestsHtml += '</ul>';
+
+    // --- Reminders ---
+    let remindersHtml = '<ul>';
+    if (state.journal.reminders.length > 0) {
+        state.journal.reminders.forEach(r => {
+            remindersHtml += `<li>${r}</li>`;
+        });
+    } else {
+        remindersHtml += '<li>No reminders.</li>';
+    }
+    remindersHtml += '</ul>';
+
+    body.innerHTML = `
+        <div>
+            <h4>Active Quests</h4>
+            ${activeQuestsHtml}
+        </div>
+        <div style="margin-top: 1rem;">
+            <h4>Completed Quests</h4>
+            ${completedQuestsHtml}
+        </div>
+        <div style="margin-top: 1rem;">
+            <h4>Reminders</h4>
+            ${remindersHtml}
+        </div>
+        <div style="margin-top: 1rem;">
+            <h4>Notes</h4>
+            <textarea id="journal-notepad" rows="20" style="width: 100%; background: #111; color: #eee; border: 1px solid #444;"></textarea>
+        </div>
+    `;
+
+    const notepad = document.getElementById('journal-notepad');
+    notepad.value = state.journal.notes;
+    notepad.addEventListener('input', (event) => {
+        state.journal.notes = event.target.value;
+    });
+}
+
+/* ==============================================================
+   SAVES
+   ============================================================== */
+function isSaveDataValid(saveData) {
+    if (!saveData || typeof saveData !== 'object') return false;
+    if (!saveData.state || typeof saveData.state !== 'object') return false;
+
+    const s = saveData.state;
+    const requiredKeys = ['currentTime', 'money', 'needs', 'skills', 'npcs', 'journal', 'currentLocation', 'scenes'];
+    for (const key of requiredKeys) {
+        if (!(key in s)) {
+            console.error(`Save data validation failed: Missing key "${key}"`);
+            return false;
+        }
+    }
+    return true;
+}
+
+function buildLoadScreen() {
+    const body = document.querySelector('#loadBtn-overlay .overlayBody');
+    if (!body) return;
+
+    let slotsHtml = '';
+    for (let i = 1; i <= 10; i++) {
+        const saveKey = `infestation_save_${i}`;
+        const savedData = localStorage.getItem(saveKey);
+        let slotName = "Empty Slot";
+        let slotDate = "";
+
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            slotName = data.name;
+            slotDate = new Date(data.date).toLocaleString();
+        }
+
+        slotsHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #444;">
+                <div style="flex-grow: 1;">
+                    <span style="font-weight: bold;">${i}: ${slotName}</span>
+                    <span style="font-size: 0.8em; color: #aaa; margin-left: 1rem;">${slotDate}</span>
+                </div>
+                <div>
+                    <button class="overlayBtn" disabled>Save</button>
+                    <button class="overlayBtn" onclick="loadGame(${i})" ${!savedData ? 'disabled' : ''}>Load</button>
+                    <button class="overlayBtn" disabled>Export</button>
+                </div>
+            </div>
+        `;
+    }
+
+    body.innerHTML = `
+        <div style="height: 100%; display: flex; flex-direction: column;">
+            <div style="flex-grow: 1; overflow-y: auto;">${slotsHtml}</div>
+            <div style="padding-top: 1rem; text-align: right;">
+                <button class="overlayBtn" onclick="importGame()">Import</button>
+            </div>
+        </div>
+    `;
+}
+
+function buildSavesOverlay() {
+    const body = document.querySelector('#btnSaves-overlay .overlayBody');
+    if (!body) return;
+
+    let slotsHtml = '';
+    for (let i = 1; i <= 10; i++) {
+        const saveKey = `infestation_save_${i}`;
+        const savedData = localStorage.getItem(saveKey);
+        let slotName = "Empty Slot";
+        let slotDate = "";
+
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            slotName = data.name;
+            slotDate = new Date(data.date).toLocaleString();
+        }
+
+        slotsHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #444;">
+                <div style="flex-grow: 1;">
+                    <span style="font-weight: bold;">${i}: ${slotName}</span>
+                    <span style="font-size: 0.8em; color: #aaa; margin-left: 1rem;">${slotDate}</span>
+                </div>
+                <div>
+                    <button class="overlayBtn" onclick="saveGame(${i})">Save</button>
+                    <button class="overlayBtn" onclick="loadGame(${i})" ${!savedData ? 'disabled' : ''}>Load</button>
+                    <button class="overlayBtn" onclick="exportGame(${i})" ${!savedData ? 'disabled' : ''}>Export</button>
+                </div>
+            </div>
+        `;
+    }
+
+    body.innerHTML = `
+        <div style="height: 100%; display: flex; flex-direction: column;">
+            <div style="flex-grow: 1; overflow-y: auto;">${slotsHtml}</div>
+            <div style="padding-top: 1rem; text-align: right;">
+                <button class="overlayBtn" onclick="importGame()">Import</button>
+            </div>
+        </div>
+    `;
+}
+
+function saveGame(slotId) {
+    const saveName = prompt("Enter a name for your save:", `Save Slot ${slotId}`);
+    if (!saveName) return; // User cancelled
+
+    const saveData = {
+        name: saveName,
+        date: new Date().toISOString(),
+        state: state
+    };
+
+    try {
+        localStorage.setItem(`infestation_save_${slotId}`, JSON.stringify(saveData));
+        buildSavesOverlay(); // Refresh the saves screen
+    } catch (e) {
+        alert("Error saving game: Your browser's storage might be full.");
+        console.error("Save failed: ", e);
+    }
+}
+
+function loadState(newState) {
+    try {
+        // A simple deep copy for the main state properties
+        Object.keys(newState).forEach(key => {
+            if (key === 'currentTime') {
+                state.currentTime = new Date(newState.currentTime);
+            } else {
+                state[key] = newState[key];
+            }
+        });
+
+        switchScreen('gameScreen');
+        fullUiRefresh();
+        closeAllOverlays();
+    } catch (e) {
+        alert("Error loading game state: The save data may be corrupt.");
+        console.error("Load failed: ", e);
+    }
+}
+
+function loadGame(slotId) {
+    const saveDataString = localStorage.getItem(`infestation_save_${slotId}`);
+    if (!saveDataString) {
+        alert("No save data found in this slot.");
+        return;
+    }
+
+    try {
+        const saveData = JSON.parse(saveDataString);
+        if (!isSaveDataValid(saveData)) {
+            throw new Error("Save data is corrupted or invalid.");
+        }
+        loadState(saveData.state);
+    } catch (e) {
+        alert(`Error loading game: ${e.message}`);
+        console.error("Load failed: ", e);
+    }
+}
+
+function exportGame(slotId) {
+    const saveDataString = localStorage.getItem(`infestation_save_${slotId}`);
+    if (!saveDataString) {
+        alert("No save data in this slot to export.");
+        return;
+    }
+
+    const blob = new Blob([saveDataString], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `infestation_save_${slotId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function importGame() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.txt,application/json';
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const saveDataString = event.target.result;
+            try {
+                const saveData = JSON.parse(saveDataString);
+                if (!isSaveDataValid(saveData)) {
+                    throw new Error("Imported file is not a valid save file.");
+                }
+                loadState(saveData.state);
+            } catch (err) {
+                alert(`Failed to import save data: ${err.message}`);
+                console.error("Import failed: ", err);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    input.click();
+}
+
+function fullUiRefresh() {
+    updateHeader();
+    updateNeedsUI();
+    initBottomButtons();
+    applySettings();
+    applyCheatsUI();
+
+    // Re-render the main area based on current location
+    if (state.currentLocation === 'event_intro') {
+        showCurrentEvent();
+    } else {
+        renderScene(state.currentLocation);
+    }
 }
 
 /* ==============================================================
@@ -592,20 +1376,39 @@ function getExpForLevel(level) {
 
 function addSkillExp(skillName, amount) {
   const skill = state.skills[skillName];
-  if (!skill || skill.level >= 20) return;
+  if (!skill) return;
+
+  // At level 20, you can't gain more exp, but you can lose it.
+  if (skill.level >= 20 && amount > 0) {
+    skill.exp = getExpForLevel(19); // Ensure it's capped
+    return;
+  }
 
   skill.exp += amount;
-  let expToLevelUp = getExpForLevel(skill.level);
 
-  while (skill.exp >= expToLevelUp) {
+  // Handle level ups
+  let expToLevelUp = getExpForLevel(skill.level);
+  while (skill.level < 20 && skill.exp >= expToLevelUp) {
     skill.level++;
     skill.exp -= expToLevelUp;
-    
-    if (skill.level >= 20) {
-      skill.exp = getExpForLevel(19);
-      return; 
-    }
     expToLevelUp = getExpForLevel(skill.level);
+  }
+
+  // Handle level downs
+  while (skill.exp < 0) {
+    if (skill.level <= 1) {
+      skill.exp = 0;
+      break;
+    }
+    skill.level--;
+    const expFromPreviousLevel = getExpForLevel(skill.level);
+    skill.exp += expFromPreviousLevel;
+  }
+
+  // Final check to cap at level 20
+  if (skill.level >= 20) {
+    skill.level = 20;
+    skill.exp = getExpForLevel(19);
   }
 }
 
@@ -620,6 +1423,364 @@ function showCharTab(tabName) {
     if (tabName === 'status') updateCharStatusTab();
     else if (tabName === 'skills') updateCharSkillsTab();
     else if (tabName === 'stats') updateCharStatsTab();
+    else if (tabName === 'equipment') buildEquipmentTab();
+    else if (tabName === 'inventory') buildInventoryTab();
+}
+
+function openSlotOverlay(slotId) {
+    const slot = state.equipment[slotId];
+    if (!slot) return;
+
+    const subOverlay = document.getElementById('sub-overlay');
+    const header = subOverlay.querySelector('.overlayHeader');
+    const body = subOverlay.querySelector('.overlayBody');
+
+    header.textContent = slot.name;
+    body.innerHTML = ''; // Clear previous content
+
+    // Handle special slots first
+    if (slotId === 'hand-held') {
+        body.innerHTML = `
+            <div>Left Hand: ${slot.left ? slot.left.name : 'Empty'}</div>
+            <div>Right Hand: ${slot.right ? slot.right.name : 'Empty'}</div>
+        `;
+        subOverlay.style.display = 'block';
+        return;
+    }
+    if (slotId === 'back') {
+        body.innerHTML = `<div>${slot.item ? slot.item.name : 'Empty'}</div>`;
+        subOverlay.style.display = 'block';
+        return;
+    }
+
+    // Handle standard layered slots
+    ['skin', 'middle', 'outer'].forEach(layer => {
+        const item = slot[layer];
+        const layerDiv = document.createElement('div');
+        layerDiv.textContent = `${layer.charAt(0).toUpperCase() + layer.slice(1)}: ${item ? item.name : 'Empty'}`;
+        layerDiv.style.cursor = 'pointer';
+        layerDiv.onclick = () => {
+            if (!item) {
+                openItemSelectionOverlay(slotId, layer);
+            } else {
+                // Future: Add unequip logic here
+                console.log(`Unequip ${item.name}`);
+            }
+        };
+        body.appendChild(layerDiv);
+    });
+
+    subOverlay.style.display = 'block';
+}
+
+function openItemSelectionOverlay(slotId, layer) {
+    const subOverlay = document.getElementById('sub-overlay');
+    const header = subOverlay.querySelector('.overlayHeader');
+    const body = subOverlay.querySelector('.overlayBody');
+
+    const compatibleItems = state.inventory.filter(item => item.slot === slotId && item.layer === layer);
+
+    header.textContent = `Select Item for ${layer} layer`;
+    body.innerHTML = '';
+
+    if (compatibleItems.length === 0) {
+        body.innerHTML = '<p>No compatible items in inventory.</p>';
+    } else {
+        const list = document.createElement('ul');
+        compatibleItems.forEach(item => {
+            const listItem = document.createElement('li');
+            listItem.textContent = item.name;
+            const equipBtn = document.createElement('button');
+            equipBtn.textContent = 'Equip';
+            equipBtn.className = 'overlayBtn';
+            equipBtn.style.marginLeft = '1rem';
+            equipBtn.onclick = () => {
+                equipItem(item.id);
+                subOverlay.style.display = 'none';
+                buildEquipmentTab(); // Refresh the main equipment screen
+            };
+            listItem.appendChild(equipBtn);
+            list.appendChild(listItem);
+        });
+        body.appendChild(list);
+    }
+
+    subOverlay.style.display = 'block';
+}
+
+function buildEquipmentTab() {
+    const equipmentDiv = document.getElementById('char-equipment');
+    const asciiArt = `
+
+
+
+
+                                                                                                                  ██ █
+                                                                                                             ███        ████     ██
+                                                                                                          ███                      ██
+                                                                                                        ███                          █
+                                                                                                      ████                              █
+                                                                                                     ████                               ██
+                                                                                                    █████                                ██
+                                                                                                   █████                                  ██
+                                                                                                  ██████                                   ██
+                                                                                                 ██████                                     █
+                                                                                                 █████    █                                 ██
+                                                                                                ██████   ██                                 ██
+                                                                                                ██████   ██                                  ██
+                                                                                               ███████  ███                     █             █
+                                                                                               ███████ █████                     █            ██
+                                                                                              ███████████████                     █            ██
+                                                                                             ██████████████████                    █             █
+                                                                                            ████████████████████                    ██
+                                                                                           █████████████████████                    ████          ██
+                                                                                           ██████████████    ███                     ████          █
+                                                                                           ███████████████   ███                     █████
+                                                                                           ██████  █████████████                      ███          ██
+                                                                                           ████ █  █████████████                    ████          ██
+                                                                                            ████ ████████████████                   ███           ██
+                                                                                             ██████████████████                    ███            █
+                                                                                              █████████████████                   ████           ██
+                                                                                              █████████████████                   ███            ██
+                                                                                              ██████████████████                  ██             ██
+                                                                                         ███ ███████████████████                  ██             ███ ██
+                                                                                          ███████████████████████         █       ██           ███████
+                                                                                           █████████████████████████████           █           █████
+                                                                                              ███████████████████████              ██    █████████
+                                                                                                █████████████████                 ████████████████
+                                                                                                     ███████████                   ████████████
+                                                                                                         ██████                    █
+                                                                                                      █████████                     ██
+                                                                                                  ████████████                         █
+                                                                                             ███                                           ███
+                                                                                    ██████ █ ██                                                  █ ███
+                                                                                 ████                                                                    █
+                                                                              ████
+                                                                             ███                                                                            ██
+                                                                            ███
+                                                                          ████                                                                                ██
+                                                                         ████                                                                                 ██
+                                                                        ████                                                                                   ██
+                                                                       ████                                                                                    ██
+                                                                      ████                                                                                      █
+                                                                     ████                                                                                       █
+                                                                    ████             ██████                                                                     ██
+                                                                  ██████            ████████                                                                    ██
+                                                                 █████              █████████                                                        █          █
+                                                               ██████              ███████████                                                       █          ██
+                                                              ██████               ███████████                                                       █          ██
+                                                             █████               █████████████                                                                  █
+                                                           █████               ██████ ██████████                                                                █
+                                                          ████               ██████    ██████████                                                               ██
+                                                        █████               █████       █████████                                                               ██
+                                                       ████                ████         ██████████                                                   ██         ██
+                                                      ████                ████           ██████████                                                 ███         ██
+                                                    █████               ████             ███████████                                                ███         ███
+                                                   █████               ████              █████████████                                             ████          ██
+                                                  █████              ████                 ███████████████                                       ███████          █
+                                                 ████              █████                  ███████████████                                      ████████          ██
+                                                ████             █████                     ████████                                               █████          ██
+                                               ████             ████                        ███████████                                       ██  ██████         █
+                                               ███            █████                         ███████████                                         ████████          ██
+                                              ████            ███                           ███████████                                         ████████          █
+                                              █████           ██                             ███████████                                        ████████          ██
+                                              ██████           ██                             ███████                                           ██ █████           █
+                                              ██████            ██                            ███████                                           ██  ████C          █
+                                               ██████            ██                            ██████                                           ██  █████          █
+                                                ███████           ██                           ██████                                           ██  █████           █
+                                                 ███████           ██                          ██████                                           ██  ██████          █
+                                                  ███████           ███                         █████                                           ██  ██████           █
+                                                    ██████            ██                        ████                                             ██  ████            █
+                                                     ███████           ██                       ████                                              █  ████             █
+                                                       ███████          ██                     █████                                              ██ ███              █
+                                                        ████████          █                    █████                                               █████
+                                                          ████████           █               ████                                                   █████             ██
+                                                            ████████          ██           ███████                           █                       █████             █
+                                                              ████████          ██        ███ █████████                                               ████             █
+                                                                ███████           ██    ███           ██                                               ███             █
+                                                                  ███████           ██████   ██████                                                    ████            ██
+                                                                    ██████          █████         ████                                                  ████           ██
+                                                                      ██████       ██████   ████     ███                                                 ████          ██
+                                                                         █████   ███████    ███████     ███                                              █████         █
+                                                                           █████████████████       ████                                                   ████         █
+                                                                             ████████████████████                                                          ████        ██
+                                                                               █████████████████████                                                       █████       ██
+                                                                                 ██████  █████                                                              ████       ██
+                                                                                        ██████                                                              █████      █
+                                                                                        █████                                                               █████      ██
+                                                                                       █████                                                                 ████       █
+                                                                                       ████                                                                  █████      █
+                                                                                       ████                                                                   ████      █
+                                                                                      █████                                                                   ████      █
+                                                                                      █████                                                                   █████     ██
+                                                                                      █████                                                                   █████     ██
+                                                                                     ██████                                                                   █████     ██
+                                                                                     ██████                                                                   █████      █
+                                                                                    ██████                                                                    █████      ██
+                                                                                    ██████                      █                                             ██ ██      ██
+                                                                                    █████                                             █                       ██ ██      ██
+                                                                                   ██████                          █ ████         █ ██                        ██ ██      █
+                                                                                   ██████                           █████████████████                         ███        ██
+                                                                                  ██████                             ███████████████                          ███        ██
+                                                                                  ██████                              █████████████                          ████        ██
+                                                                                  █████                               ███   ███████                          ███          █
+                                                                                 ██████                               ███   ███████                          ███          ██
+                                                                                 ██████                               ███   ███████                         ████          ██
+                                                                                 ██████                               ██   █████████                        ████          ██
+                                                                                 █████                               ███   █████████                        █████   █      ██
+                                                                                ██████                               ███   ████████                        ███ ██  ███     ██
+                                                                                ██████                              ███    █████████                       ███ ██    ██   ███
+                                                                                ██████                              ███    █████████                      ███  ██  █ ██  ███
+                                                                                ██████                             ███     ████████                       ███  ███ ███   ██
+                                                                                ██████                            ███      ████████                      ████  ██  ███   ██
+                                                                               ██████                             ███      █████████                     ███   █  ███   ██
+                                                                               ███████                           ███        ███████                     ████  █████  ████
+                                                                               ██████                           ███         ████████                    ███  ████ █████
+                                                                               ██████                          ████         ████████                    ███  ███████
+                                                                               ██████                          ███          ████████                   ███   ███
+                                                                               ██████                         ███           ████████                   ███
+                                                                               ██████                        ████           ████████                  ████
+                                                                               ██████                       ████            ████████                 ████
+                                                                              ███████                      ████             ████████                 ███
+                                                                              ███████                      ███              ████████                 ███
+                                                                              ███████                     ████              ████████                ███
+                                                                              ███████                    ████               ████████                ███
+                                                                              ███████                    ████               ████████               ███
+                                                                              ███████                   ████               █████████              ████
+                                                                              ███████                    ██                ████████               ███
+                                                                              ███████                   ███                ████████              ████
+                                                                              ███████                   ██                 █████████             ███
+                                                                              ████████                 ███                ██████████            ████
+                                                                              ████████                 ███                ██████████            ███
+                                                                              ███████                 ███                 ███████████          ████
+                                                                              ███████                ████                 ███████████          ████
+                                                                              ███████                ███                  ███████████         █████
+                                                                             ███████                 ███                  ███████████        █████
+                                                                             ███████              █  ██                   ███████████       ██████
+                                                                            ████████           ███  ███                   ████████████     ███████
+                                                                            ████████          ███   ███                   █████████████  █████████
+                                                                            ███████          ███    ██                    █████████████ █████████
+                                                                           ████████         ██     ███                     ██████████      ██████
+                                                                           ████████               ███                      ███████████      █████
+                                                                          █████████              ███                       ███████████     ██████
+                                                                         ██████████        █    ███                        ████████████   ██  ███
+                                                                         ████████              ███                         █████████           ██
+                                                                        ██████████            ███                          ████████            ██
+                                                                        ████████              ██                          █████████           ███
+                                                                       ████████              ███                          █████████           ███
+                                                                       ███████              ████                          █████████           ███
+                                                                      ███████                ██                          ██████████           ███
+                                                                      ███████                ██                          ███████████          ███
+                                                                      ██████                 ██                          ██████████          ████
+                                                                     ███████                 ██                         █████  ███           ███
+                                                                     ███████                ███                         █████  ██            ███
+                                                                     ██████                 ██                          █████  ██           ████
+                                                                     ██████                 ██                          █████  ██           ███
+                                                                     ██████                 ██                          █████  ██           ███
+                                                                     █████                 ██                           ██████ ██          ███
+                                                                     █████                 ██                           █████████          ███
+                                                                     █████                ██                            ████████          ███
+                                                                     █████               ██                             █████  █          ███
+                                                                     ████                ██                             █████            ███
+                                                                     █████              ██                              █████            ███
+                                                                    █████             ███                               █████           ███
+                                                                    █████             ██                                █████           ███
+                                                                    █████            ███                                █████          ███
+                                                                    █████            ██                                 █████          ███
+                                                                    █████           ██                                  ████          ███
+                                                                    █████          ███                                  ████          ███
+                                                                    ████           ██                                   ████         ███
+                                                                    █████          ██                                   ████         ███
+                                                                    █████         ██                                    ████         ██
+                                                                    ████          █                                     ████        ██
+                                                                     ███         ██                                     ███         ██
+                                                                     ███         ██                                     ███        ██
+                                                                    ████        ██                                     ████        ██
+                                                                    ████        ██                                    ████         ██
+                                                                    ████       ██                                     ████        ███
+                                                                   █████       ██                                     ████        ██
+                                                                   ████        ██                                     ████        ██
+                                                                   ████        ██                                     ████        ██
+                                                                  ████        ███                                     ████         ██
+                                                                 ███          ███                                     █████         █
+                                                                ███          ███                                     ███████         ██
+                                                              ████           ███                                     ███████          ██
+                                                             ████           █████                                    ████████         ███
+                                                           █████          ███████                                     ████████          ███
+                                                        ██████           ███████                                         █████           █████
+                                                      ██████             █████                                             ███
+                                                    █████               ███                                                ████     ██        ██
+                                                    ███                 ██                                                  ██████  ███ ██  █ ██
+                                                   ████ █      ██     ███                                                    █████   ███  █   ██
+                                                    ████ ██  ███     ███                                                       ████   ███  ███
+                                                     █████  ███     ██                                                           ███████████
+                                                       █████████████
+                                                                █
+
+`;
+    const container = document.createElement('div');
+    container.style.position = 'relative';
+    container.style.fontFamily = 'monospace';
+    container.style.color = '#00ff00';
+    container.style.lineHeight = '1';
+    container.style.fontSize = '12px'; // Adjust as needed
+
+    const pre = document.createElement('pre');
+    pre.textContent = asciiArt;
+    container.appendChild(pre);
+
+    // Add slot links
+    const slots = [
+        { id: 'head', name: 'Head', top: '10%', left: '45%' },
+        { id: 'upper', name: 'Upper Body', top: '30%', left: '60%' },
+        { id: 'lower', name: 'Lower Body', top: '50%', left: '60%' },
+        { id: 'waist', name: 'Waist', top: '45%', left: '35%' },
+        { id: 'arms', name: 'Arms', top: '32%', left: '25%' },
+        { id: 'hands', name: 'Hands', top: '45%', left: '20%' },
+        { id: 'legs', name: 'Legs', top: '65%', left: '30%' },
+        { id: 'feet', name: 'Feet', top: '85%', left: '30%' },
+        { id: 'hand-held', name: 'Hand-held', top: '55%', left: '75%' },
+        { id: 'back', name: 'Back', top: '25%', left: '70%' }
+    ];
+
+    slots.forEach(slotInfo => {
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = slotInfo.name;
+        link.style.position = 'absolute';
+        link.style.top = slotInfo.top;
+        link.style.left = slotInfo.left;
+        link.style.color = '#00ff00';
+        link.style.textDecoration = 'underline';
+        link.onclick = (e) => {
+            e.preventDefault();
+            openSlotOverlay(slotInfo.id);
+        };
+        container.appendChild(link);
+    });
+
+    equipmentDiv.innerHTML = '';
+    equipmentDiv.appendChild(container);
+}
+
+function buildInventoryTab() {
+    const inventoryDiv = document.getElementById('char-inventory');
+    inventoryDiv.innerHTML = ''; // Clear previous content
+
+    if (state.inventory.length === 0) {
+        inventoryDiv.innerHTML = '<p>Your inventory is empty.</p>';
+        return;
+    }
+
+    const list = document.createElement('ul');
+    state.inventory.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.textContent = item.name;
+        // We can add an "Equip" button here later
+        list.appendChild(listItem);
+    });
+
+    inventoryDiv.appendChild(list);
 }
 
 function updateCharStatusTab() {
@@ -684,50 +1845,30 @@ function buildSocialOverlay() {
 
     let html = '<div class="npc-grid" style="display: flex; flex-wrap: wrap; gap: 1rem; align-content: flex-start; height: 100%; overflow-y: auto;">';
 
-    for (const npcName in state.npcs) {
-        const npc = state.npcs[npcName];
-        
-        html += `<div class="npc-plate" style="border: 1px solid #444; padding: 1rem; width: 22%; box-sizing: border-box; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between;">`;
-        
-        html += `<div><h4>${npcName}</h4>`;
+    const knownNpcs = Object.keys(state.npcs).filter(npcName => !state.npcs[npcName].hidden);
 
-        if (npc.hidden) {
-            html += `<p style="font-size: 0.9em; color: #aaa;">Stats are hidden.</p>`;
-        } else {
-            // Using placeholder colors here.
+    if (knownNpcs.length === 0) {
+        html += '<p>You haven\'t met anyone yet.</p>';
+    } else {
+        for (const npcName of knownNpcs) {
+            const npc = state.npcs[npcName];
+
+            html += `<div class="npc-plate" style="border: 1px solid #444; padding: 1rem; width: 22%; box-sizing: border-box; min-height: 160px; display: flex; flex-direction: column; justify-content: space-between;">`;
+
+            html += `<div><h4>${npcName}</h4>`;
+
+            // Always show stats for visible NPCs
             html += createNpcStatBar('Love', npc.relationship, '#ff0000'); // Red
             html += createNpcStatBar('Lust', npc.attraction, '#ff69b4');   // Hot Pink
             html += createNpcStatBar('Trust', npc.trust, '#1e90ff');     // Dodger Blue
             html += createNpcStatBar('Fear', npc.fear, '#9932cc');       // Dark Orchid
-        }
-        html += `</div>`;
 
-        if (npc.hidden) {
-            const buttonId = `reveal-btn-${npcName.replace(/\s/g, '-')}`;
-            html += `<button id="${buttonId}" class="overlayBtn" style="width: 100%; margin-top: 1rem;">Reveal Stats</button>`;
+            html += `</div></div>`; // Close h4 div and npc-plate
         }
-        
-        html += `</div>`;
     }
     html += '</div>';
 
     body.innerHTML = html;
-
-    // --- Attach Event Listeners ---
-    for (const npcName in state.npcs) {
-        if (state.npcs[npcName].hidden) {
-            const buttonId = `reveal-btn-${npcName.replace(/\s/g, '-')}`;
-            const btn = document.getElementById(buttonId);
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    if (state.npcs[npcName]) {
-                        state.npcs[npcName].hidden = false;
-                        buildSocialOverlay();
-                    }
-                });
-            }
-        }
-    }
 }
 
 function createNpcStatBar(statName, value, barColor = '#4a90e2') {
@@ -752,6 +1893,14 @@ function cheatAddAllSkillsExp(amount) {
     }
 }
 
+function cheatAddSkillExp(skillName, amount) {
+    addSkillExp(skillName, amount);
+    buildCheatOverlay();
+    if (document.getElementById('btnChar-overlay').style.display === 'block') {
+        updateCharSkillsTab();
+    }
+}
+
 
 
 /* ==============================================================
@@ -760,7 +1909,7 @@ function cheatAddAllSkillsExp(amount) {
 function updateHeader(){
   document.getElementById('clock').textContent = fmtHM(state.currentTime);
   document.getElementById('date' ).textContent = fmtDate(state.currentTime);
-  document.getElementById('money').textContent = `$${state.money.toFixed(2)}`;
+  document.getElementById('money').textContent = formatMoney(state.money);
 }
 
 /* ==============================================================
@@ -874,6 +2023,10 @@ function showCurrentEvent(){
 
   const ev = state.events[state.eventIndex];
 
+  if (ev.reveals && state.npcs[ev.reveals]) {
+    state.npcs[ev.reveals].hidden = false;
+  }
+
   const title = document.createElement('h2');
   title.className = 'eventTitle';
   title.textContent = ev.title;
@@ -892,7 +2045,8 @@ function showCurrentEvent(){
       state.eventIndex++;
       showCurrentEvent();          // **no** advanceTime here
     }else{
-      renderFoyer();               // entering the lab starts the map
+      state.storyEventActive = false; // Intro is over
+      goToScene('foyer', 30);      // entering the lab starts the map
     }
   };
   c.appendChild(link);
@@ -901,54 +2055,109 @@ function showCurrentEvent(){
 /* ==============================================================
    MAP – FOYER AND ROOMS (each move advances time)
    ============================================================== */
-function renderFoyer(){
+function renderScene(sceneName) {
+  state.currentLocation = sceneName;
+  const sceneData = state.scenes[sceneName];
+  if (!sceneData) return; // Or show an error scene
+
   const c = document.getElementById('mainArea');
   c.innerHTML = `
-    <h2 class="eventTitle">Laboratory Foyer</h2>
-    <p class="eventText" id="foyerDesc">
-      The foyer is dimly lit, metal doors line the walls, and a low hum of equipment
-      reverberates through the concrete floor. A faint smell of antiseptic hangs in the air.
-    </p>
-    <div class="navColumn" id="foyerNav"></div>
+    <h2 class="eventTitle">${sceneData.title}</h2>
+    <p class="eventText" id="sceneDesc">${sceneData.description}</p>
+    <div class="navColumn" id="sceneNav"></div>
   `;
-  const nav = document.getElementById('foyerNav');
-  nav.innerHTML = `
-    <span class="link" onclick="renderRoom('kitchen')">Kitchen</span>
-    <span class="link" onclick="renderRoom('lounge')">Lounge</span>
-    <span class="link" onclick="renderRoom('bathroom')">Bathroom</span>
-  `;
-  positionNavBelow(document.getElementById('foyerDesc'), nav);
-  advanceTime();                     // moving into the foyer costs 30 s
+
+  const nav = document.getElementById('sceneNav');
+  let navHtml = '';
+  sceneData.nav.forEach(link => {
+    let showLink = true;
+    if (link.condition) {
+      if (link.condition.type === 'npc_relationship') {
+        const npc = state.npcs[link.condition.npc];
+        if (!npc || npc.relationship < link.condition.value) {
+          showLink = false;
+        }
+      }
+      // Future condition types can be added here
+    }
+
+    if (showLink) {
+      navHtml += `<span class="link" onclick="${link.action}">${link.text}</span>`;
+    }
+  });
+  nav.innerHTML = navHtml;
+
+  positionNavBelow(document.getElementById('sceneDesc'), nav);
 }
 
-function renderRoom(name){
-  const c = document.getElementById('mainArea');
-  let title='',desc='';
-
-  if(name==='kitchen'){
-    title='Kitchen';
-    desc=`Stainless steel counters glint under harsh fluorescent lights. A coffee maker gurgles,
-           and a half‑eaten sandwich rests on a plate. The scent of stale coffee lingers.
-           The fridge hums softly, casting a faint blue glow across the tiled floor.`;
-  }else if(name==='lounge'){
-    title='Lounge';
-    desc=`Plush chairs face a wall‑mounted screen playing calming nature footage.
-           Shelves hold scientific journals and a few well‑worn novels. Soft ambient music drifts.`;
-  }else if(name==='bathroom'){
-    title='Bathroom';
-    desc=`White tiles line the walls, a single sink flickers with a weak bulb. The mirror fogs
-           slightly as warm air circulates. A small cabinet holds basic toiletries.`;
+function goToScene(sceneName, seconds) {
+  if (seconds > 0) {
+    advanceTime(seconds);
   }
 
-  c.innerHTML = `
-    <h2 class="eventTitle">${title}</h2>
-    <p class="eventText" id="roomDesc">${desc}</p>
-    <div class="navColumn" id="roomNav"></div>
-  `;
-  const nav = document.getElementById('roomNav');
-  nav.innerHTML = `<span class="link" onclick="renderFoyer()">Back to Foyer</span>`;
-  positionNavBelow(document.getElementById('roomDesc'), nav);
-  advanceTime();                     // each room transition adds 30 s
+  // --- NEW RANDOM EVENT LOGIC ---
+  const destinationScene = state.scenes[sceneName];
+  if (destinationScene && destinationScene.randomEvents) {
+    for (const event of destinationScene.randomEvents) {
+      if (Math.random() < event.chance) {
+        // The random event triggered!
+        renderScene(event.scene); // Go to the event scene instead
+        return; // Stop processing further
+      }
+    }
+  }
+
+  // If no random event triggered, render the original destination
+  renderScene(sceneName);
+}
+
+function finishShower() {
+  advanceTime(600); // 10 minutes
+  goToScene('bathroom', 0);
+}
+
+function finishRelaxing() {
+  // 1. Pass time, but don't update the UI yet
+  advanceTime(1800, false);
+
+  // 2. Apply the stat bonuses
+  let newHappiness = state.needs.happiness + 50;
+  if (newHappiness > state.ranges.happiness) {
+    newHappiness = state.ranges.happiness;
+  }
+  state.needs.happiness = newHappiness;
+
+  let newTiredness = state.needs.tiredness + 250;
+  if (newTiredness > state.ranges.tiredness) {
+    newTiredness = state.ranges.tiredness;
+  }
+  state.needs.tiredness = newTiredness;
+
+  // 3. Now, update the UI with the final values
+  forceGlobalUIRefresh();
+  checkStatTriggers();
+
+  // 4. Go back to the lounge
+  goToScene('lounge', 0);
+}
+
+function recoverFromStressCollapse() {
+  // Set stress to 35% and increase trauma by 10%
+  state.needs.stress = state.ranges.stress * 0.35;
+  state.needs.trauma = Math.min(state.ranges.trauma, state.needs.trauma + (state.ranges.trauma * 0.1));
+  state.stats.timesCollapsedFromStress++;
+
+  // Go back to the previous location after a 1-hour time penalty
+  goToScene(state.locationBeforeEvent, 3600);
+}
+
+function recoverFromArousalMax() {
+  // Reset arousal and increment counter
+  state.needs.arousal = 0;
+  state.stats.timesClimaxed++;
+
+  // Go back to the previous location after a 10-minute time penalty
+  goToScene(state.locationBeforeEvent, 600);
 }
 
 /* Helper – positions a .navColumn just below a given element */
@@ -988,10 +2197,22 @@ function openOverlay(btnId){
     ov.style.display = 'block';
 
     // Populate overlays with dynamic content when they are opened
-    if (btnId === 'btnChar') {
+    if (btnId === 'btnSettings') {
+        // Check the current font and font size radio buttons
+        document.querySelectorAll(`input[name="font"][value="${state.settings.fontFamily}"]`).forEach(el => el.checked = true);
+        document.querySelectorAll(`input[name="fontsize"][value="${state.settings.fontSize}"]`).forEach(el => el.checked = true);
+    } else if (btnId === 'btnChar') {
         showCharTab('status');
     } else if (btnId === 'btnSocial') {
         buildSocialOverlay();
+    } else if (btnId === 'btnJournal') {
+        buildJournalOverlay();
+    } else if (btnId === 'btnSaves') {
+        buildSavesOverlay();
+    } else if (btnId === 'loadBtn') {
+        buildLoadScreen();
+    } else if (btnId === 'cheatsBtn') {
+        buildCheatOverlay();
     }
   }
 }
@@ -1006,13 +2227,27 @@ function closeAllOverlays(){
    -------------------------------------------------------------- */
 function toggleCheats(cb){
   state.cheatsEnabled = cb.checked;
+  applyCheatsUI();
+}
 
-  // add/remove a class that drives the CSS layout
-  if(state.cheatsEnabled) document.body.classList.add('cheats-enabled');
-  else                       document.body.classList.remove('cheats-enabled');
+function applyCheatsUI() {
+  const cheatsEnabled = state.cheatsEnabled;
 
-  // show / hide the Cheats button (CSS already handles width)
-  document.getElementById('cheatsBtn').style.display = state.cheatsEnabled ? 'inline-block' : 'none';
+  const cheatsChk = document.getElementById('cheatsChk');
+  if (cheatsChk) {
+    cheatsChk.checked = cheatsEnabled;
+  }
+
+  if (cheatsEnabled) {
+    document.body.classList.add('cheats-enabled');
+  } else {
+    document.body.classList.remove('cheats-enabled');
+  }
+
+  const cheatsBtn = document.getElementById('cheatsBtn');
+  if (cheatsBtn) {
+    cheatsBtn.style.display = cheatsEnabled ? 'inline-block' : 'none';
+  }
 }
 
 /* --------------------------------------------------------------
@@ -1034,6 +2269,7 @@ function cheatModifyNeed(key, delta) {
   state.needs[key] = Math.min(max, Math.max(min, state.needs[key] + delta));
   updateNeedsUI();
   buildCheatOverlay(); // Redraw cheats to update value
+  checkStatTriggers();
 }
 
 // This helper function creates the new standardized row for any cheat
@@ -1064,6 +2300,13 @@ function buildCheatOverlay() {
     const body = document.querySelector('#cheatsBtn-overlay .overlayBody');
     body.style.height = 'calc(100% - 2rem)';
     body.style.overflowY = 'hidden';
+
+    // --- Remember current tab ---
+    let activeTab = 'general';
+    const activeTabEl = document.querySelector('.cheat-tab-content[style*="display: block"]');
+    if (activeTabEl) {
+        activeTab = activeTabEl.id.replace('cheat-tab-', '');
+    }
 
     // --- Tab Setup ---
     body.innerHTML = `
@@ -1121,8 +2364,8 @@ function buildCheatOverlay() {
     col1.forEach(skillName => {
         col1Html += createCheatControlRow({
             label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
-            neg_actions: [ {label: '-64', onclick:`addSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`addSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`addSkillExp('${skillName}', -1)`} ],
-            pos_actions: [ {label: '+1', onclick:`addSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`addSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`addSkillExp('${skillName}', 64)`} ],
+            neg_actions: [ {label: '-64', onclick:`cheatAddSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`cheatAddSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`cheatAddSkillExp('${skillName}', -1)`} ],
+            pos_actions: [ {label: '+1', onclick:`cheatAddSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`cheatAddSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`cheatAddSkillExp('${skillName}', 64)`} ],
         });
     });
     col1Html += '</div>';
@@ -1130,8 +2373,8 @@ function buildCheatOverlay() {
     col2.forEach(skillName => {
         col2Html += createCheatControlRow({
             label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
-            neg_actions: [ {label: '-64', onclick:`addSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`addSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`addSkillExp('${skillName}', -1)`} ],
-            pos_actions: [ {label: '+1', onclick:`addSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`addSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`addSkillExp('${skillName}', 64)`} ],
+            neg_actions: [ {label: '-64', onclick:`cheatAddSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`cheatAddSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`cheatAddSkill-exp('${skillName}', -1)`} ],
+            pos_actions: [ {label: '+1', onclick:`cheatAddSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`cheatAddSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`cheatAddSkillExp('${skillName}', 64)`} ],
         });
     });
     col2Html += '</div>';
@@ -1174,7 +2417,7 @@ function buildCheatOverlay() {
     npcCol2Html += '</div>';
     npcsTab.innerHTML = npcsHtml + npcCol1Html + npcCol2Html + '</div>';
 
-    showCheatTab('general');
+    showCheatTab(activeTab);
 }
 
 /* optional money cheat – keeps two‑decimal precision */
@@ -1192,21 +2435,44 @@ function toggleCorruptionDisplay(cb){
 /* --------------------------------------------------------------
    INITIALISATION
    -------------------------------------------------------------- */
-document.getElementById('startBtn').addEventListener('click', () => {
-  // Switch to the main game screen
-  switchScreen('gameScreen');
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('startBtn');
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            // Set story flag to protect intro
+            state.storyEventActive = true;
 
-  // Initialise dynamic values
-  state.money = 0.00;
-  updateHeader();          // date | time | money row
-  updateNeedsUI();         // draw need bars (all green at start)
+            // Initialise physical body
+            state.playerBody = createPlayerBody(state.sex);
 
-  // Build UI pieces that depend on JS
-  initBottomButtons();    // hook up the bottom‑button bar
-  buildCheatOverlay();    // populate the Cheats overlay
+            // Switch to the main game screen
+            switchScreen('gameScreen');
 
-  // Show the first intro event
-  showCurrentEvent();
+            // Initialise dynamic values
+            state.money = 0.00;
+            updateHeader();          // date | time | money row
+            updateNeedsUI();         // draw need bars (all green at start)
+
+            // Build UI pieces that depend on JS
+            initBottomButtons();    // hook up the bottom‑button bar
+            buildCheatOverlay();    // populate the Cheats overlay
+            applySettings();        // apply default/loaded settings
+            applyCheatsUI();        // apply default/loaded cheat settings
+
+            // Equip starting items
+            equipItem('labcoat');
+            equipItem('sneakers');
+            updateCharDesc();
+
+            // Show the first intro event
+            showCurrentEvent();
+        });
+    }
+
+    const loadBtn = document.getElementById('loadBtn');
+    if (loadBtn) {
+        loadBtn.addEventListener('click', () => openOverlay('loadBtn'));
+    }
 });
 
 </script>
