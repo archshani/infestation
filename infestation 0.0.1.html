@@ -571,14 +571,16 @@ class EquipmentSlot {
 }
 
 class HandHeldSlot {
-    constructor() {
+    constructor(name = 'Hand-held') {
+        this.name = name;
         this.left = null;
         this.right = null;
     }
 }
 
 class BackSlot {
-    constructor() {
+    constructor(name = 'Back') {
+        this.name = name;
         this.item = null;
     }
 }
@@ -588,9 +590,11 @@ class ClothingItem {
         id,
         name,
         slot, // The ID of the EquipmentSlot it goes into
-        layer, // 'skin', 'middle', or 'outer'
+        layer = null, // 'skin', 'middle', or 'outer'
         covers, // Array of BodyPart IDs it covers
-        bonusStats = {} // e.g., { warmth: 5, style: 10 }
+        bonusStats = {}, // e.g., { warmth: 5, style: 10 }
+        durability = 100,
+        tags = []
     }) {
         this.id = id;
         this.name = name;
@@ -598,6 +602,8 @@ class ClothingItem {
         this.layer = layer;
         this.covers = covers;
         this.bonusStats = bonusStats;
+        this.durability = durability;
+        this.tags = tags;
     }
 }
 
@@ -653,6 +659,7 @@ function createPlayerBody(sex = 'female') {
 
     return body;
 }
+
 
 /* ==============================================================
    GLOBAL STATE
@@ -720,6 +727,7 @@ const state = {
   playerBody: {}, // Will be populated by factory
   equipment: {
     head: new EquipmentSlot('head', 'Head'),
+    neck: new EquipmentSlot('neck', 'Neck'),
     upper: new EquipmentSlot('upper', 'Upper Body'),
     lower: new EquipmentSlot('lower', 'Lower Body'),
     waist: new EquipmentSlot('waist', 'Waist'),
@@ -727,13 +735,10 @@ const state = {
     hands: new EquipmentSlot('hands', 'Hands'),
     legs: new EquipmentSlot('legs', 'Legs'),
     feet: new EquipmentSlot('feet', 'Feet'),
-    'hand-held': new HandHeldSlot(),
-    back: new BackSlot()
+    'hand-held': new HandHeldSlot('Hand-held'),
+    back: new BackSlot('Back')
   },
-  inventory: [
-      new ClothingItem({id: 'labcoat', name: 'Lab Coat', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'left_thigh', 'right_thigh']}),
-      new ClothingItem({id: 'sneakers', name: 'Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot']})
-  ],
+  inventory: [],
 
   /* -------------------- Stats -------------------- */
   stats: {
@@ -779,6 +784,7 @@ const state = {
         { text: 'Kitchen', action: "goToScene('kitchen', 30)" },
         { text: 'Lounge', action: "goToScene('lounge', 30)" },
         { text: 'Bathroom', action: "goToScene('bathroom', 30)" },
+        { text: 'Visit the Tailor', action: "goToTailorHub()" },
         {
           text: 'Check in with Leah',
           action: "goToScene('leah_love_event', 0)",
@@ -880,6 +886,11 @@ const state = {
         { text: 'Return to Foyer', action: "goToScene('foyer', 0)" }
       ]
     },
+'tailor_hub': {
+    title: 'The Tailor',
+    description: 'The tailor is a mysterious figure who can create any clothing you desire, for a price. What would you like to create?',
+    nav: [] // This will be populated dynamically
+},
     'amir_love_event': {
       title: 'A Moment with Amir',
       description: 'Placeholder text for a special moment with Amir.',
@@ -912,59 +923,245 @@ const state = {
 };
 
 /* ==============================================================
+   CLOTHING TEMPLATES
+   ============================================================== */
+const clothingTemplates = {
+  // Head
+  hat_baseball_cap: { id: 'hat_baseball_cap', name: 'Baseball Cap', slot: 'head', layer: 'outer', covers: ['head'], tags: ['dummy'] },
+  hat_beanie: { id: 'hat_beanie', name: 'Beanie', slot: 'head', layer: 'outer', covers: ['head'], tags: ['dummy'] },
+  glasses_sunglasses: { id: 'glasses_sunglasses', name: 'Sunglasses', slot: 'head', layer: 'outer', covers: ['face'], tags: ['dummy'] },
+  // Upper Body
+  upper_tshirt: { id: 'upper_tshirt', name: 'Plain T-Shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back'], tags: ['dummy'] },
+  upper_shirt_buttondown: { id: 'upper_shirt_buttondown', name: 'Button-down Shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['dummy'] },
+  upper_sweater: { id: 'upper_sweater', name: 'Sweater', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['dummy'] },
+  upper_hoodie: { id: 'upper_hoodie', name: 'Hoodie', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'head'], tags: ['dummy'] },
+  upper_jacket_leather: { id: 'upper_jacket_leather', name: 'Leather Jacket', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['dummy'] },
+  upper_coat_trench: { id: 'upper_coat_trench', name: 'Trench Coat', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'left_thigh', 'right_thigh'], tags: ['dummy'] },
+  upper_bra: { id: 'upper_bra', name: 'Plain Bra', slot: 'upper', layer: 'skin', covers: ['chest'], tags: ['underwear', 'upper_underwear'] },
+  // Lower Body
+  lower_jeans: { id: 'lower_jeans', name: 'Plain Jeans', slot: 'lower', layer: 'middle', covers: ['left_thigh', 'right_thigh', 'left_calf', 'right_calf', 'groin', 'butt'], tags: ['dummy'] },
+  lower_shorts_denim: { id: 'lower_shorts_denim', name: 'Denim Shorts', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['dummy'] },
+  lower_skirt_short: { id: 'lower_skirt_short', name: 'Short Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['dummy'] },
+  lower_panties: { id: 'lower_panties', name: 'Plain Panties', slot: 'lower', layer: 'skin', covers: ['groin', 'butt'], tags: ['underwear', 'lower_underwear'] },
+  // Feet
+  feet_sneakers: { id: 'feet_sneakers', name: 'Plain Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['dummy'] },
+  feet_boots_combat: { id: 'feet_boots_combat', name: 'Combat Boots', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf'], tags: ['dummy'] },
+  // Back
+  back_backpack: { id: 'back_backpack', name: 'Backpack', slot: 'back', covers: [], tags: ['dummy'] },
+  // Hand-held
+  handheld_handbag: { id: 'handheld_handbag', name: 'Handbag', slot: 'hand-held', covers: [], tags: ['dummy'] }
+};
+
+/* ==============================================================
    CLOTHING HELPERS
    ============================================================== */
 function updateCharDesc() {
-    const equippedItems = [];
+    const descEl = document.getElementById('charDesc');
+    
+    // --- 1. Data Gathering ---
+    const allEquippedItems = [];
+    const underwearItems = [];
+    const outerwearItems = new Map();
+
     for (const slotId in state.equipment) {
         const slot = state.equipment[slotId];
-        // Handle layered slots
-        if (slot.skin || slot.middle || slot.outer) {
-            if(slot.skin) equippedItems.push(slot.skin.name);
-            if(slot.middle) equippedItems.push(slot.middle.name);
-            if(slot.outer) equippedItems.push(slot.outer.name);
+        let outermostItem = null;
+
+        if (slot instanceof EquipmentSlot) {
+            outermostItem = slot.outer || slot.middle || slot.skin;
+            if (slot.skin && slot.skin.tags.includes('underwear')) {
+                underwearItems.push(slot.skin);
+            }
+        } else if (slot instanceof BackSlot) {
+            outermostItem = slot.item;
+        } else if (slot instanceof HandHeldSlot) {
+            if(slot.left) allEquippedItems.push(slot.left);
+            if(slot.right) allEquippedItems.push(slot.right);
         }
-        // Handle hand-held slots
-        if (slot.left || slot.right) {
-            if(slot.left) equippedItems.push(slot.left.name);
-            if(slot.right) equippedItems.push(slot.right.name);
+        
+        if (outermostItem) {
+            outerwearItems.set(slotId, outermostItem);
         }
-        // Handle single-item back slot
-        if (slot.item) {
-            equippedItems.push(slot.item.name);
+    }
+    
+    // Add handheld items to the final list
+    allEquippedItems.push(...Array.from(outerwearItems.values()));
+
+    const coveredParts = getCoveredBodyParts();
+    const vaginaExposed = !coveredParts.has('vagina');
+    const breastsExposed = !coveredParts.has('left_breast') && !coveredParts.has('right_breast');
+    
+    const hasBra = underwearItems.some(i => i.tags.includes('upper_underwear'));
+    const hasPanties = underwearItems.some(i => i.tags.includes('lower_underwear'));
+    const isWearingOuterwear = Array.from(outerwearItems.values()).some(i => !i.tags.includes('underwear'));
+
+    // --- 2. Handle exposure states ---
+    if (vaginaExposed && breastsExposed) {
+        descEl.innerHTML = '<span style="color: #880000;">You are completely naked!</span>';
+        return;
+    }
+
+    // --- 3. Handle underwear-only states ---
+    if (!isWearingOuterwear && (hasBra || hasPanties)) {
+        let desc = '';
+        if (hasBra && !hasPanties) {
+            const bra = underwearItems.find(i => i.tags.includes('upper_underwear'));
+            desc = `You are wearing your ${bra.name}, but you are not wearing any panties.`;
+        } else if (!hasBra && hasPanties) {
+            const panties = underwearItems.find(i => i.tags.includes('lower_underwear'));
+            desc = `You are wearing your ${panties.name}, but you are not wearing any bra.`;
+        } else { // hasBra && hasPanties
+            const bra = underwearItems.find(i => i.tags.includes('upper_underwear'));
+            const panties = underwearItems.find(i => i.tags.includes('lower_underwear'));
+            desc = `You are wearing your ${bra.name} and ${panties.name}.`;
+        }
+        descEl.innerHTML = desc;
+        return;
+    }
+
+    // --- 4. Default clothing description ---
+    let description = 'Wearing: ';
+    const outerwearNames = Array.from(outerwearItems.values()).map(item => item.name);
+    description += outerwearNames.join(', ');
+
+    let exposureMessage = '';
+    if (breastsExposed) {
+        exposureMessage = '<span style="color: #880000;">Your breasts are exposed!</span>';
+    } else if (vaginaExposed) {
+        exposureMessage = '<span style="color: #880000;">Your vagina is exposed!</span>';
+    }
+
+    // Only add "beneath" text if not exposed
+    if (!exposureMessage) {
+        if (underwearItems.length > 0) {
+            const underwearNames = underwearItems.map(item => item.name);
+            description += ` with ${underwearNames.join(' and ')} beneath.`;
+        } else if (isWearingOuterwear) {
+            description += ' with <span style="color: purple;">nothing beneath</span>.';
         }
     }
 
-    const descEl = document.getElementById('charDesc');
-    if (equippedItems.length > 0) {
-        descEl.textContent = `Wearing: ${equippedItems.join(', ')}`;
-    } else {
-        descEl.textContent = 'Wearing: nothing';
+    if (exposureMessage) {
+        description += `<br>${exposureMessage}`;
     }
+
+    descEl.innerHTML = description;
 }
 
-function equipItem(itemId) {
+
+function equipItem(itemId, subSlot) { // subSlot can be layer, hand, or null for 'back'
     const itemIndex = state.inventory.findIndex(i => i.id === itemId);
-    if (itemIndex === -1) {
-        console.error(`Item with id "${itemId}" not found in inventory.`);
-        return;
-    }
+    if (itemIndex === -1) { console.error(`Item "${itemId}" not found.`); return; }
 
     const item = state.inventory[itemIndex];
-    const slot = state.equipment[item.slot];
+    const targetSlotId = item.slot;
+    const slot = state.equipment[targetSlotId];
 
-    if (!slot) {
-        console.error(`Equipment slot "${item.slot}" does not exist.`);
+    if (!slot) { console.error(`Slot "${targetSlotId}" not found.`); return; }
+
+    // Determine what's currently equipped in the target location
+    let currentlyEquippedItem = null;
+    if (slot instanceof BackSlot) {
+        currentlyEquippedItem = slot.item;
+    } else if (slot instanceof HandHeldSlot && slot.hasOwnProperty(subSlot)) {
+        currentlyEquippedItem = slot[subSlot];
+    } else if (slot instanceof EquipmentSlot && slot.hasOwnProperty(subSlot)) {
+        currentlyEquippedItem = slot[subSlot];
+    }
+
+    // If an item is there, move it to inventory
+    if (currentlyEquippedItem) {
+        state.inventory.push(currentlyEquippedItem);
+    }
+
+    // Equip the new item
+    if (slot instanceof BackSlot) {
+        slot.item = item;
+    } else if (slot instanceof HandHeldSlot && slot.hasOwnProperty(subSlot)) {
+        slot[subSlot] = item; // 'left' or 'right'
+    } else if (slot instanceof EquipmentSlot && slot.hasOwnProperty(subSlot)) {
+        slot[subSlot] = item; // 'skin', 'middle', 'outer'
+    } else {
+        console.error(`Cannot equip to invalid slot type for ${targetSlotId}`);
+        if (currentlyEquippedItem) { state.inventory.pop(); } // Revert if equip fails
         return;
     }
 
-    // For now, simple logic. We can add layer conflict checks later.
-    if (slot[item.layer] === null) {
-        slot[item.layer] = item;
-        state.inventory.splice(itemIndex, 1); // Remove from inventory
-    } else {
-        console.error(`Layer "${item.layer}" in slot "${item.slot}" is already occupied.`);
+    // Remove the newly equipped item from inventory
+    state.inventory.splice(itemIndex, 1);
+    // Sort inventory alphabetically for consistency, useful for UI
+    state.inventory.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function unequipItem(slotId, subSlot) { // subSlot is layer, hand, or null
+    const slot = state.equipment[slotId];
+    if (!slot) { console.error(`Slot "${slotId}" not found.`); return; }
+
+    let itemToUnequip = null;
+
+    if (slot instanceof BackSlot) {
+        itemToUnequip = slot.item;
+        slot.item = null;
+    } else if (slot instanceof HandHeldSlot && slot.hasOwnProperty(subSlot)) {
+        itemToUnequip = slot[subSlot];
+        slot[subSlot] = null;
+    } else if (slot instanceof EquipmentSlot && slot.hasOwnProperty(subSlot)) {
+        itemToUnequip = slot[subSlot];
+        slot[subSlot] = null;
     }
+
+    if (itemToUnequip) {
+        state.inventory.push(itemToUnequip);
+        // Sort inventory alphabetically for consistency
+        state.inventory.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+        console.log(`Nothing to unequip from ${slotId} -> ${subSlot}`);
+    }
+
+    // Refresh UI
+    buildEquipmentTab();
+    updateCharDesc();
+}
+
+function getCoveredBodyParts() {
+    const coveredParts = new Set();
+
+    // Helper to add item's coverage to the set
+    const addItemCoverage = (item) => {
+        if (item && item.covers) {
+            item.covers.forEach(partId => coveredParts.add(partId));
+        }
+    };
+
+    // Iterate over all equipment slots
+    for (const slotId in state.equipment) {
+        const slot = state.equipment[slotId];
+        if (slot instanceof EquipmentSlot) {
+            // Layered slots
+            addItemCoverage(slot.skin);
+            addItemCoverage(slot.middle);
+            addItemCoverage(slot.outer);
+        } else if (slot instanceof HandHeldSlot) {
+            // Hand-held slots
+            addItemCoverage(slot.left);
+            addItemCoverage(slot.right);
+        } else if (slot instanceof BackSlot) {
+            // Back slot
+            addItemCoverage(slot.item);
+        }
+    }
+
+    // Apply special coverage rules
+    if (coveredParts.has('groin')) {
+        coveredParts.add('vagina');
+        coveredParts.add('anus');
+    }
+    if (coveredParts.has('chest')) {
+        coveredParts.add('left_breast');
+        coveredParts.add('right_breast');
+    }
+
+    return coveredParts;
 }
 
 /* ==============================================================
@@ -1427,60 +1624,29 @@ function showCharTab(tabName) {
     else if (tabName === 'inventory') buildInventoryTab();
 }
 
-function openSlotOverlay(slotId) {
+function openItemSelectionOverlay(slotId, subSlot = null) {
+    const subOverlay = document.getElementById('sub-overlay');
+    const header = subOverlay.querySelector('.overlayHeader');
+    const body = subOverlay.querySelector('.overlayBody');
+
+    // Logic change: filter by slot only, not layer.
+    const compatibleItems = state.inventory.filter(item => item.slot === slotId);
+
+    let headerText;
     const slot = state.equipment[slotId];
-    if (!slot) return;
+    const slotName = slot ? slot.name : slotId;
 
-    const subOverlay = document.getElementById('sub-overlay');
-    const header = subOverlay.querySelector('.overlayHeader');
-    const body = subOverlay.querySelector('.overlayBody');
-
-    header.textContent = slot.name;
-    body.innerHTML = ''; // Clear previous content
-
-    // Handle special slots first
-    if (slotId === 'hand-held') {
-        body.innerHTML = `
-            <div>Left Hand: ${slot.left ? slot.left.name : 'Empty'}</div>
-            <div>Right Hand: ${slot.right ? slot.right.name : 'Empty'}</div>
-        `;
-        subOverlay.style.display = 'block';
-        return;
-    }
-    if (slotId === 'back') {
-        body.innerHTML = `<div>${slot.item ? slot.item.name : 'Empty'}</div>`;
-        subOverlay.style.display = 'block';
-        return;
+    if (slot instanceof EquipmentSlot) { // Layered slots
+        headerText = `Select Item for ${slotName} (${subSlot} layer)`;
+    } else if (slot instanceof HandHeldSlot) {
+        headerText = `Select Item for ${subSlot} hand`;
+    } else if (slot instanceof BackSlot) {
+        headerText = `Select Item for Back`;
+    } else {
+        headerText = `Select Item for ${slotName}`; // Fallback
     }
 
-    // Handle standard layered slots
-    ['skin', 'middle', 'outer'].forEach(layer => {
-        const item = slot[layer];
-        const layerDiv = document.createElement('div');
-        layerDiv.textContent = `${layer.charAt(0).toUpperCase() + layer.slice(1)}: ${item ? item.name : 'Empty'}`;
-        layerDiv.style.cursor = 'pointer';
-        layerDiv.onclick = () => {
-            if (!item) {
-                openItemSelectionOverlay(slotId, layer);
-            } else {
-                // Future: Add unequip logic here
-                console.log(`Unequip ${item.name}`);
-            }
-        };
-        body.appendChild(layerDiv);
-    });
-
-    subOverlay.style.display = 'block';
-}
-
-function openItemSelectionOverlay(slotId, layer) {
-    const subOverlay = document.getElementById('sub-overlay');
-    const header = subOverlay.querySelector('.overlayHeader');
-    const body = subOverlay.querySelector('.overlayBody');
-
-    const compatibleItems = state.inventory.filter(item => item.slot === slotId && item.layer === layer);
-
-    header.textContent = `Select Item for ${layer} layer`;
+    header.textContent = headerText;
     body.innerHTML = '';
 
     if (compatibleItems.length === 0) {
@@ -1495,9 +1661,10 @@ function openItemSelectionOverlay(slotId, layer) {
             equipBtn.className = 'overlayBtn';
             equipBtn.style.marginLeft = '1rem';
             equipBtn.onclick = () => {
-                equipItem(item.id);
-                subOverlay.style.display = 'none';
-                buildEquipmentTab(); // Refresh the main equipment screen
+                equipItem(item.id, subSlot);
+                document.getElementById('sub-overlay').style.display = 'none';
+                buildEquipmentTab();
+                updateCharDesc();
             };
             listItem.appendChild(equipBtn);
             list.appendChild(listItem);
@@ -1510,16 +1677,45 @@ function openItemSelectionOverlay(slotId, layer) {
 
 function buildEquipmentTab() {
     const equipmentDiv = document.getElementById('char-equipment');
+    equipmentDiv.innerHTML = ''; // Clear previous content
+
+    // Main container with 3-column layout
+    const container = document.createElement('div');
+    container.style.display = 'flex';
+    container.style.justifyContent = 'space-between';
+    container.style.height = '100%';
+
+    // Define columns
+    const leftCol = document.createElement('div');
+    leftCol.style.flexBasis = '30%';
+    leftCol.style.display = 'flex';
+    leftCol.style.flexDirection = 'column';
+    leftCol.style.gap = '0.5rem';
+    leftCol.style.overflowY = 'auto';
+    leftCol.style.alignItems = 'flex-end'; // Align widgets to the right of the left column
+
+    const centerCol = document.createElement('div');
+    centerCol.style.flexBasis = '40%';
+    centerCol.style.display = 'flex';
+    centerCol.style.justifyContent = 'center';
+    centerCol.style.alignItems = 'center';
+    centerCol.style.position = 'relative'; // Needed for positioning the overlay
+
+    const rightCol = document.createElement('div');
+    rightCol.style.flexBasis = '30%';
+    rightCol.style.display = 'flex';
+    rightCol.style.flexDirection = 'column';
+    rightCol.style.gap = '0.5rem';
+    rightCol.style.overflowY = 'auto';
+    rightCol.style.alignItems = 'flex-start'; // Align widgets to the left of the right column
+
+    // --- ASCII Art as background ---
     const asciiArt = `
-
-
-
-
-                                                                                                                  ██ █
-                                                                                                             ███        ████     ██
+                                                                                                                ████████
+                                                                                                             ███        ███████████
                                                                                                           ███                      ██
-                                                                                                        ███                          █
-                                                                                                      ████                              █
+                                                                                                        ███                          ██
+                                                                                                      ████                             ██
                                                                                                      ████                               ██
                                                                                                     █████                                ██
                                                                                                    █████                                  ██
@@ -1532,10 +1728,10 @@ function buildEquipmentTab() {
                                                                                                ███████ █████                     █            ██
                                                                                               ███████████████                     █            ██
                                                                                              ██████████████████                    █             █
-                                                                                            ████████████████████                    ██
+                                                                                            ████████████████████                    ██            █
                                                                                            █████████████████████                    ████          ██
                                                                                            ██████████████    ███                     ████          █
-                                                                                           ███████████████   ███                     █████
+                                                                                           ███████████████   ███                     █████         █
                                                                                            ██████  █████████████                      ███          ██
                                                                                            ████ █  █████████████                    ████          ██
                                                                                             ████ ████████████████                   ███           ██
@@ -1551,13 +1747,13 @@ function buildEquipmentTab() {
                                                                                                      ███████████                   ████████████
                                                                                                          ██████                    █
                                                                                                       █████████                     ██
-                                                                                                  ████████████                         █
-                                                                                             ███                                           ███
-                                                                                    ██████ █ ██                                                  █ ███
-                                                                                 ████                                                                    █
-                                                                              ████
+                                                                                                  ████████████                        ██
+                                                                                             █████                                      ██████
+                                                                                    ███████████                                               ████████
+                                                                                 ████                                                                 ████
+                                                                              ████                                                                        ██
                                                                              ███                                                                            ██
-                                                                            ███
+                                                                            ███                                                                               █
                                                                           ████                                                                                ██
                                                                          ████                                                                                 ██
                                                                         ████                                                                                   ██
@@ -1578,14 +1774,14 @@ function buildEquipmentTab() {
                                                     █████               ████             ███████████                                                ███         ███
                                                    █████               ████              █████████████                                             ████          ██
                                                   █████              ████                 ███████████████                                       ███████          █
-                                                 ████              █████                  ███████████████                                      ████████          ██
+                                                 ████              █████                  ███████████████                                     █████████          ██
                                                 ████             █████                     ████████                                               █████          ██
-                                               ████             ████                        ███████████                                       ██  ██████         █
-                                               ███            █████                         ███████████                                         ████████          ██
-                                              ████            ███                           ███████████                                         ████████          █
-                                              █████           ██                             ███████████                                        ████████          ██
+                                               ████             ████                        ███████                                               ██████         █
+                                               ███            █████                         ███████                                             ████████          ██
+                                              ████            ███                           ███████                                             ████████          █
+                                              █████           ██                             ███████                                            ████████          ██
                                               ██████           ██                             ███████                                           ██ █████           █
-                                              ██████            ██                            ███████                                           ██  ████C          █
+                                              ██████            ██                            ███████                                           ██  ████           █
                                                ██████            ██                            ██████                                           ██  █████          █
                                                 ███████           ██                           ██████                                           ██  █████           █
                                                  ███████           ██                          ██████                                           ██  ██████          █
@@ -1593,8 +1789,8 @@ function buildEquipmentTab() {
                                                     ██████            ██                        ████                                             ██  ████            █
                                                      ███████           ██                       ████                                              █  ████             █
                                                        ███████          ██                     █████                                              ██ ███              █
-                                                        ████████          █                    █████                                               █████
-                                                          ████████           █               ████                                                   █████             ██
+                                                        ████████          ██                   █████                                               █████              █
+                                                          ████████          ██               ████                                                   █████             ██
                                                             ████████          ██           ███████                           █                       █████             █
                                                               ████████          ██        ███ █████████                                               ████             █
                                                                 ███████           ██    ███           ██                                               ███             █
@@ -1617,10 +1813,10 @@ function buildEquipmentTab() {
                                                                                      ██████                                                                   █████     ██
                                                                                      ██████                                                                   █████      █
                                                                                     ██████                                                                    █████      ██
-                                                                                    ██████                      █                                             ██ ██      ██
-                                                                                    █████                                             █                       ██ ██      ██
-                                                                                   ██████                          █ ████         █ ██                        ██ ██      █
-                                                                                   ██████                           █████████████████                         ███        ██
+                                                                                    ██████                      █                      █                      ██ ██      ██
+                                                                                    █████                        █                    █                       ██ ██      ██
+                                                                                   ██████                         █  ████         █ ██                        ██ ██      █
+                                                                                   ██████                          ██████████████████                         ███        ██
                                                                                   ██████                             ███████████████                          ███        ██
                                                                                   ██████                              █████████████                          ████        ██
                                                                                   █████                               ███   ███████                          ███          █
@@ -1708,58 +1904,115 @@ function buildEquipmentTab() {
                                                              ████           █████                                    ████████         ███
                                                            █████          ███████                                     ████████          ███
                                                         ██████           ███████                                         █████           █████
-                                                      ██████             █████                                             ███
-                                                    █████               ███                                                ████     ██        ██
-                                                    ███                 ██                                                  ██████  ███ ██  █ ██
-                                                   ████ █      ██     ███                                                    █████   ███  █   ██
-                                                    ████ ██  ███     ███                                                       ████   ███  ███
-                                                     █████  ███     ██                                                           ███████████
+                                                      ██████             █████                                             ███                █
+                                                    █████               ███                                                ████               ██
+                                                    ███                 ██                                                  ██████            ██
+                                                   ████               ███                                                    █████            ██
+                                                    ████             ███                                                       ████        ███
+                                                     █████          ██                                                           ███████████
                                                        █████████████
-                                                                █
-
 `;
-    const container = document.createElement('div');
-    container.style.position = 'relative';
-    container.style.fontFamily = 'monospace';
-    container.style.color = '#00ff00';
-    container.style.lineHeight = '1';
-    container.style.fontSize = '12px'; // Adjust as needed
-
     const pre = document.createElement('pre');
     pre.textContent = asciiArt;
-    container.appendChild(pre);
+    pre.style.position = 'absolute';
+    pre.style.top = '50%';
+    pre.style.left = '50%';
+    pre.style.transform = 'translate(-50%, -50%)';
+    pre.style.fontSize = '0.20vw';
+    pre.style.lineHeight = '0.85';
+    pre.style.fontFamily = 'monospace';
+    pre.style.color = '#0c0';
+    pre.style.zIndex = '-1'; // Put it behind the widgets
+    centerCol.appendChild(pre);
 
-    // Add slot links
-    const slots = [
-        { id: 'head', name: 'Head', top: '10%', left: '45%' },
-        { id: 'upper', name: 'Upper Body', top: '30%', left: '60%' },
-        { id: 'lower', name: 'Lower Body', top: '50%', left: '60%' },
-        { id: 'waist', name: 'Waist', top: '45%', left: '35%' },
-        { id: 'arms', name: 'Arms', top: '32%', left: '25%' },
-        { id: 'hands', name: 'Hands', top: '45%', left: '20%' },
-        { id: 'legs', name: 'Legs', top: '65%', left: '30%' },
-        { id: 'feet', name: 'Feet', top: '85%', left: '30%' },
-        { id: 'hand-held', name: 'Hand-held', top: '55%', left: '75%' },
-        { id: 'back', name: 'Back', top: '25%', left: '70%' }
-    ];
+    // --- Create and Place Slot Widgets ---
+    const createSlotWidget = (slotId) => {
+        const slot = state.equipment[slotId];
+        const widget = document.createElement('div');
+        widget.style.border = '1px solid #444';
+        widget.style.padding = '0.5rem';
+        widget.style.width = '150px';
 
-    slots.forEach(slotInfo => {
-        const link = document.createElement('a');
-        link.href = '#';
-        link.textContent = slotInfo.name;
-        link.style.position = 'absolute';
-        link.style.top = slotInfo.top;
-        link.style.left = slotInfo.left;
-        link.style.color = '#00ff00';
-        link.style.textDecoration = 'underline';
-        link.onclick = (e) => {
-            e.preventDefault();
-            openSlotOverlay(slotInfo.id);
+        const nameDiv = document.createElement('div');
+        nameDiv.style.fontWeight = 'bold';
+        nameDiv.style.color = '#00ff00';
+        nameDiv.style.marginBottom = '0.3rem';
+        nameDiv.textContent = slot.name;
+        widget.appendChild(nameDiv);
+
+        const createLayerButton = (subSlot, subSlotName) => {
+            const item = (slot instanceof BackSlot) ? slot.item : slot[subSlot];
+            const button = document.createElement('button');
+            
+            // New Styling Logic
+            button.style.background = '#222';
+            button.style.border = '1px solid transparent'; // Dark border, no outline
+            button.style.borderRadius = '4px';
+            button.style.padding = '.15rem .6rem';
+            button.style.cursor = 'pointer';
+            button.style.width = '100%';
+            button.style.textAlign = 'left';
+            button.style.marginBottom = '0.1rem';
+            button.style.whiteSpace = 'nowrap';
+            button.style.overflow = 'hidden';
+            button.style.textOverflow = 'ellipsis';
+            
+            const originalColor = item ? 'lightblue' : 'grey';
+            button.style.color = originalColor;
+
+            button.innerHTML = `<small>[${subSlotName} - ${item ? item.name : 'empty'}]</small>`;
+            
+            button.onmouseover = () => {
+                button.style.color = '#00ff00'; // Green on hover
+                button.style.borderColor = '#00ff00';
+            };
+            button.onmouseout = () => {
+                button.style.color = originalColor; // Revert to original color
+                button.style.borderColor = 'transparent';
+            };
+
+            button.onclick = () => {
+                if (item) {
+                    unequipItem(slotId, subSlot);
+                } else {
+                    openItemSelectionOverlay(slotId, subSlot);
+                }
+            };
+            widget.appendChild(button);
         };
-        container.appendChild(link);
-    });
 
-    equipmentDiv.innerHTML = '';
+        if (slot instanceof EquipmentSlot) {
+            createLayerButton('skin', 'Skin');
+            createLayerButton('middle', 'Middle');
+            createLayerButton('outer', 'Outer');
+        } else if (slot instanceof HandHeldSlot) {
+            createLayerButton('left', 'Left Hand');
+            createLayerButton('right', 'Right Hand');
+        } else if (slot instanceof BackSlot) {
+            createLayerButton('item', 'Back');
+        }
+        return widget;
+    };
+
+    // Add widgets to columns
+    leftCol.appendChild(createSlotWidget('neck'));
+    leftCol.appendChild(createSlotWidget('arms'));
+    leftCol.appendChild(createSlotWidget('hands'));
+    leftCol.appendChild(createSlotWidget('legs'));
+    leftCol.appendChild(createSlotWidget('hand-held'));
+
+    rightCol.appendChild(createSlotWidget('head'));
+    rightCol.appendChild(createSlotWidget('upper'));
+    rightCol.appendChild(createSlotWidget('lower'));
+    rightCol.appendChild(createSlotWidget('waist'));
+    rightCol.appendChild(createSlotWidget('feet'));
+    rightCol.appendChild(createSlotWidget('back'));
+
+
+    // Append columns to container, and container to the main div
+    container.appendChild(leftCol);
+    container.appendChild(centerCol);
+    container.appendChild(rightCol);
     equipmentDiv.appendChild(container);
 }
 
@@ -1862,7 +2115,7 @@ function buildSocialOverlay() {
             html += createNpcStatBar('Lust', npc.attraction, '#ff69b4');   // Hot Pink
             html += createNpcStatBar('Trust', npc.trust, '#1e90ff');     // Dodger Blue
             html += createNpcStatBar('Fear', npc.fear, '#9932cc');       // Dark Orchid
-
+            
             html += `</div></div>`; // Close h4 div and npc-plate
         }
     }
@@ -2168,6 +2421,69 @@ function positionNavBelow(targetEl, navEl){
   navEl.style.top = `${pct + 2}%`;   // small gap
 }
 
+function goToTailorHub() {
+    const tailorScene = state.scenes.tailor_hub;
+    tailorScene.nav = [];
+    for (const slotId in state.equipment) {
+        if (slotId !== 'hand-held' && slotId !== 'back') {
+            tailorScene.nav.push({
+                text: state.equipment[slotId].name,
+                action: `goToTailorCrafting('${slotId}')`
+            });
+        }
+    }
+    tailorScene.nav.push({ text: 'Back to Foyer', action: "goToScene('foyer', 0)" });
+    goToScene('tailor_hub', 0);
+}
+
+function goToTailorCrafting(slotId) {
+    const mainArea = document.getElementById('mainArea');
+    const templates = Object.values(clothingTemplates).filter(t => t.slot === slotId);
+
+    let html = `
+        <h2 class="eventTitle">Crafting: ${state.equipment[slotId].name}</h2>
+        <p class="eventText">Select a template to craft:</p>
+        <div class="navColumn">
+    `;
+
+    templates.forEach(template => {
+        html += `<span class="link" onclick="craftItem('${template.id}')">${template.name} ($50)</span>`;
+    });
+
+    html += `<span class="link" onclick="goToTailorHub()">Back</span>`;
+    html += `</div>`;
+
+    mainArea.innerHTML = html;
+    positionNavBelow(mainArea.querySelector('.eventText'), mainArea.querySelector('.navColumn'));
+}
+
+function craftItem(templateId) {
+    const template = clothingTemplates[templateId];
+    if (!template) return;
+
+    const price = 50;
+    if (state.money < price) {
+        alert("You don't have enough money.");
+        return;
+    }
+
+    const itemName = prompt(`Enter a name for your new ${template.name}:`, template.name);
+    if (!itemName) return; // User cancelled
+
+    state.money -= price;
+
+    const newItem = new ClothingItem({
+        ...template,
+        id: `${template.id}_${Date.now()}`, // Unique ID
+        name: itemName
+    });
+
+    state.inventory.push(newItem);
+    alert(`You crafted a ${itemName} and it has been added to your inventory.`);
+    updateHeader();
+    goToTailorCrafting(template.slot); // Go back to the crafting screen
+}
+
 /* ==============================================================
    BOTTOM BUTTONS & OVERLAYS
    ============================================================== */
@@ -2373,7 +2689,7 @@ function buildCheatOverlay() {
     col2.forEach(skillName => {
         col2Html += createCheatControlRow({
             label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
-            neg_actions: [ {label: '-64', onclick:`cheatAddSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`cheatAddSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`cheatAddSkill-exp('${skillName}', -1)`} ],
+            neg_actions: [ {label: '-64', onclick:`cheatAddSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`cheatAddSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`cheatAddSkillExp('${skillName}', -1)`} ],
             pos_actions: [ {label: '+1', onclick:`cheatAddSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`cheatAddSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`cheatAddSkillExp('${skillName}', 64)`} ],
         });
     });
@@ -2459,9 +2775,34 @@ document.addEventListener('DOMContentLoaded', () => {
             applySettings();        // apply default/loaded settings
             applyCheatsUI();        // apply default/loaded cheat settings
 
-            // Equip starting items
-            equipItem('labcoat');
-            equipItem('sneakers');
+            // Create and equip starting gear
+            const startingGear = [
+                'upper_bra', 'lower_panties', 'upper_tshirt', 'lower_jeans', 'feet_sneakers',
+                'back_backpack', 'handheld_handbag', 'hat_baseball_cap'
+            ];
+            
+            state.inventory = startingGear.map(templateId => {
+                const template = clothingTemplates[templateId];
+                return new ClothingItem({
+                    ...template,
+                    id: `${template.id}_${Date.now()}_${Math.random()}` // Ensure unique ID
+                });
+            });
+
+            // Equip the default outfit
+            const equipStartingItem = (templateId, subSlot) => {
+                const item = state.inventory.find(i => i.name === clothingTemplates[templateId].name);
+                if (item) {
+                    equipItem(item.id, subSlot);
+                }
+            };
+
+            equipStartingItem('upper_bra', 'skin');
+            equipStartingItem('lower_panties', 'skin');
+            equipStartingItem('upper_tshirt', 'middle');
+            equipStartingItem('lower_jeans', 'middle');
+            equipStartingItem('feet_sneakers', 'outer');
+            
             updateCharDesc();
 
             // Show the first intro event
