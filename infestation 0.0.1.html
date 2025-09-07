@@ -353,6 +353,26 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 /* -------------------------------------------------------------
    NOTIFICATION OVERLAY
 ------------------------------------------------------------- */
+#error-notification-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ff0000;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 2px solid #000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  display: none;
+  font-weight: bold;
+  text-align: center;
+}
+
 #craft-notification-overlay {
   position: fixed;
   top: 30px;
@@ -696,7 +716,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
     <!-- Bottom Button Bar -->
     <div style="padding-top: 1rem; border-top: 1px solid #444; text-align: right;">
-        <button class="overlayBtn" onclick="craftItemFromMenu()">Craft Item ($50)</button>
+        <button id="craft-item-btn" class="overlayBtn" onclick="craftItemFromMenu()">Craft Item</button>
         <button class="overlayBtn" onclick="backToTailorHub()">Back to Slots</button>
     </div>
   </div>
@@ -704,6 +724,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <!-- ==================== NOTIFICATION OVERLAY ==================== -->
 <div id="craft-notification-overlay"></div>
+<div id="error-notification-overlay"></div>
 
 <!-- ==================== SAVE PROMPT OVERLAY ==================== -->
 <div id="save-prompt-overlay" class="overlay" style="width: 25vw; height: auto;">
@@ -1253,61 +1274,67 @@ function processClothingRules() {
 function updateCharDesc() {
     const descEl = document.getElementById('charDesc');
     const coverageMap = getCoverageInfo();
+    const purple = 'purple';
+    const red = '#ff4d4d';
 
-    // 1. Determine exposure status based on the new coverage map
-    const vaginaExposed = !coverageMap.has('vagina');
-    const nipplesExposed = !coverageMap.has('left_nipple') || !coverageMap.has('right_nipple');
-    const buttExposed = !coverageMap.has('butt'); // For fun, might use later
-
-    // 2. Determine what is visibly worn
-    const u = state.equipment.upper;
-    const l = state.equipment.lower;
-    const upperVisible = u.outer || u.middle || u.skin;
-    const lowerVisible = l.outer || l.middle || l.skin;
-    
-    const visibleItems = [];
-    // Collect all visible items from major slots
-    for (const slotId of ['upper', 'lower', 'head', 'feet', 'hands', 'neck', 'waist']) {
-        const slot = state.equipment[slotId];
-        if (slot) {
-            const visibleItem = slot.outer || slot.middle || slot.skin;
-            if (visibleItem) {
-                visibleItems.push(visibleItem);
-            }
+    // Helper to format item names based on tags and context
+    const formatItemName = (item, isOuter) => {
+        if (!item) return '';
+        if (isOuter && item.tags.includes('underwear')) {
+            return `<span style="color: ${purple};">${item.name}</span>`;
         }
+        return item.name;
+    };
+
+    const upperSlot = state.equipment.upper;
+    const lowerSlot = state.equipment.lower;
+
+    const upperVisible = upperSlot.outer || upperSlot.middle || upperSlot.skin;
+    const lowerVisible = lowerSlot.outer || lowerSlot.middle || lowerSlot.skin;
+
+    // Handle completely naked case first
+    if (!upperVisible && !lowerVisible) {
+        descEl.innerHTML = `<span style="color: ${red};">You are completely naked!</span>`;
+        return;
     }
 
-    // 3. Build the description string
-    let clothingDesc = '';
-    if (visibleItems.length > 0) {
-        clothingDesc = 'You are wearing ' + visibleItems.map(item => {
-            if (item.tags.includes('underwear')) {
-                return `<span style="color: purple;">${item.name}</span>`;
-            }
-            return item.name;
-        }).join(', ') + '.';
-    }
+    // New logic based on user feedback
+    const clothingParts = [];
+    const exposureParts = [];
 
-    let exposureDesc = '';
-    if (vaginaExposed && nipplesExposed) {
-        exposureDesc = '<span style="color: #ff4d4d;">You are completely naked!</span>';
-        // If naked, don't bother listing clothes.
-        clothingDesc = '';
+    if (upperVisible) {
+        clothingParts.push(formatItemName(upperVisible, true));
     } else {
-        const exposureParts = [];
-        if (nipplesExposed) {
-            exposureParts.push("topless");
-        }
-        if (vaginaExposed) {
-            exposureParts.push("bottomless");
-        }
-        if (exposureParts.length > 0) {
-             exposureDesc = `<span style="color: #ff4d4d;">You are ${exposureParts.join(' and ')}!</span>`;
+        exposureParts.push(`<span style="color: ${red};">your breasts are exposed!</span>`);
+    }
+
+    if (lowerVisible) {
+        clothingParts.push(formatItemName(lowerVisible, true));
+    } else {
+        exposureParts.push(`<span style="color: ${red};">your vagina is exposed!</span>`);
+    }
+
+    const allParts = clothingParts.concat(exposureParts);
+    let finalDesc = `You are wearing ${allParts.join(' and ')}`;
+
+    // Revised "underneath" logic
+    const upperUnder = upperSlot.skin && upperSlot.skin.tags.includes('underwear') ? upperSlot.skin : null;
+    const lowerUnder = lowerSlot.skin && lowerSlot.skin.tags.includes('underwear') ? lowerSlot.skin : null;
+    const underParts = [upperUnder, lowerUnder].filter(Boolean);
+
+    // Outerwear is anything visible that is NOT underwear.
+    const hasOuterwear = (upperVisible && !upperVisible.tags.includes('underwear')) || (lowerVisible && !lowerVisible.tags.includes('underwear'));
+
+    if (hasOuterwear) {
+        if (underParts.length > 0) {
+            finalDesc += ` with ${underParts.map(item => formatItemName(item, false)).join(' and ')} underneath`;
+        } else {
+            finalDesc += ` with <span style="color: ${purple};">nothing</span> underneath`;
         }
     }
     
-    // Combine the descriptions
-    descEl.innerHTML = [exposureDesc, clothingDesc].filter(Boolean).join('<br>');
+    finalDesc += '.';
+    descEl.innerHTML = finalDesc;
 }
 
 
@@ -1764,10 +1791,42 @@ function loadState(newState) {
         Object.keys(newState).forEach(key => {
             if (key === 'currentTime') {
                 state.currentTime = new Date(newState.currentTime);
-            } else {
+            } else if (key !== 'equipment' && key !== 'inventory') { // Defer hydration
                 state[key] = newState[key];
             }
         });
+
+        // Re-hydrate equipment
+        const hydratedEquipment = {};
+        for (const slotId in newState.equipment) {
+            const loadedSlot = newState.equipment[slotId];
+            if (!loadedSlot) continue;
+
+            if (loadedSlot.hasOwnProperty('skin')) { // EquipmentSlot
+                const newSlot = new EquipmentSlot(loadedSlot.id, loadedSlot.name);
+                ['skin', 'middle', 'outer'].forEach(layer => {
+                    if (loadedSlot[layer]) {
+                        newSlot[layer] = new ClothingItem(loadedSlot[layer]);
+                    }
+                });
+                hydratedEquipment[slotId] = newSlot;
+            } else if (loadedSlot.hasOwnProperty('left')) { // HandHeldSlot
+                const newSlot = new HandHeldSlot(loadedSlot.name);
+                if (loadedSlot.left) newSlot.left = new ClothingItem(loadedSlot.left);
+                if (loadedSlot.right) newSlot.right = new ClothingItem(loadedSlot.right);
+                hydratedEquipment[slotId] = newSlot;
+            } else if (loadedSlot.hasOwnProperty('item')) { // BackSlot
+                const newSlot = new BackSlot(loadedSlot.name);
+                if (loadedSlot.item) newSlot.item = new ClothingItem(loadedSlot.item);
+                hydratedEquipment[slotId] = newSlot;
+            } else {
+                hydratedEquipment[slotId] = loadedSlot; // Fallback
+            }
+        }
+        state.equipment = hydratedEquipment;
+
+        // Re-hydrate inventory items
+        state.inventory = newState.inventory.map(itemData => new ClothingItem(itemData));
 
         switchScreen('gameScreen');
         fullUiRefresh();
@@ -1847,6 +1906,7 @@ function importGame() {
 function fullUiRefresh() {
     updateHeader();
     updateNeedsUI();
+    updateCharDesc();
     initBottomButtons();
     applySettings();
     applyCheatsUI();
@@ -1973,17 +2033,7 @@ function showItemTooltip(event, item, unequipConfig = null) {
             tooltip.style.display = 'none';
         };
 
-        const replaceBtn = document.createElement('button');
-        replaceBtn.textContent = 'Replace';
-        replaceBtn.className = 'overlayBtn';
-        replaceBtn.style.flexGrow = '1';
-        replaceBtn.onclick = () => {
-            // We pass the original event to maintain the anchor position
-            openItemSelectionOverlay(event, unequipConfig.slotId, unequipConfig.subSlot);
-        };
-        
         buttonContainer.appendChild(unequipBtn);
-        buttonContainer.appendChild(replaceBtn);
         body.appendChild(buttonContainer);
     }
     
@@ -2066,16 +2116,19 @@ function openItemSelectionOverlay(event, slotId, subSlot = null) {
         compatibleItems.forEach(item => {
             const listItem = document.createElement('li');
             listItem.textContent = item.name;
+
             const equipBtn = document.createElement('button');
-            equipBtn.textContent = 'Equip';
             equipBtn.className = 'overlayBtn';
             equipBtn.style.marginLeft = '1rem';
+            equipBtn.textContent = 'Equip';
             equipBtn.onclick = () => {
                 equipItem(item.id, subSlot);
-                document.getElementById('sub-overlay').style.display = 'none';
+                // Manually refresh UI since equipItem doesn't
                 buildEquipmentTab();
                 updateCharDesc();
+                document.getElementById('sub-overlay').style.display = 'none';
             };
+
             listItem.appendChild(equipBtn);
             list.appendChild(listItem);
         });
@@ -2948,6 +3001,7 @@ function onTemplateSelect() {
         nameInput.disabled = true;
         tagsWrapper.style.display = 'none';
         updateFinalTagsList();
+        updateCraftingCost(); // Update cost to reset button
         return;
     }
 
@@ -3080,6 +3134,7 @@ function updateTagAvailability() {
     });
 
     updateFinalTagsList();
+    updateCraftingCost();
     setTimeout(updateCoverageList, 0);
 }
 
@@ -3112,6 +3167,27 @@ function showCraftNotification(itemName, templateName) {
     }, 2500);
 }
 
+let errorNotificationTimeout;
+function showErrorNotification(message) {
+    const notification = document.getElementById('error-notification-overlay');
+    if (!notification) return;
+
+    clearTimeout(errorNotificationTimeout);
+    notification.textContent = message;
+
+    notification.style.display = 'block';
+    setTimeout(() => {
+        notification.style.opacity = '1';
+    }, 10);
+
+    errorNotificationTimeout = setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 400);
+    }, 1500);
+}
+
 function updateFinalTagsList() {
     const finalTagsList = document.getElementById('tailor-final-tags-list');
     const template = clothingTemplates[document.getElementById('tailor-template-select').value];
@@ -3138,27 +3214,89 @@ function updateFinalTagsList() {
     });
 }
 
+function updateCraftingCost() {
+    const craftButton = document.getElementById('craft-item-btn');
+    const templateSelect = document.getElementById('tailor-template-select');
+    const selectedTemplateId = templateSelect.value;
+
+    if (!selectedTemplateId) {
+        craftButton.textContent = 'Craft Item';
+        craftButton.disabled = true;
+        return;
+    }
+
+    const template = clothingTemplates[selectedTemplateId];
+    const materialPrice = template.materialCost || 50;
+    const tagPrice = template.tagCost || 15;
+
+    let finalCost = 0;
+
+    // Check for material cost
+    const materialSelect = document.getElementById('tailor-material-select');
+    const hasForcedMaterial = template.forcedTags && template.forcedTags.some(tag => materialTags.includes(tag));
+    if (materialSelect.value || hasForcedMaterial) {
+        finalCost += materialPrice;
+    }
+
+    // Check for tag costs
+    const finalTags = new Set();
+    if (template.forcedTags) {
+        template.forcedTags.forEach(tag => {
+            if (!materialTags.includes(tag)) { // Don't double-count forced materials
+                finalTags.add(tag);
+            }
+        });
+    }
+    document.querySelectorAll('input[name="tailor-tag"]:checked').forEach(cb => {
+        finalTags.add(cb.value);
+    });
+
+    finalCost += finalTags.size * tagPrice;
+
+    craftButton.textContent = `Craft Item (${formatMoney(finalCost)})`;
+    craftButton.dataset.cost = finalCost;
+    craftButton.disabled = false;
+}
+
 function craftItemFromMenu() {
     const templateSelect = document.getElementById('tailor-template-select');
     const nameInput = document.getElementById('tailor-item-name');
     const selectedTemplateId = templateSelect.value;
+    const craftButton = document.getElementById('craft-item-btn');
+    const cost = parseFloat(craftButton.dataset.cost || '0');
 
-    if (!selectedTemplateId) { alert("Please select a template first."); return; }
+    if (!selectedTemplateId) {
+        showErrorNotification("Please select a template first.");
+        return;
+    }
     const itemName = nameInput.value.trim();
-    if (!itemName) { alert("Please enter a name for the item."); return; }
-    if (state.money < 50) { alert("You don't have enough money."); return; }
-
-    state.money -= 50;
-    updateHeader();
+    if (!itemName) {
+        showErrorNotification("Please enter a name for the item.");
+        return;
+    }
+    if (state.money < cost) {
+        showErrorNotification("You don't have enough money.");
+        return;
+    }
 
     const template = clothingTemplates[selectedTemplateId];
+    const materialSelect = document.getElementById('tailor-material-select');
+
+    // Check for material selection, if not forced
+    const hasForcedMaterial = template.forcedTags && template.forcedTags.some(tag => materialTags.includes(tag));
+    if (!hasForcedMaterial && !materialSelect.value) {
+        showErrorNotification("Please select a material for this item.");
+        return;
+    }
+
+    state.money -= cost;
+    updateHeader();
 
     // --- Gather all final tags ---
     const finalTags = new Set(template.tags || []);
     if (template.forcedTags) {
         template.forcedTags.forEach(tag => finalTags.add(tag));
     }
-    const materialSelect = document.getElementById('tailor-material-select');
     if (materialSelect.value) {
         finalTags.add(materialSelect.value);
     }
