@@ -546,6 +546,95 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   <div class="overlayBody"></div>
 </div>
 
+<!-- ==================== TAILOR HUB OVERLAY ==================== -->
+<div id="tailor-hub-overlay" class="overlay">
+  <div class="overlayHeader">The Tailor</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody">
+    <p>Welcome to the Tailor. What kind of clothing would you like to create?</p>
+    <div id="tailor-slot-buttons" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+      <!-- Slot buttons will be dynamically inserted here -->
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAILOR CRAFTING OVERLAY ==================== -->
+<div id="tailor-crafting-overlay" class="overlay">
+  <div class="overlayHeader">Crafting Menu</div>
+  <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+  <div class="overlayBody" style="display: flex; flex-direction: column; height: calc(100% - 2.2rem); gap: 1rem;">
+
+    <!-- Top Row: Template and Name -->
+    <div style="display: flex; gap: 2rem; align-items: center;">
+        <div style="flex-basis: 50%;">
+            <label for="tailor-template-select">Template:</label>
+            <select id="tailor-template-select" onchange="onTemplateSelect()" style="width: 100%;">
+                <option value="">--Please choose a template--</option>
+            </select>
+        </div>
+        <div style="flex-basis: 50%;">
+            <label for="tailor-item-name">Item Name:</label>
+            <input type="text" id="tailor-item-name" disabled style="width: 100%;">
+        </div>
+    </div>
+
+    <!-- Main Content Area: 3 Columns -->
+    <div style="display: flex; flex: 1; gap: 1rem; overflow: hidden;">
+
+      <!-- Column 1: Available Tags (Now Categorized) -->
+      <div id="tailor-tags-sections-wrapper" style="flex: 1; display: none; flex-direction: column; min-height: 0;">
+
+        <!-- Materials Dropdown -->
+        <div id="tailor-material-section" style="margin-bottom: 1rem;">
+            <strong>Material:</strong>
+            <select id="tailor-material-select" style="width: 100%; margin-top: 0.25rem;">
+                <!-- Material options will be dynamically inserted here -->
+            </select>
+        </div>
+
+        <!-- Style Tags -->
+        <div id="tailor-style-section" style="margin-bottom: 1rem; display: flex; flex-direction: column; min-height: 0;">
+            <strong>Style Tags:</strong>
+            <div id="tailor-style-tags-container" style="flex: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+              <!-- Style tag checkboxes will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <!-- General Tags -->
+        <div id="tailor-general-section" style="display: flex; flex-direction: column; min-height: 0; flex: 1;">
+            <strong>General Tags:</strong>
+            <div id="tailor-general-tags-container" style="flex: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+              <!-- General tag checkboxes will be dynamically inserted here -->
+            </div>
+        </div>
+
+      </div>
+
+      <!-- Column 2: Covers -->
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+        <strong>Covers:</strong>
+        <ul id="tailor-coverage-list" style="flex: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem; list-style-position: inside; margin-top: 0.5rem; margin-left:0; padding-left: 1.2rem;">
+          <!-- Coverage list will be dynamically inserted here -->
+        </ul>
+      </div>
+
+      <!-- Column 3: Final Tags -->
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+        <strong>Final Tags:</strong>
+        <ul id="tailor-final-tags-list" style="flex: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem; list-style-position: inside; margin-top: 0.5rem; margin-left:0; padding-left: 1.2rem;">
+            <!-- Final tags will be dynamically inserted here -->
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Button Bar -->
+    <div style="padding-top: 1rem; border-top: 1px solid #444; text-align: right;">
+        <button class="overlayBtn" onclick="craftItemFromMenu()">Craft Item ($50)</button>
+        <button class="overlayBtn" onclick="backToTailorHub()">Back to Slots</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ==============================================================
    CLASSES
@@ -633,6 +722,7 @@ function createPlayerBody(sex = 'female') {
     // Torso
     addPart('chest', 'Chest');
     addPart('belly', 'Belly');
+    addPart('waist', 'Waist');
     addPart('upper_back', 'Upper Back');
     addPart('lower_back', 'Lower Back');
 
@@ -644,9 +734,11 @@ function createPlayerBody(sex = 'female') {
 
     // Limbs
     addPairedParts('arm', 'Arm');
+    addPairedParts('wrist', 'Wrist');
     addPairedParts('hand', 'Hand');
     addPairedParts('thigh', 'Thigh');
     addPairedParts('calf', 'Calf');
+    addPairedParts('ankle', 'Ankle');
     addPairedParts('foot', 'Foot');
 
     // Conditional parts based on sex
@@ -927,125 +1019,227 @@ const state = {
    ============================================================== */
 const clothingTemplates = {
   // Head
-  hat_baseball_cap: { id: 'hat_baseball_cap', name: 'Baseball Cap', slot: 'head', layer: 'outer', covers: ['head'], tags: ['dummy'] },
-  hat_beanie: { id: 'hat_beanie', name: 'Beanie', slot: 'head', layer: 'outer', covers: ['head'], tags: ['dummy'] },
-  glasses_sunglasses: { id: 'glasses_sunglasses', name: 'Sunglasses', slot: 'head', layer: 'outer', covers: ['face'], tags: ['dummy'] },
+  hat_fedora: { id: 'hat_fedora', name: 'Fedora', slot: 'head', layer: 'outer', covers: ['head'], tags: ['hat'], allowedTags: ['casual', 'formal', 'wool', 'cotton'] },
+  hat_baseball_cap: { id: 'hat_baseball_cap', name: 'Baseball Cap', slot: 'head', layer: 'outer', covers: ['head'], tags: ['hat'], allowedTags: ['casual', 'athletic', 'cotton', 'denim'] },
+  hat_beanie: { id: 'hat_beanie', name: 'Beanie', slot: 'head', layer: 'outer', covers: ['head'], tags: ['hat'], allowedTags: ['casual', 'cool', 'goth', 'wool', 'cotton'] },
+  hat_sunhat: { id: 'hat_sunhat', name: 'Sun Hat', slot: 'head', layer: 'outer', covers: ['head'], tags: ['hat'], allowedTags: ['casual', 'cotton'] },
+  hat_tophat: { id: 'hat_tophat', name: 'Top Hat', slot: 'head', layer: 'outer', covers: ['head'], tags: ['hat'], allowedTags: ['formal', 'sexy', 'goth', 'silk', 'leather'] },
+  glasses_reading: { id: 'glasses_reading', name: 'Reading Glasses', slot: 'head', layer: 'outer', covers: ['face'], tags: ['glasses'], allowedTags: ['casual', 'business', 'formal', 'plastic', 'metal'] },
+  glasses_sunglasses: { id: 'glasses_sunglasses', name: 'Sunglasses', slot: 'head', layer: 'outer', covers: ['face'], tags: ['glasses'], allowedTags: ['casual', 'cool', 'sexy', 'plastic', 'metal'] },
+  headband: { id: 'headband', name: 'Headband', slot: 'head', layer: 'outer', covers: ['head'], tags: ['accessory'], allowedTags: ['casual', 'athletic', 'cotton', 'plastic', 'spandex'] },
+
+  // Neck
+  neck_scarf: { id: 'neck_scarf', name: 'Scarf', slot: 'neck', layer: 'outer', covers: ['neck'], tags: ['accessory'], allowedTags: ['casual', 'cool', 'formal', 'cotton', 'wool', 'silk'] },
+  neck_necklace: { id: 'neck_necklace', name: 'Necklace', slot: 'neck', layer: 'outer', covers: ['neck'], tags: ['accessory', 'jewelry'], allowedTags: ['casual', 'formal', 'sexy', 'goth', 'metal', 'plastic'] },
+  neck_choker: { id: 'neck_choker', name: 'Choker', slot: 'neck', layer: 'skin', covers: ['neck'], tags: ['accessory', 'jewelry'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'lace', 'metal', 'plastic', 'vinyl', 'satin'] },
+
   // Upper Body
-  upper_tshirt: { id: 'upper_tshirt', name: 'Plain T-Shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back'], tags: ['dummy'] },
-  upper_shirt_buttondown: { id: 'upper_shirt_buttondown', name: 'Button-down Shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['dummy'] },
-  upper_sweater: { id: 'upper_sweater', name: 'Sweater', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['dummy'] },
-  upper_hoodie: { id: 'upper_hoodie', name: 'Hoodie', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'head'], tags: ['dummy'] },
-  upper_jacket_leather: { id: 'upper_jacket_leather', name: 'Leather Jacket', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['dummy'] },
-  upper_coat_trench: { id: 'upper_coat_trench', name: 'Trench Coat', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'left_thigh', 'right_thigh'], tags: ['dummy'] },
-  upper_bra: { id: 'upper_bra', name: 'Bra', slot: 'upper', layer: 'skin', covers: ['chest'], tags: ['underwear', 'upper_underwear'] },
+  upper_bra: { id: 'upper_bra', name: 'Bra', slot: 'upper', layer: 'skin', covers: ['chest'], tags: ['underwear', 'upper_underwear'], allowedTags: ['sexy', 'fetish-wear', 'transparent', 'cotton', 'lace', 'satin', 'silk', 'spandex', 'leather', 'vinyl'], forcedTags: ['belly showing'] },
+  upper_bikini_top: { id: 'upper_bikini_top', name: 'Bikini Top', slot: 'upper', layer: 'skin', covers: ['chest'], tags: ['swimwear'], allowedTags: ['sexy', 'spandex', 'cotton'], forcedTags: ['belly showing', 'swimming', 'underwear'] },
+  upper_one_piece_swimwear: { id: 'upper_one_piece_swimwear', name: 'One-piece Swimwear', slot: 'upper', layer: 'skin', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'groin', 'butt'], tags: ['swimwear'], allowedTags: ['sexy', 'athletic', 'spandex', 'cotton'], forcedTags: ['swimming', 'underwear'] },
+  upper_tshirt: { id: 'upper_tshirt', name: 'T-shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back'], tags: ['top'], allowedTags: ['casual', 'cool', 'goth', 'cotton', 'spandex'] },
+  upper_shirt_buttondown: { id: 'upper_shirt_buttondown', name: 'Button-down Shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'formal', 'business', 'cotton', 'silk', 'denim'] },
+  upper_shirt_buttondown_tshirt: { id: 'upper_shirt_buttondown_tshirt', name: 'Button-down T-shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back'], tags: ['top'], allowedTags: ['casual', 'cool', 'cotton', 'spandex'] },
+  upper_crop_top: { id: 'upper_crop_top', name: 'Crop Top', slot: 'upper', layer: 'middle', covers: ['chest', 'upper_back'], tags: ['top'], allowedTags: ['casual', 'cool', 'sexy', 'goth', 'cotton', 'spandex', 'lace', 'belly showing'], forcedTags: ['belly showing'] },
+  upper_tank_top: { id: 'upper_tank_top', name: 'Tank Top', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back'], tags: ['top'], allowedTags: ['casual', 'athletic', 'sexy', 'cotton', 'spandex'] },
+  upper_blouse: { id: 'upper_blouse', name: 'Blouse', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'formal', 'business', 'sexy', 'cotton', 'silk', 'satin', 'lace'] },
+  upper_sheer_blouse: { id: 'upper_sheer_blouse', name: 'Sheer Blouse', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top', 'transparent', 'fetish-wear'], allowedTags: ['formal', 'sexy', 'goth', 'silk', 'satin', 'lace'] },
+  upper_off_shoulder_blouse: { id: 'upper_off_shoulder_blouse', name: 'Off-shoulder Blouse', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'formal', 'sexy', 'cotton', 'silk', 'satin', 'lace'] },
+  upper_off_shoulder_crop_top: { id: 'upper_off_shoulder_crop_top', name: 'Off-shoulder Crop Top', slot: 'upper', layer: 'middle', covers: ['chest', 'upper_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'sexy', 'goth', 'cotton', 'spandex', 'lace', 'belly showing'], forcedTags: ['belly showing'] },
+  upper_halter_top: { id: 'upper_halter_top', name: 'Halter Top', slot: 'upper', layer: 'middle', covers: ['chest', 'belly'], tags: ['top'], allowedTags: ['casual', 'sexy', 'goth', 'cotton', 'spandex', 'leather', 'vinyl', 'belly showing'], forcedTags: ['belly showing'] },
+  upper_corset: { id: 'upper_corset', name: 'Corset', slot: 'upper', layer: 'middle', covers: ['chest', 'belly'], tags: ['top'], allowedTags: ['formal', 'sexy', 'goth', 'fetish-wear', 'leather', 'lace', 'satin', 'denim', 'vinyl', 'belly showing'], forcedTags: ['belly showing'] },
+  upper_sweater: { id: 'upper_sweater', name: 'Sweater', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'cool', 'goth', 'wool', 'cotton'] },
+  upper_turtleneck_sweater: { id: 'upper_turtleneck_sweater', name: 'Turtleneck Sweater', slot: 'upper', layer: 'middle', covers: ['neck', 'chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'formal', 'cool', 'goth', 'wool', 'cotton'] },
+  upper_hoodie: { id: 'upper_hoodie', name: 'Hoodie', slot: 'upper', layer: 'outer', covers: ['head', 'chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'athletic', 'cool', 'goth', 'cotton', 'wool'] },
+  upper_hoodie_zipper: { id: 'upper_hoodie_zipper', name: 'Hoodie (zipper)', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'head'], tags: ['top'], allowedTags: ['casual', 'athletic', 'cool', 'goth', 'cotton', 'wool'] },
+  upper_jacket: { id: 'upper_jacket', name: 'Jacket', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'cool', 'goth', 'leather', 'denim', 'wool'] },
+  upper_coat: { id: 'upper_coat', name: 'Coat', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm', 'left_thigh', 'right_thigh'], tags: ['top'], allowedTags: ['casual', 'formal', 'goth', 'wool', 'leather'] },
+  upper_blazer: { id: 'upper_blazer', name: 'Blazer', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['formal', 'business', 'sexy', 'cotton', 'wool', 'satin'] },
+  upper_vest: { id: 'upper_vest', name: 'Vest', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back'], tags: ['top'], allowedTags: ['casual', 'formal', 'business', 'goth', 'cotton', 'wool', 'leather', 'denim'] },
+  upper_apron: { id: 'upper_apron', name: 'Apron', slot: 'upper', layer: 'outer', covers: ['chest', 'belly'], tags: ['costume'], allowedTags: ['cotton'] },
+  upper_dress_short: { id: 'upper_dress_short', name: 'Short Dress', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'groin', 'butt'], tags: ['dress'], allowedTags: ['casual', 'formal', 'sexy', 'goth', 'cotton', 'silk', 'satin', 'lace', 'denim', 'leather', 'vinyl', 'belly showing'] },
+  upper_dress_medium: { id: 'upper_dress_medium', name: 'Medium Dress', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['dress'], allowedTags: ['casual', 'formal', 'sexy', 'goth', 'cotton', 'silk', 'satin', 'lace', 'denim', 'wool', 'belly showing'] },
+  upper_dress_long: { id: 'upper_dress_long', name: 'Long Dress', slot: 'upper', layer: 'middle', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['dress'], allowedTags: ['formal', 'sexy', 'goth', 'cotton', 'silk', 'satin', 'lace', 'wool', 'belly showing'] },
+
   // Lower Body
-  lower_jeans: { id: 'lower_jeans', name: 'Plain Jeans', slot: 'lower', layer: 'middle', covers: ['left_thigh', 'right_thigh', 'left_calf', 'right_calf', 'groin', 'butt'], tags: ['dummy'] },
-  lower_shorts_denim: { id: 'lower_shorts_denim', name: 'Denim Shorts', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['dummy'] },
-  lower_skirt_short: { id: 'lower_skirt_short', name: 'Short Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['dummy'] },
-  lower_panties: { id: 'lower_panties', name: 'Panties', slot: 'lower', layer: 'skin', covers: ['groin', 'butt'], tags: ['underwear', 'lower_underwear'] },
+  lower_panties: { id: 'lower_panties', name: 'Panties', slot: 'lower', layer: 'skin', covers: ['groin', 'butt'], tags: ['underwear', 'lower_underwear'], allowedTags: ['sexy', 'fetish-wear', 'transparent', 'cotton', 'lace', 'satin', 'silk', 'spandex', 'leather', 'vinyl'] },
+  lower_bikini_bottoms: { id: 'lower_bikini_bottoms', name: 'Bikini Bottoms', slot: 'lower', layer: 'skin', covers: ['groin', 'butt'], tags: ['swimwear'], allowedTags: ['sexy', 'spandex', 'cotton'], forcedTags: ['swimming', 'underwear'] },
+  lower_jeans: { id: 'lower_jeans', name: 'Jeans', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants'], allowedTags: ['casual', 'cool', 'goth', 'sexy', 'denim'] },
+  lower_pants: { id: 'lower_pants', name: 'Pants', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants'], allowedTags: ['casual', 'formal', 'business', 'goth', 'cotton', 'wool', 'spandex', 'leather'] },
+  lower_leggings: { id: 'lower_leggings', name: 'Leggings', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants'], allowedTags: ['casual', 'athletic', 'sexy', 'goth', 'cotton', 'spandex', 'leather', 'vinyl'] },
+  lower_sweatpants: { id: 'lower_sweatpants', name: 'Sweatpants', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants'], allowedTags: ['casual', 'athletic', 'cotton'] },
+  lower_shorts: { id: 'lower_shorts', name: 'Shorts', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['shorts'], allowedTags: ['casual', 'athletic', 'sexy', 'cotton', 'denim', 'spandex', 'leather'] },
+  lower_mini_shorts: { id: 'lower_mini_shorts', name: 'Mini Shorts', slot: 'lower', layer: 'middle', covers: ['groin', 'butt'], tags: ['shorts'], allowedTags: ['casual', 'sexy', 'goth', 'cotton', 'denim', 'spandex', 'leather', 'vinyl'] },
+  lower_skirt_long: { id: 'lower_skirt_long', name: 'Long Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['skirt'], allowedTags: ['casual', 'formal', 'goth', 'cotton', 'denim', 'wool', 'satin', 'silk', 'leather'] },
+  lower_skirt: { id: 'lower_skirt', name: 'Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh'], tags: ['skirt'], allowedTags: ['casual', 'formal', 'business', 'sexy', 'goth', 'cotton', 'denim', 'wool', 'satin', 'leather'] },
+  lower_skirt_short: { id: 'lower_skirt_short', name: 'Short Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh'], tags: ['skirt'], allowedTags: ['casual', 'sexy', 'goth', 'cotton', 'denim', 'wool', 'satin', 'leather', 'vinyl'] },
+  lower_mini_skirt: { id: 'lower_mini_skirt', name: 'Mini Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'butt'], tags: ['skirt'], allowedTags: ['casual', 'sexy', 'goth', 'fetish-wear', 'cotton', 'denim', 'satin', 'leather', 'vinyl', 'lace'] },
+  lower_cargo_pants: { id: 'lower_cargo_pants', name: 'Cargo Pants', slot: 'lower', layer: 'middle', covers: ['groin', 'butt', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants'], allowedTags: ['casual', 'cotton', 'denim'] },
+
+  // Arms
+  arms_detached_sleeves: { id: 'arms_detached_sleeves', name: 'Detached Sleeves', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['goth', 'sexy', 'cool', 'lace', 'spandex', 'cotton', 'leather', 'vinyl'] },
+  arms_arm_warmers: { id: 'arms_arm_warmers', name: 'Arm Warmers', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['goth', 'cool', 'casual', 'wool', 'cotton', 'spandex'] },
+  arms_wristbands: { id: 'arms_wristbands', name: 'Wristbands', slot: 'arms', layer: 'outer', covers: ['left_wrist', 'right_wrist'], tags: ['accessory'], allowedTags: ['athletic', 'goth', 'cool', 'casual', 'cotton', 'leather', 'plastic'] },
+  arms_armbands: { id: 'arms_armbands', name: 'Armbands', slot: 'arms', layer: 'outer', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['athletic', 'goth', 'cool', 'sexy', 'metal', 'leather', 'plastic'] },
+
+  // Hands
+  hands_gloves: { id: 'hands_gloves', name: 'Gloves', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory'], allowedTags: ['formal', 'goth', 'sexy', 'fetish-wear', 'leather', 'lace', 'satin', 'cotton', 'spandex', 'vinyl'] },
+  hands_watches: { id: 'hands_watches', name: 'Watches', slot: 'hands', layer: 'outer', covers: ['left_wrist'], tags: ['accessory', 'jewelry'], allowedTags: ['formal', 'business', 'casual', 'athletic', 'sexy', 'metal'] },
+  hands_bracelets: { id: 'hands_bracelets', name: 'Bracelets', slot: 'hands', layer: 'outer', covers: ['left_wrist', 'right_wrist'], tags: ['accessory', 'jewelry'], allowedTags: ['goth', 'sexy', 'casual', 'metal', 'leather', 'plastic'] },
+  hands_rings: { id: 'hands_rings', name: 'Rings', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory', 'jewelry'], allowedTags: ['formal', 'goth', 'sexy', 'casual', 'metal'] },
+
+  // Waist
+  waist_belt: { id: 'waist_belt', name: 'Belt', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory'], allowedTags: ['casual', 'formal', 'business', 'goth', 'sexy', 'leather', 'metal', 'plastic', 'vinyl'] },
+  waist_sash_wrap: { id: 'waist_sash_wrap', name: 'Sash Wrap', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory'], allowedTags: ['casual', 'formal', 'sexy', 'silk', 'satin', 'cotton'] },
+  waist_corset: { id: 'waist_corset', name: 'Waist Corset', slot: 'waist', layer: 'middle', covers: ['belly', 'waist'], tags: ['accessory'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'lace', 'satin', 'denim', 'vinyl'] },
+  waist_apron: { id: 'waist_apron', name: 'Waist Apron', slot: 'waist', layer: 'outer', covers: ['groin', 'waist'], tags: ['costume'], allowedTags: ['cotton'] },
+
+  // Legs
+  legs_legwarmers: { id: 'legs_legwarmers', name: 'Legwarmers', slot: 'legs', layer: 'middle', covers: ['left_calf', 'right_calf'], tags: ['accessory'], allowedTags: ['goth', 'cool', 'casual', 'wool', 'cotton'] },
+  legs_socks: { id: 'legs_socks', name: 'Socks', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['casual', 'athletic', 'formal', 'cotton', 'wool', 'spandex'] },
+  legs_thigh_high_socks: { id: 'legs_thigh_high_socks', name: 'Thigh High Socks', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf', 'left_thigh', 'right_thigh', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['sexy', 'goth', 'cotton', 'wool', 'spandex', 'lace'] },
+  legs_stockings: { id: 'legs_stockings', name: 'Stockings', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf', 'left_thigh', 'right_thigh', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['sexy', 'formal', 'goth', 'fetish-wear', 'spandex', 'lace', 'vinyl'] },
+  legs_tights: { id: 'legs_tights', name: 'Tights', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf', 'left_thigh', 'right_thigh', 'butt', 'waist', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['sexy', 'formal', 'goth', 'fetish-wear', 'spandex', 'lace', 'vinyl', 'wool', 'cotton'] },
+
   // Feet
-  feet_sneakers: { id: 'feet_sneakers', name: 'Plain Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['dummy'] },
-  feet_boots_combat: { id: 'feet_boots_combat', name: 'Combat Boots', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf'], tags: ['dummy'] },
-  // Back
-  back_backpack: { id: 'back_backpack', name: 'Backpack', slot: 'back', covers: [], tags: ['dummy'] },
-  // Hand-held
-  handheld_handbag: { id: 'handheld_handbag', name: 'Handbag', slot: 'hand-held', covers: [], tags: ['dummy'] }
+  feet_ankle_cuffs: { id: 'feet_ankle_cuffs', name: 'Ankle Cuffs', slot: 'feet', layer: 'outer', covers: ['left_ankle', 'right_ankle'], tags: ['accessory'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'metal', 'lace'] },
+  feet_anklets: { id: 'feet_anklets', name: 'Anklets', slot: 'feet', layer: 'outer', covers: ['left_ankle', 'right_ankle'], tags: ['accessory', 'jewelry'], allowedTags: ['sexy', 'casual', 'goth', 'metal', 'plastic'] },
+  feet_loafers: { id: 'feet_loafers', name: 'Loafers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'formal', 'business', 'leather'] },
+  feet_ballet_flats: { id: 'feet_ballet_flats', name: 'Ballet Flats', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'formal', 'leather', 'satin'] },
+  feet_mary_janes: { id: 'feet_mary_janes', name: 'Mary Janes', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'formal', 'goth', 'sexy', 'leather', 'vinyl'] },
+  feet_boots: { id: 'feet_boots', name: 'Boots', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf'], tags: ['shoes'], allowedTags: ['casual', 'formal', 'goth', 'cool', 'leather', 'vinyl'] },
+  feet_platform_boots: { id: 'feet_platform_boots', name: 'Platform Boots', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf'], tags: ['shoes'], allowedTags: ['goth', 'fetish-wear', 'sexy', 'leather', 'vinyl'], forcedTags: ['high heeled'] },
+  feet_sandals: { id: 'feet_sandals', name: 'Sandals', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'leather', 'plastic'] },
+  feet_slippers: { id: 'feet_slippers', name: 'Slippers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'cotton', 'wool'] },
+  feet_flip_flops: { id: 'feet_flip_flops', name: 'Flip-flops', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'plastic'] },
+  feet_running_shoes: { id: 'feet_running_shoes', name: 'Running Shoes', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'athletic', 'plastic', 'spandex'] },
+  feet_high_top_sneakers: { id: 'feet_high_top_sneakers', name: 'High-top Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'cool', 'athletic', 'cotton', 'leather'] },
+  feet_sneakers: { id: 'feet_sneakers', name: 'Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'cool', 'athletic', 'cotton', 'leather'] },
+  feet_pumps: { id: 'feet_pumps', name: 'Pumps', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['formal', 'business', 'sexy', 'leather', 'satin', 'vinyl'], forcedTags: ['high heeled'] },
+  feet_heels: { id: 'feet_heels', name: 'Heels', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['formal', 'sexy', 'fetish-wear', 'leather', 'satin', 'vinyl', 'plastic', 'metal'], forcedTags: ['high heeled'] },
+
+  // Bags
+  back_backpack: { id: 'back_backpack', name: 'Backpack', slot: 'back', layer: null, covers: [], tags: ['bag'], allowedTags: ['casual', 'athletic', 'cool', 'cotton', 'denim', 'leather'] },
+  handheld_handbag: { id: 'handheld_handbag', name: 'Handbag', slot: 'hand-held', layer: null, covers: [], tags: ['bag'], allowedTags: ['casual', 'formal', 'sexy', 'leather', 'satin', 'vinyl'] },
 };
 
 /* ==============================================================
    CLOTHING HELPERS
    ============================================================== */
-function updateCharDesc() {
-    const descEl = document.getElementById('charDesc');
-    
-    // --- 1. Data Gathering ---
-    const allEquippedItems = [];
-    const underwearItems = [];
-    const outerwearItems = new Map();
+function processClothingRules() {
+    for (const id in clothingTemplates) {
+        const template = clothingTemplates[id];
 
-    for (const slotId in state.equipment) {
-        const slot = state.equipment[slotId];
-        let outermostItem = null;
-
-        if (slot instanceof EquipmentSlot) {
-            outermostItem = slot.outer || slot.middle || slot.skin;
-            if (slot.skin && slot.skin.tags.includes('underwear')) {
-                underwearItems.push(slot.skin);
-            }
-        } else if (slot instanceof BackSlot) {
-            outermostItem = slot.item;
-        } else if (slot instanceof HandHeldSlot) {
-            if(slot.left) allEquippedItems.push(slot.left);
-            if(slot.right) allEquippedItems.push(slot.right);
+        // Ensure forcedTags and allowedTags exist to prevent errors
+        if (!template.forcedTags) {
+            template.forcedTags = [];
+        }
+        if (!template.allowedTags) {
+            template.allowedTags = [];
         }
         
-        if (outermostItem) {
-            outerwearItems.set(slotId, outermostItem);
+        // RULE 1: Automatically add 'belly hiding' if the item covers the belly
+        // and is not explicitly a 'belly showing' optional item.
+        if (template.covers && template.covers.includes('belly')) {
+            const isBellyShowingOptional = template.allowedTags.includes('belly showing');
+            if (!isBellyShowingOptional) {
+                if (!template.forcedTags.includes('belly hiding')) {
+                    template.forcedTags.push('belly hiding');
+                }
+            }
+        }
+
+        // RULE 2: If an item has only one material option, force it.
+        const templateMaterials = template.allowedTags.filter(t => materialTags.includes(t));
+        if (templateMaterials.length === 1) {
+            const material = templateMaterials[0];
+            // Move from allowed to forced
+            const index = template.allowedTags.indexOf(material);
+            if (index > -1) {
+                template.allowedTags.splice(index, 1);
+            }
+            if (!template.forcedTags.includes(material)) {
+                template.forcedTags.push(material);
+            }
         }
     }
+}
+
+function updateCharDesc() {
+    const descEl = document.getElementById('charDesc');
+
+    // 1. Data Gathering for upper and lower slots
+    const u = state.equipment.upper;
+    const l = state.equipment.lower;
+
+    const upperVisible = u.outer || u.middle || u.skin;
+    const lowerVisible = l.outer || l.middle || l.skin;
     
-    // Add handheld items to the final list
-    allEquippedItems.push(...Array.from(outerwearItems.values()));
+    const visibleItems = [];
+    if (upperVisible) visibleItems.push(upperVisible);
+    if (lowerVisible) visibleItems.push(lowerVisible);
 
-    const coveredParts = getCoveredBodyParts();
-    const vaginaExposed = !coveredParts.has('vagina');
-    const breastsExposed = !coveredParts.has('left_breast') && !coveredParts.has('right_breast');
-    
-    const hasBra = underwearItems.some(i => i.tags.includes('upper_underwear'));
-    const hasPanties = underwearItems.some(i => i.tags.includes('lower_underwear'));
-    const isWearingOuterwear = Array.from(outerwearItems.values()).some(i => !i.tags.includes('underwear'));
+    const upperBeneath = u.outer ? (u.middle || u.skin) : (u.middle ? u.skin : null);
+    const lowerBeneath = l.outer ? (l.middle || l.skin) : (l.middle ? l.skin : null);
 
-    // --- 2. Handle exposure states ---
-    if (vaginaExposed && breastsExposed) {
-        descEl.innerHTML = '<span style="color: #880000;">You are completely naked!</span>';
-        return;
-    }
+    const beneathItems = [];
+    if (upperBeneath) beneathItems.push(upperBeneath);
+    if (lowerBeneath) beneathItems.push(lowerBeneath);
 
-    // --- 3. Handle underwear-only states ---
-    if (!isWearingOuterwear && (hasBra || hasPanties)) {
-        let desc = '';
-        if (hasBra && !hasPanties) {
-            const bra = underwearItems.find(i => i.tags.includes('upper_underwear'));
-            desc = `You are wearing your ${bra.name}, but you are not wearing any panties.`;
-        } else if (!hasBra && hasPanties) {
-            const panties = underwearItems.find(i => i.tags.includes('lower_underwear'));
-            desc = `You are wearing your ${panties.name}, but you are not wearing any bra.`;
-        } else { // hasBra && hasPanties
-            const bra = underwearItems.find(i => i.tags.includes('upper_underwear'));
-            const panties = underwearItems.find(i => i.tags.includes('lower_underwear'));
-            desc = `You are wearing your ${bra.name} and ${panties.name}.`;
+    const isVisibleLayerOnlyUnderwear = visibleItems.length > 0 && visibleItems.every(item => item.tags.includes('underwear'));
+
+    // NEW: Use getCoverageInfo to check for exposure, including transparency
+    const coverageMap = getCoverageInfo();
+
+    const breastCovering = coverageMap.get('left_breast'); // Assume left and right are covered by the same item
+    const breastsExposed = !breastCovering || breastCovering.tags.includes('transparent');
+
+    const vaginaCovering = coverageMap.get('vagina');
+    const vaginaExposed = !vaginaCovering || vaginaCovering.tags.includes('transparent');
+
+    // 2. Description Logic
+    let finalDescription = "";
+
+    if (breastsExposed && vaginaExposed) {
+        finalDescription = '<span style="color: #880000;">You are completely naked!</span>';
+    } else if (isVisibleLayerOnlyUnderwear) {
+        finalDescription = `<span style="color: purple;">You are wearing ${visibleItems.map(i => i.name).join(' and ')}.</span>`;
+    } else {
+        let desc = 'You are wearing ';
+        if (visibleItems.length > 0) {
+            desc += visibleItems.map(item => {
+                if (item.tags.includes('underwear')) {
+                    return `<span style="color: purple;">${item.name}</span>`;
+                }
+                return item.name;
+            }).join(', ');
+        } else {
+            // This case is for when only non-upper/lower clothes are worn, e.g. shoes.
+            // The exposure messages below will handle the description.
+            desc = '';
         }
-        descEl.innerHTML = desc;
-        return;
+
+        if (beneathItems.length > 0) {
+            desc += ` with ${beneathItems.map(i => i.name).join(' and ')} beneath.`;
+        } else if (visibleItems.length > 0) {
+            const hasAnyUnderwear = (u.skin && u.skin.tags.includes('underwear')) || (l.skin && l.skin.tags.includes('underwear'));
+            if (!hasAnyUnderwear) {
+                 desc += ' <span style="color: purple;">and nothing beneath.</span>';
+            }
+        }
+        finalDescription = desc;
     }
 
-    // --- 4. Default clothing description ---
-    let description = 'Wearing: ';
-    const outerwearNames = Array.from(outerwearItems.values()).map(item => item.name);
-    description += outerwearNames.join(', ');
-
-    let exposureMessage = '';
-    if (breastsExposed) {
-        exposureMessage = '<span style="color: #880000;">Your breasts are exposed!</span>';
-    } else if (vaginaExposed) {
-        exposureMessage = '<span style="color: #880000;">Your vagina is exposed!</span>';
-    }
-
-    // Only add "beneath" text if not exposed
-    if (!exposureMessage) {
-        if (underwearItems.length > 0) {
-            const underwearNames = underwearItems.map(item => item.name);
-            description += ` with ${underwearNames.join(' and ')} beneath.`;
-        } else if (isWearingOuterwear) {
-            description += ' with <span style="color: purple;">nothing beneath</span>.';
+    // Add exposure messages if necessary
+    if (!(breastsExposed && vaginaExposed)) {
+        if (breastsExposed) {
+            finalDescription += (finalDescription ? '<br>' : '') + '<span style="color: #880000;">Your breasts are exposed!</span>';
+        } else if (vaginaExposed) {
+            finalDescription += (finalDescription ? '<br>' : '') + '<span style="color: #880000;">Your vagina is exposed!</span>';
         }
     }
 
-    if (exposureMessage) {
-        description += `<br>${exposureMessage}`;
-    }
-
-    descEl.innerHTML = description;
+    descEl.innerHTML = finalDescription;
 }
 
 
@@ -1123,45 +1317,54 @@ function unequipItem(slotId, subSlot) { // subSlot is layer, hand, or null
     updateCharDesc();
 }
 
-function getCoveredBodyParts() {
-    const coveredParts = new Set();
+function getCoverageInfo() {
+    const coverageMap = new Map(); // bodyPartId -> ClothingItem
 
-    // Helper to add item's coverage to the set
-    const addItemCoverage = (item) => {
-        if (item && item.covers) {
-            item.covers.forEach(partId => coveredParts.add(partId));
+    // Helper to process a slot by iterating from outer to inner layers
+    const processSlot = (slot) => {
+        const layers = ['outer', 'middle', 'skin'];
+        for (const layer of layers) {
+            const item = slot[layer];
+            if (item && item.covers) {
+                item.covers.forEach(partId => {
+                    // Only set the coverage if it's not already set by a higher layer
+                    if (!coverageMap.has(partId)) {
+                        coverageMap.set(partId, item);
+                    }
+                });
+            }
         }
     };
 
-    // Iterate over all equipment slots
-    for (const slotId in state.equipment) {
+    // Iterate over all layered equipment slots
+    ['head', 'neck', 'upper', 'lower', 'waist', 'arms', 'hands', 'legs', 'feet'].forEach(slotId => {
         const slot = state.equipment[slotId];
         if (slot instanceof EquipmentSlot) {
-            // Layered slots
-            addItemCoverage(slot.skin);
-            addItemCoverage(slot.middle);
-            addItemCoverage(slot.outer);
-        } else if (slot instanceof HandHeldSlot) {
-            // Hand-held slots
-            addItemCoverage(slot.left);
-            addItemCoverage(slot.right);
-        } else if (slot instanceof BackSlot) {
-            // Back slot
-            addItemCoverage(slot.item);
+            processSlot(slot);
         }
+    });
+
+    // Non-layered slots can be added here if needed, but they don't usually "cover" in the same way.
+    // We will handle back slot separately if it's ever needed for coverage.
+
+    // Apply special coverage rules: if a general area is covered, its specific sub-parts are covered by the same item.
+    if (coverageMap.has('groin')) {
+        const coveringItem = coverageMap.get('groin');
+        if (!coverageMap.has('vagina')) coverageMap.set('vagina', coveringItem);
+        if (!coverageMap.has('anus')) coverageMap.set('anus', coveringItem);
+    }
+    if (coverageMap.has('chest')) {
+        const coveringItem = coverageMap.get('chest');
+        if (!coverageMap.has('left_breast')) coverageMap.set('left_breast', coveringItem);
+        if (!coverageMap.has('right_breast')) coverageMap.set('right_breast', coveringItem);
+    }
+    if (coverageMap.has('butt')) {
+        const coveringItem = coverageMap.get('butt');
+        if (!coverageMap.has('left_ass_cheek')) coverageMap.set('left_ass_cheek', coveringItem);
+        if (!coverageMap.has('right_ass_cheek')) coverageMap.set('right_ass_cheek', coveringItem);
     }
 
-    // Apply special coverage rules
-    if (coveredParts.has('groin')) {
-        coveredParts.add('vagina');
-        coveredParts.add('anus');
-    }
-    if (coveredParts.has('chest')) {
-        coveredParts.add('left_breast');
-        coveredParts.add('right_breast');
-    }
-
-    return coveredParts;
+    return coverageMap;
 }
 
 /* ==============================================================
@@ -2422,66 +2625,296 @@ function positionNavBelow(targetEl, navEl){
 }
 
 function goToTailorHub() {
-    const tailorScene = state.scenes.tailor_hub;
-    tailorScene.nav = [];
+    closeAllOverlays();
+    const overlay = document.getElementById('tailor-hub-overlay');
+    const buttonsContainer = document.getElementById('tailor-slot-buttons');
+    buttonsContainer.innerHTML = ''; // Clear previous buttons
+
     for (const slotId in state.equipment) {
-        if (slotId !== 'hand-held' && slotId !== 'back') {
-            tailorScene.nav.push({
-                text: state.equipment[slotId].name,
-                action: `goToTailorCrafting('${slotId}')`
-            });
+        // Hand-held is excluded for now as there are no craftable hand-held templates.
+        // This avoids showing the player a button that leads to an empty crafting screen.
+        if (slotId !== 'hand-held') {
+            const slot = state.equipment[slotId];
+            const button = document.createElement('button');
+            button.className = 'overlayBtn';
+            button.textContent = slot.name;
+            button.onclick = () => openCraftingOverlay(slotId);
+            buttonsContainer.appendChild(button);
         }
     }
-    tailorScene.nav.push({ text: 'Back to Foyer', action: "goToScene('foyer', 0)" });
-    goToScene('tailor_hub', 0);
+    overlay.style.display = 'block';
 }
 
-function goToTailorCrafting(slotId) {
-    const mainArea = document.getElementById('mainArea');
+function backToTailorHub() {
+    // This function will be called from the crafting overlay to go back to the hub
+    document.getElementById('tailor-crafting-overlay').style.display = 'none';
+    goToTailorHub();
+}
+
+const availableTags = ['athletic', 'bag', 'belly hiding', 'belly showing', 'business', 'casual', 'cool', 'cotton', 'denim', 'fetish-wear', 'formal', 'goth', 'high heeled', 'lace', 'latex', 'leather', 'metal', 'plastic', 'satin', 'sexy', 'silk', 'spandex', 'swimming', 'transparent', 'underwear', 'vinyl', 'wool'];
+
+const materialTags = ['cotton', 'denim', 'lace', 'latex', 'leather', 'metal', 'plastic', 'satin', 'silk', 'spandex', 'vinyl', 'wool'];
+const styleTags = ['athletic', 'business', 'casual', 'cool', 'fetish-wear', 'formal', 'goth', 'sexy'];
+const generalTags = ['bag', 'belly hiding', 'belly showing', 'high heeled', 'swimming', 'transparent', 'underwear'];
+
+const mutuallyExclusiveTags = [
+    ['belly showing', 'belly hiding']
+];
+
+const slotSpecificTags = {
+    'high heeled': ['feet']
+};
+
+function openCraftingOverlay(slotId) {
+    document.getElementById('tailor-hub-overlay').style.display = 'none';
+    const overlay = document.getElementById('tailor-crafting-overlay');
+    const templateSelect = document.getElementById('tailor-template-select');
+    const nameInput = document.getElementById('tailor-item-name');
+    const tagsWrapper = document.getElementById('tailor-tags-sections-wrapper');
+
+    // Store the current slot in the element for the craft button to use
+    overlay.dataset.slotId = slotId;
+
+    // Clear previous content and reset UI state
+    templateSelect.innerHTML = '<option value="">--Please choose a template--</option>';
+    nameInput.value = '';
+    nameInput.disabled = true;
+    tagsWrapper.style.display = 'none'; // Hide the tag sections initially
+
+    // Populate templates based on the selected slot
     const templates = Object.values(clothingTemplates).filter(t => t.slot === slotId);
-
-    let html = `
-        <h2 class="eventTitle">Crafting: ${state.equipment[slotId].name}</h2>
-        <p class="eventText">Select a template to craft:</p>
-        <div class="navColumn">
-    `;
-
     templates.forEach(template => {
-        html += `<span class="link" onclick="craftItem('${template.id}')">${template.name} ($50)</span>`;
+        const option = document.createElement('option');
+        option.value = template.id;
+        option.textContent = template.name;
+        templateSelect.appendChild(option);
     });
 
-    html += `<span class="link" onclick="goToTailorHub()">Back</span>`;
-    html += `</div>`;
-
-    mainArea.innerHTML = html;
-    positionNavBelow(mainArea.querySelector('.eventText'), mainArea.querySelector('.navColumn'));
+    onTemplateSelect(); // Call this to ensure the UI is in a clean initial state
+    overlay.style.display = 'block';
 }
 
-function craftItem(templateId) {
-    const template = clothingTemplates[templateId];
-    if (!template) return;
+function onTemplateSelect() {
+    const templateSelect = document.getElementById('tailor-template-select');
+    const nameInput = document.getElementById('tailor-item-name');
+    const tagsWrapper = document.getElementById('tailor-tags-sections-wrapper');
+    const coverageList = document.getElementById('tailor-coverage-list');
 
-    const price = 50;
-    if (state.money < price) {
-        alert("You don't have enough money.");
+    // Get containers for new UI
+    const materialSection = document.getElementById('tailor-material-section');
+    const materialSelect = document.getElementById('tailor-material-select');
+    const styleContainer = document.getElementById('tailor-style-tags-container');
+    const generalContainer = document.getElementById('tailor-general-tags-container');
+
+    const selectedTemplateId = templateSelect.value;
+
+    // 1. Reset everything to a clean slate.
+    coverageList.innerHTML = '';
+    materialSelect.innerHTML = '';
+    styleContainer.innerHTML = '';
+    generalContainer.innerHTML = '';
+
+    if (!selectedTemplateId) {
+        nameInput.value = '';
+        nameInput.disabled = true;
+        tagsWrapper.style.display = 'none';
+        updateFinalTagsList();
         return;
     }
 
-    const itemName = prompt(`Enter a name for your new ${template.name}:`, template.name);
-    if (!itemName) return; // User cancelled
+    // 2. A template is selected, so enable UI.
+    nameInput.disabled = false;
+    tagsWrapper.style.display = 'flex'; // Show the whole tag section
+    const template = clothingTemplates[selectedTemplateId];
+    nameInput.value = template.name;
 
-    state.money -= price;
+    const allowed = template.allowedTags || [];
+    const forced = template.forcedTags || [];
+
+    // 3. Populate Materials Dropdown
+    const availableMaterials = materialTags.filter(t => allowed.includes(t));
+    let hasForcedMaterial = false;
+    if (availableMaterials.length > 0) {
+        materialSelect.innerHTML = '<option value="">-- a material --</option>';
+        availableMaterials.forEach(tag => {
+            const option = document.createElement('option');
+            option.value = tag;
+            option.textContent = tag;
+            if (forced.includes(tag)) {
+                option.selected = true;
+                hasForcedMaterial = true;
+            }
+            materialSelect.appendChild(option);
+        });
+        materialSection.style.display = hasForcedMaterial ? 'none' : 'block';
+    } else {
+        materialSection.style.display = 'none';
+    }
+    materialSelect.onchange = updateTagAvailability;
+
+    // 4. Populate Style & General Checkboxes
+    const createCheckbox = (tag, container) => {
+        const label = document.createElement('label');
+        label.style.display = 'flex';
+        label.style.alignItems = 'center';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'tailor-tag';
+        checkbox.value = tag;
+        checkbox.checked = forced.includes(tag);
+        checkbox.onclick = updateTagAvailability;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${tag}`));
+        container.appendChild(label);
+    };
+
+    styleTags.filter(t => allowed.includes(t)).forEach(t => createCheckbox(t, styleContainer));
+    generalTags.filter(t => allowed.includes(t)).forEach(t => createCheckbox(t, generalContainer));
+
+    // 5. Populate coverage list and update UI
+    updateCoverageList();
+    updateTagAvailability();
+}
+
+function updateCoverageList() {
+    const coverageList = document.getElementById('tailor-coverage-list');
+    const template = clothingTemplates[document.getElementById('tailor-template-select').value];
+    coverageList.innerHTML = '';
+    if (!template || !template.covers) return;
+
+    let finalCovers = [...template.covers];
+
+    // Check if 'belly showing' is selected
+    const bellyShowingCheckbox = document.querySelector('input[name="tailor-tag"][value="belly showing"]');
+    if (bellyShowingCheckbox && bellyShowingCheckbox.checked) {
+        const bellyIndex = finalCovers.indexOf('belly');
+        if (bellyIndex > -1) {
+            finalCovers.splice(bellyIndex, 1);
+        }
+    }
+
+    // Populate the list
+    finalCovers.forEach(partName => {
+        const li = document.createElement('li');
+        li.textContent = state.playerBody[partName] ? state.playerBody[partName].name : partName;
+        coverageList.appendChild(li);
+    });
+}
+
+function updateTagAvailability() {
+    const allCheckboxes = Array.from(document.querySelectorAll('input[name="tailor-tag"]'));
+    const template = clothingTemplates[document.getElementById('tailor-template-select').value];
+    if (!template) return;
+
+    const forced = template.forcedTags || [];
+    const allowed = template.allowedTags || [];
+
+    // Enable all allowed checkboxes first
+    allCheckboxes.forEach(cb => {
+        cb.disabled = !allowed.includes(cb.value);
+    });
+
+    // Disable based on mutual exclusion
+    const checkedTags = allCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
+    checkedTags.forEach(checkedTag => {
+        const exclusionGroup = mutuallyExclusiveTags.find(group => group.includes(checkedTag));
+        if (exclusionGroup) {
+            exclusionGroup.forEach(tagToDisable => {
+                if (tagToDisable !== checkedTag) {
+                    const checkboxToDisable = allCheckboxes.find(cb => cb.value === tagToDisable);
+                    if (checkboxToDisable) checkboxToDisable.disabled = true;
+                }
+            });
+        }
+    });
+
+    // Finally, disable all forced tags so they can't be unchecked
+    forced.forEach(forcedTag => {
+        const checkbox = allCheckboxes.find(cb => cb.value === forcedTag);
+        if (checkbox) checkbox.disabled = true;
+    });
+
+    updateFinalTagsList();
+    setTimeout(updateCoverageList, 0);
+}
+
+function updateFinalTagsList() {
+    const finalTagsList = document.getElementById('tailor-final-tags-list');
+    const template = clothingTemplates[document.getElementById('tailor-template-select').value];
+    finalTagsList.innerHTML = '';
+    if (!template) return;
+
+    const finalTags = new Set(template.tags || []);
+
+    // Add selected material
+    const materialSelect = document.getElementById('tailor-material-select');
+    if (materialSelect.value) {
+        finalTags.add(materialSelect.value);
+    }
+
+    // Add checked tags
+    document.querySelectorAll('input[name="tailor-tag"]:checked').forEach(cb => {
+        finalTags.add(cb.value);
+    });
+
+    Array.from(finalTags).sort().forEach(tag => {
+        const li = document.createElement('li');
+        li.textContent = tag;
+        finalTagsList.appendChild(li);
+    });
+}
+
+function craftItemFromMenu() {
+    const templateSelect = document.getElementById('tailor-template-select');
+    const nameInput = document.getElementById('tailor-item-name');
+    const selectedTemplateId = templateSelect.value;
+
+    if (!selectedTemplateId) { alert("Please select a template first."); return; }
+    const itemName = nameInput.value.trim();
+    if (!itemName) { alert("Please enter a name for the item."); return; }
+    if (state.money < 50) { alert("You don't have enough money."); return; }
+
+    state.money -= 50;
+    updateHeader();
+
+    const template = clothingTemplates[selectedTemplateId];
+
+    // --- Gather all final tags ---
+    const finalTags = new Set(template.tags || []);
+    if (template.forcedTags) {
+        template.forcedTags.forEach(tag => finalTags.add(tag));
+    }
+    const materialSelect = document.getElementById('tailor-material-select');
+    if (materialSelect.value) {
+        finalTags.add(materialSelect.value);
+    }
+    document.querySelectorAll('#tailor-style-tags-container input:checked, #tailor-general-tags-container input:checked').forEach(cb => {
+        finalTags.add(cb.value);
+    });
+
+    // --- Create a mutable copy of the covers array ---
+    const finalCovers = [...template.covers];
+
+    // --- Dynamic Coverage Logic ---
+    if (finalTags.has('belly showing')) {
+        const bellyIndex = finalCovers.indexOf('belly');
+        if (bellyIndex > -1) {
+            finalCovers.splice(bellyIndex, 1);
+        }
+    }
 
     const newItem = new ClothingItem({
         ...template,
-        id: `${template.id}_${Date.now()}`, // Unique ID
-        name: itemName
+        id: `${template.id}_${Date.now()}`,
+        name: itemName,
+        tags: Array.from(finalTags),
+        covers: finalCovers // Use the potentially modified covers array
     });
 
     state.inventory.push(newItem);
     alert(`You crafted a ${itemName} and it has been added to your inventory.`);
-    updateHeader();
-    goToTailorCrafting(template.slot); // Go back to the crafting screen
+
+    backToTailorHub();
 }
 
 /* ==============================================================
@@ -2740,6 +3173,7 @@ function buildCheatOverlay() {
 function cheatMoney(delta){
   state.money = Math.round((state.money + delta) * 100) / 100;
   updateHeader();
+  buildCheatOverlay();
 }
 
 /* toggle the hidden “Corruption” bar */
@@ -2752,6 +3186,8 @@ function toggleCorruptionDisplay(cb){
    INITIALISATION
    -------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
+    processClothingRules(); // Process all template rules once on load
+
     const startBtn = document.getElementById('startBtn');
     if (startBtn) {
         startBtn.addEventListener('click', () => {
@@ -2777,31 +3213,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Create and equip starting gear
             const startingGear = [
-                'upper_bra', 'lower_panties', 'upper_tshirt', 'lower_jeans', 'feet_sneakers',
-                'back_backpack', 'handheld_handbag', 'hat_baseball_cap'
+                'upper_bra', 'lower_panties', 'upper_tshirt', 'lower_jeans', 'feet_sneakers'
             ];
             
             state.inventory = startingGear.map(templateId => {
                 const template = clothingTemplates[templateId];
                 return new ClothingItem({
                     ...template,
+                    name: `Plain ${template.name}`, // Prepend "Plain" to the name
                     id: `${template.id}_${Date.now()}_${Math.random()}` // Ensure unique ID
                 });
             });
 
-            // Equip the default outfit
-            const equipStartingItem = (templateId, subSlot) => {
-                const item = state.inventory.find(i => i.name === clothingTemplates[templateId].name);
-                if (item) {
-                    equipItem(item.id, subSlot);
-                }
-            };
+            // Equip the default outfit by finding the unique ID of each item in the inventory
+            const bra = state.inventory.find(i => i.name === 'Plain Bra');
+            if (bra) equipItem(bra.id, 'skin');
 
-            equipStartingItem('upper_bra', 'skin');
-            equipStartingItem('lower_panties', 'skin');
-            equipStartingItem('upper_tshirt', 'middle');
-            equipStartingItem('lower_jeans', 'middle');
-            equipStartingItem('feet_sneakers', 'outer');
+            const panties = state.inventory.find(i => i.name === 'Plain Panties');
+            if (panties) equipItem(panties.id, 'skin');
+
+            const tshirt = state.inventory.find(i => i.name === 'Plain T-shirt');
+            if (tshirt) equipItem(tshirt.id, 'middle');
+
+            const jeans = state.inventory.find(i => i.name === 'Plain Jeans');
+            if (jeans) equipItem(jeans.id, 'middle');
+
+            const sneakers = state.inventory.find(i => i.name === 'Plain Sneakers');
+            if (sneakers) equipItem(sneakers.id, 'outer');
             
             updateCharDesc();
 
