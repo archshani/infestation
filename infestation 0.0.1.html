@@ -692,6 +692,16 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
     z-index: 10;
     box-shadow: 0 0 8px #00ff00;
 }
+#grayscale-overlay {
+    background: transparent;
+    border: none;
+    /* Allows clicks to pass through the overlay container to what's behind it */
+    pointer-events: none;
+}
+#grayscale-overlay .hex-swatch {
+    /* Re-enable pointer events for the swatches themselves */
+    pointer-events: auto;
+}
 </style>
 </head>
 <body>
@@ -1100,6 +1110,13 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 <!-- ==================== NOTIFICATION OVERLAY ==================== -->
 <div id="craft-notification-overlay"></div>
 <div id="error-notification-overlay"></div>
+
+<!-- ==================== GRAYSCALE OVERLAY ==================== -->
+<div id="grayscale-overlay" class="overlay" style="width: 15rem; height: auto; min-height: 0;">
+  <div id="grayscale-picker-container" class="overlayBody hex-picker-container" style="margin-top: 0;">
+      <!-- Grayscale hexes will be populated by JS -->
+  </div>
+</div>
 
 <!-- ==================== SAVE PROMPT OVERLAY ==================== -->
 <div id="save-prompt-overlay" class="overlay" style="width: 25vw; height: auto;">
@@ -1648,7 +1665,7 @@ const clothingTemplates = {
   // Upper Body
   upper_bra: { id: 'upper_bra', name: 'Bra', slot: 'upper', layer: 'skin', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple'], tags: ['underwear'], allowedTags: ['sexy', 'fetish-wear', 'transparent', 'cotton', 'lace', 'satin', 'silk', 'spandex', 'leather', 'vinyl'], forcedTags: ['belly showing'] },
   upper_bikini_top: { id: 'upper_bikini_top', name: 'Bikini Top', slot: 'upper', layer: 'skin', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple'], tags: ['swimwear'], allowedTags: ['sexy', 'spandex', 'cotton'], forcedTags: ['belly showing', 'swimming', 'underwear'] },
-  upper_one_piece_swimwear: { id: 'upper_one_piece_swimwear', name: 'One-piece Swimwear', slot: 'upper', layer: 'skin', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['swimwear'], allowedTags: ['sexy', 'athletic', 'spandex', 'cotton'], forcedTags: ['swimming', 'underwear'] },
+  upper_one_piece_swimwear: { id: 'upper_one_piece_swimwear', name: 'One-piece Swimwear', slot: 'upper', layer: 'skin', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['swimwear'], allowedTags: ['sexy', 'athletic', 'spandex', 'cotton', 'belly showing'], forcedTags: ['swimming', 'underwear'] },
   upper_tshirt: { id: 'upper_tshirt', name: 'T-shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back'], tags: ['top'], allowedTags: ['casual', 'cool', 'goth', 'cotton', 'spandex'] },
   upper_shirt_buttondown: { id: 'upper_shirt_buttondown', name: 'Button-down Shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top'], allowedTags: ['casual', 'formal', 'business', 'cotton', 'silk', 'denim'] },
   upper_shirt_buttondown_tshirt: { id: 'upper_shirt_buttondown_tshirt', name: 'Button-down T-shirt', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back'], tags: ['top'], allowedTags: ['casual', 'cool', 'cotton', 'spandex'] },
@@ -1884,34 +1901,26 @@ const hexPaletteGenerator = {
         // Define the 6 corner hues AND their angular positions (in degrees)
         // This layout matches the user's request: Red(right), Green(top-left), Blue(bottom-left)
         const corners = [
-            { name: 'Red',     h: 0,   s: 1, l: 0.5, angle: 0 },
-            { name: 'Magenta', h: 5/6, s: 1, l: 0.5, angle: 60 },
-            { name: 'Blue',    h: 2/3, s: 1, l: 0.5, angle: 120 },
-            { name: 'Cyan',    h: 1/2, s: 1, l: 0.5, angle: 180 },
-            { name: 'Green',   h: 1/3, s: 1, l: 0.5, angle: 240 },
-            { name: 'Yellow',  h: 1/6, s: 1, l: 0.5, angle: 300 }
+            { name: 'Red',     h: 0,     s: 1, l: 0.5, angle: 0 },
+            { name: 'Yellow',  h: 1/6,   s: 1, l: 0.5, angle: 60 },
+            { name: 'Green',   h: 1/3,   s: 1, l: 0.5, angle: 120 },
+            { name: 'Cyan',    h: 1/2,   s: 1, l: 0.5, angle: 180 },
+            { name: 'Blue',    h: 2/3,   s: 1, l: 0.5, angle: 240 },
+            { name: 'Magenta', h: 5/6,   s: 1, l: 0.5, angle: 300 }
         ];
         
-        // Define the grayscale cluster in a specific spiral path with a smooth gradient
-        const orderedGrays = ['#000000', '#2a2a2a', '#555555', '#808080', '#aaaaaa', '#d5d5d5', '#ffffff'];
-        const orderedGrayNames = ['Black', 'Gray', 'Gray', 'Gray', 'Gray', 'Gray', 'White'];
-        const grayIdPath = [46, 47, 58, 57, 45, 35, 36]; // Grid IDs for the central cluster path
-
         // Generate colors for each slot
         for (let id = 1; id <= totalSlots; id++) {
             const coord = coordMap.get(id);
             const ring = this.getAxialDistance(coord, centerCoord);
 
-            // Handle grayscale cluster
-            const grayIndex = grayIdPath.indexOf(id);
-            if (grayIndex !== -1) {
-                palette[id - 1] = { name: orderedGrayNames[grayIndex], hex: orderedGrays[grayIndex] };
-                continue;
-            }
-
             // Handle colors
             // 1. Calculate angle of the current hexagon in degrees (0-360)
-            let angle = Math.atan2(coord.r * Math.sqrt(3) / 2, coord.q) * 180 / Math.PI;
+            // We convert from axial coordinates (q, r) to cartesian (x, y) to get the angle.
+            // The y-axis for atan2 is positive upwards, while our r-coordinate is positive downwards, so we use -r.
+            const x_cart = Math.sqrt(3) * coord.q + Math.sqrt(3) / 2 * coord.r;
+            const y_cart = -(3 / 2 * coord.r);
+            let angle = Math.atan2(y_cart, x_cart) * 180 / Math.PI;
             if (angle < 0) angle += 360;
 
             // 2. Find the two corners the angle is between
@@ -1943,13 +1952,23 @@ const hexPaletteGenerator = {
             if (diff < -0.5) diff += 1;
             const finalH = (h1 + diff * factor + 1) % 1;
 
-            // 5. Interpolate lightness based on ring distance
+            // 5. Interpolate lightness based on ring distance in a non-linear fashion
             const finalS = 1.0;
-            const finalL = this.interpolateLinear(0.5, 0.2, (ring - 1) / 4); 
+            let finalL;
+            if (ring <= 3) {
+                // From ring 1 (L=0.9) to ring 3 (L=0.5)
+                finalL = this.interpolateLinear(0.9, 0.5, (ring - 1) / 2);
+            } else {
+                // From ring 3 (L=0.5) to ring 5 (L=0.2)
+                finalL = this.interpolateLinear(0.5, 0.33, (ring - 3) / 2);
+            }
 
             const {r, g, b} = this.hslToRgb(finalH, finalS, finalL);
             palette[id - 1] = { name: 'Color', hex: this.rgbToHex(r, g, b) };
         }
+
+        // Manually set the center hex (ID 46) to white to act as the grayscale picker button
+        palette[45] = { name: 'Grays...', hex: '#FFFFFF' };
         
         return palette;
     }
@@ -5062,6 +5081,95 @@ function populateSkinPicker(containerId, paletteName, targetProperty) {
     }
 }
 
+function showGrayscaleOverlay(event, targetProperty) {
+    const overlay = document.getElementById('grayscale-overlay');
+    const container = document.getElementById('grayscale-picker-container');
+    if (!overlay || !container) return;
+
+    container.innerHTML = ''; // Clear previous content
+
+    const grays = [
+        { name: 'Gray', hex: '#D5D5D5' }, { name: 'Gray', hex: '#AAAAAA' },
+        { name: 'Gray', hex: '#808080' }, { name: 'Gray', hex: '#555555' },
+        { name: 'Gray', hex: '#2A2A2A' }, { name: 'Black', hex: '#000000' }
+    ];
+    const white = { name: 'White', hex: '#FFFFFF' };
+    const shape = [2, 3, 2];
+    let grayIndex = 0;
+    let swatchIndex = 0;
+
+    shape.forEach(itemsThisRow => {
+        const row = document.createElement('div');
+        row.className = 'hex-row';
+        for (let i = 0; i < itemsThisRow; i++) {
+            let color;
+            // The 4th swatch (index 3) is the center one
+            if (swatchIndex === 3) {
+                color = white;
+            } else {
+                color = grays[grayIndex++];
+            }
+            
+            const swatch = document.createElement('div');
+            swatch.className = 'hex-swatch';
+            swatch.style.backgroundColor = color.hex;
+            swatch.dataset.colorName = color.name;
+            swatch.dataset.colorHex = color.hex;
+            swatch.title = `${color.name} (${color.hex})`;
+
+            // Standard selection logic
+            swatch.onclick = () => {
+                state.appearance[targetProperty] = { name: color.name, hex: color.hex };
+                const mainPickerContainer = document.getElementById(`${targetProperty.replace('Color', '-color-picker')}`);
+                if (mainPickerContainer) {
+                    mainPickerContainer.querySelectorAll('.hex-swatch').forEach(s => s.classList.remove('selected'));
+                    const newSelection = Array.from(mainPickerContainer.querySelectorAll('.hex-swatch')).find(s => s.dataset.colorHex === color.hex);
+                    if (newSelection) {
+                        newSelection.classList.add('selected');
+                    } else {
+                        // If the color is not in the main palette (like a gray), select the center white swatch as a visual indicator
+                        mainPickerContainer.querySelector('.hex-swatch[title^="Grays"]').classList.add('selected');
+                    }
+                }
+                updateCreationPreview();
+                overlay.style.display = 'none';
+            };
+            row.appendChild(swatch);
+            swatchIndex++;
+        }
+        container.appendChild(row);
+    });
+
+    // --- Dynamic Positioning ---
+    // 1. Make the overlay part of the layout but invisible to measure it
+    overlay.style.visibility = 'hidden';
+    overlay.style.display = 'block';
+
+    // 2. Get dimensions and calculate position
+    const swatchRect = event.target.getBoundingClientRect();
+    const overlayRect = overlay.getBoundingClientRect();
+    const top = swatchRect.top + (swatchRect.height / 2) - (overlayRect.height / 2);
+    const left = swatchRect.left + (swatchRect.width / 2) - (overlayRect.width / 2);
+
+    // 3. Apply position and make it visible
+    overlay.style.top = `${top}px`;
+    overlay.style.left = `${left}px`;
+    overlay.style.transform = 'none'; // Override the default centering transform
+    overlay.style.visibility = 'visible';
+
+    // --- Add listener to close on outside click ---
+    const closeListener = (closeEvent) => {
+        if (!overlay.contains(closeEvent.target)) {
+            overlay.style.display = 'none';
+            document.removeEventListener('click', closeListener);
+        }
+    };
+    // Use a timeout to add the listener, preventing it from catching the same click that opened it
+    setTimeout(() => {
+        document.addEventListener('click', closeListener);
+    }, 0);
+}
+
 function populateHexPicker(containerId, paletteName, targetProperty) {
     const palette = colorPalettes[paletteName];
     const container = document.getElementById(containerId);
@@ -5091,12 +5199,18 @@ function populateHexPicker(containerId, paletteName, targetProperty) {
             swatch.dataset.colorHex = color.hex;
             swatch.title = `${color.name} (${color.hex})`;
 
-            swatch.onclick = () => {
-                container.querySelectorAll('.hex-swatch').forEach(s => s.classList.remove('selected'));
-                swatch.classList.add('selected');
-                state.appearance[targetProperty] = { name: color.name, hex: color.hex };
-                updateCreationPreview();
-            };
+            // If this is the special "Grays..." swatch, give it the overlay-opening function.
+            // Otherwise, give it the standard color selection function.
+            if (color.name === 'Grays...') {
+                swatch.onclick = (event) => showGrayscaleOverlay(event, targetProperty);
+            } else {
+                swatch.onclick = () => {
+                    container.querySelectorAll('.hex-swatch').forEach(s => s.classList.remove('selected'));
+                    swatch.classList.add('selected');
+                    state.appearance[targetProperty] = { name: color.name, hex: color.hex };
+                    updateCreationPreview();
+                };
+            }
 
             row.appendChild(swatch);
             colorIndex++;
