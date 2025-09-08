@@ -58,19 +58,28 @@ body{
   position:relative;
 }
 
-/* ----- Header row (date | time | money) ----- */
+/* ----- Header row (Time | Money) ----- */
 #headerRow{
   display:flex;
   justify-content:space-between;
   font-size:.9rem;
-  margin-bottom:1rem;
 }
 #headerRow span{
-  flex:1;
-  text-align:center;
+  flex-basis: 50%;
 }
-#headerRow #date{text-align:left;}
+#headerRow #clock{text-align:left;}
 #headerRow #money{text-align:right;}
+
+/* ----- Date Row ----- */
+#dateRow #date {
+  cursor: pointer;
+  transition: color .15s ease;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+#dateRow #date:hover {
+  color: #33ff33;
+}
 
 /* ----- Character description ----- */
 #charDesc{
@@ -313,6 +322,93 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
+/* -------------------------------------------------------------
+   CALENDAR OVERLAY
+------------------------------------------------------------- */
+#calendar-overlay {
+  width: 11vw;
+  height: auto;
+  min-width: 150px;
+  font-size: 0.8rem;
+  /* top and left are now set by JS */
+  transform: none;
+  margin: 0;
+}
+
+#calendar-header .overlayBtn {
+  padding: .2rem .5rem;
+  flex-grow: 0;
+}
+
+#calendar-month-year {
+  flex-grow: 1;
+  text-align: center;
+  font-weight: bold;
+  color: #00ff00;
+}
+
+#calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  background: #2a2a3a;
+  border: 1px solid #444;
+  height: 0;
+  padding-bottom: 100%; /* Creates a square aspect ratio */
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.calendar-day:hover {
+  background: #3a3a4a;
+  border-color: #00ff00;
+}
+
+.calendar-day span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* For days not in the current month */
+.calendar-day.other-month {
+  color: #666;
+  background: #222;
+  cursor: default;
+}
+.calendar-day.other-month:hover {
+  background: #222;
+  border-color: #444;
+}
+
+/* For the current day */
+.calendar-day.current-day {
+  border-color: #00ff00;
+  box-shadow: 0 0 5px #00ff00;
+}
+
+/* For period days */
+.calendar-day.period-day {
+  box-shadow: 0 0 0 2px #ff4d4d inset;
+}
+
+/* For days with a reminder */
+.calendar-day.has-reminder::after {
+  content: "!";
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  color: yellow;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-shadow: 1px 1px 1px #000;
+}
+
 /* ----- Inventory Tab Styles ----- */
 #char-inventory {
     /* The parent overlay has a fixed height, this allows the grid to fill it */
@@ -438,11 +534,15 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   <aside id="sidebar">
     <h3>Game Info</h3>
 
-    <!-- Header row: Date | Time | Money -->
+    <!-- Header row: Time | Money -->
     <div id="headerRow">
-      <span id="date">01 Aug 2025</span>
       <span id="clock">09:00</span>
       <span id="money">$0.00</span>
+    </div>
+
+    <!-- Date row -->
+    <div id="dateRow" style="text-align: center; margin-bottom: 1rem;">
+        <span id="date"></span>
     </div>
 
     <!-- Character description -->
@@ -463,7 +563,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need" id="need-stress"
      data-name="Stress"
-     data-labels="Panicked|Very Stressed|Stressed|Calm|Relaxed">
+     data-labels="Relaxed|Calm|Stressed|Very Stressed|Panicked">
   <div class="needHeader">
     <span class="needLine"></span>
   </div>
@@ -473,7 +573,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need" id="need-trauma"
      data-name="Trauma"
-     data-labels="Shattered|Severely Traumatized|Traumatized|Stable|Secure">
+     data-labels="Secure|Stable|Traumatized|Severely Traumatized|Shattered">
   <div class="needHeader">
     <span class="needLine"></span>
   </div>
@@ -613,6 +713,29 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
         <label><input type="radio" name="fontsize" value="1rem" onchange="changeFontSize(this.value)"> Medium</label>
         <label><input type="radio" name="fontsize" value="1.2rem" onchange="changeFontSize(this.value)"> Large</label>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CALENDAR OVERLAY ==================== -->
+<div id="calendar-overlay" class="overlay" style="display: none;">
+  <div class="overlayHeader" id="calendar-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <button id="calendar-prev-btn" class="overlayBtn">&lt;</button>
+    <span id="calendar-month-year"></span>
+    <button id="calendar-next-btn" class="overlayBtn">&gt;</button>
+  </div>
+  <div class="overlayBody" id="calendar-body">
+    <div id="calendar-weekdays" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 0.5rem; font-size: 0.8em; color: #aaa;">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+    </div>
+    <div id="calendar-days" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;">
+      <!-- Day cells will be inserted by JS -->
     </div>
   </div>
 </div>
@@ -865,6 +988,7 @@ function createPlayerBody(sex = 'female') {
 const state = {
   /* -------------------- Time -------------------- */
   currentTime: new Date('2007-08-01T09:00:00'),   // start time (unchanged)
+  calendarDate: null,
 
   /* -------------------- Money ------------------- */
   money: 0.00,
@@ -948,6 +1072,28 @@ const state = {
     timesClimaxed: 0
   },
 
+  /* -------------------- Reproductive System -------------------- */
+  womb: {
+    semenVolume: 0 // in ml
+  },
+  menstrualCycle: {
+    cycleLength: 28,
+    periodLength: 5,
+    currentDayInCycle: 1,
+    isFertile: false
+  },
+  pregnancy: {
+    isPregnant: false,
+    type: null, // 'human' or 'parasite'
+    days: 0,
+    eggCount: 0,
+    discoveryEventTriggered: false
+  },
+  parasite: {
+      canImpregnate: false,
+      eggs: [] // Each egg: {id, laidAtTime, hatchDay, isDiscovered}
+  },
+
   /* -------------------- NPCs --------------------- */
   npcs: {
     "Leah": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true },
@@ -961,7 +1107,7 @@ const state = {
       { title: "Uncover the Truth", description: "Find out more about the alien parasite and its origins.", complete: false },
       { title: "Get some rest", description: "You were feeling exhausted, but you took a nap.", complete: true }
     ],
-    reminders: ["Appointment with Dr. Amir next Tuesday at 2pm."],
+    reminders: [{ date: '2007-08-07', text: 'Appointment with Dr. Amir at 2pm' }],
     notes: "I can write my own notes here."
   },
 
@@ -1010,7 +1156,12 @@ const state = {
         { text: 'Back to Foyer', action: "goToScene('foyer', 30)" }
       ],
       randomEvents: [
-        { chance: 0.2, scene: 'random_kitchen_1' }
+        { chance: 0.2, scene: 'random_kitchen_1' },
+        {
+          chance: 0.3, // 30% chance when conditions are met
+          scene: 'parasite_craving_event',
+          condition: { type: 'parasite_pregnancy' }
+        }
       ]
     },
     'lounge': {
@@ -1018,7 +1169,10 @@ const state = {
       description: 'Plush chairs face a wall-mounted screen playing calming nature footage. Shelves hold scientific journals and a few well-worn novels. Soft ambient music drifts.',
       nav: [
         { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
-        { text: 'Relax', action: "goToScene('relaxing', 0)" }
+        { text: 'Relax', action: "goToScene('relaxing', 0)" },
+        { text: 'Rest for the day', action: "passDayInLounge()" },
+        { text: 'Test Sex with Toby', action: "addSemen(5); goToScene('lounge', 600);" },
+        { text: 'Test Sex with Amir', action: "addSemen(5); goToScene('lounge', 600);" }
       ],
       randomEvents: [
         { chance: 0.2, scene: 'random_lounge_1' }
@@ -1032,7 +1186,12 @@ const state = {
         { text: 'Take a shower', action: "goToScene('showering', 0)" }
       ],
       randomEvents: [
-        { chance: 0.2, scene: 'random_bathroom_1' }
+        { chance: 0.2, scene: 'random_bathroom_1' },
+        {
+          chance: 0.4, // 40% chance when conditions are met
+          scene: 'morning_sickness_event',
+          condition: { type: 'human_pregnancy_early' }
+        }
       ]
     },
     'showering': {
@@ -1115,6 +1274,69 @@ const state = {
       description: 'A wave of intense pleasure washes over you, so powerful it leaves you breathless and trembling on the floor.',
       nav: [
         { text: 'Recover...', action: "recoverFromArousalMax()" }
+      ]
+    },
+    'morning_sickness_event': {
+      title: 'Morning Sickness',
+      description: 'A wave of nausea hits you suddenly, and you barely make it to the nearest receptacle before you\'re sick. The feeling passes after a few moments, leaving you feeling drained and miserable.',
+      nav: [
+        { text: 'Pull yourself together.', action: "handleMorningSickness()" }
+      ]
+    },
+    'parasite_craving_event': {
+      title: 'Unusual Hunger',
+      description: 'A sudden, ravenous hunger grips you. It\'s not for anything normal. You find yourself craving the taste of metal, the texture of plastic, anything to satisfy the strange gnawing in your gut. You manage to resist the urge, but it leaves you feeling shaken and disturbed.',
+      nav: [
+        { text: 'This is not my body...', action: "handleParasiteCraving()" }
+      ]
+    },
+    'human_water_breaking_event': {
+      title: 'A Sudden Gush',
+      description: 'You feel a sudden, warm gush between your legs. Your water has broken. It seems the time is near.',
+      nav: [
+        { text: 'Prepare for what comes next...', action: "goToScene('human_birth_event', 0)" }
+      ]
+    },
+    'human_birth_event': {
+      title: 'Birth',
+      description: 'After a long and exhausting labor, you give birth to a healthy baby. [This is a placeholder event.]',
+      nav: [
+        { text: 'A new chapter begins.', action: "completeHumanBirth()" }
+      ]
+    },
+    'parasite_takeover_event': {
+      title: 'A Vicious Change',
+      description: 'A sudden, sharp pain lances through your abdomen, far more intense than any cramp you\'ve felt before. You double over, gasping, as a strange, cold sensation spreads from your womb. The subtle warmth of the life you were carrying vanishes, replaced by an alien chill. Something is terribly wrong.',
+      nav: [
+        { text: 'Endure it...', action: "endTakeoverEvent()" }
+      ]
+    },
+    'human_pregnancy_discovery': {
+      title: 'A New Possibility',
+      description: 'You\'ve been feeling off for a couple of weeks now—unusually tired, a bit nauseous in the mornings. Looking at the calendar, a sudden thought strikes you. Could you be... pregnant?',
+      nav: [
+        { text: 'A wave of uncertainty washes over you.', action: "endDiscoveryEvent()" }
+      ]
+    },
+    'parasite_pregnancy_discovery': {
+      title: 'A Horrifying Realization',
+      description: 'The tightness in your abdomen has grown into a constant, unsettling pressure. It\'s not a feeling of life, but of invasion. You realize with dawning horror that the parasite has done something inside you. It has laid eggs.',
+      nav: [
+        { text: 'A wave of dread washes over you.', action: "endDiscoveryEvent()" }
+      ]
+    },
+    'parasite_egg_discovery_event': {
+      title: 'An Unsettling Sensation',
+      description: 'You feel a strange, internal shifting, a faint popping sensation deep within your womb. It\\'s not painful, but it\\'s deeply unsettling. You have a horrifying certainty that the parasite has just laid another egg inside you.',
+      nav: [
+        { text: 'The violation is sickening...', action: "handleEggDiscovery()" }
+      ]
+    },
+    'parasite_hatch_event': {
+      title: 'A New Horror',
+      description: 'A sharp, agonizing pain rips through your abdomen. It feels like something tearing its way out from the inside. The sensation is brief but terrifying, leaving you weak, trembling, and with the sickening knowledge that something has just hatched inside you.',
+      nav: [
+        { text: 'Oh god, what was that...', action: "handleEggHatching()" }
       ]
     }
   }
@@ -1445,10 +1667,210 @@ function getCoverageInfo() {
 }
 
 /* ==============================================================
+   REPRODUCTIVE SYSTEM
+   ============================================================== */
+function initMenstrualCycle() {
+    // Randomize cycle and period length for variety
+    state.menstrualCycle.cycleLength = Math.floor(Math.random() * 11) + 25; // 25-35 days
+    state.menstrualCycle.periodLength = Math.floor(Math.random() * 4) + 4;   // 4-7 days
+    state.menstrualCycle.currentDayInCycle = Math.floor(Math.random() * state.menstrualCycle.cycleLength) + 1;
+}
+
+function addSemen(volume) {
+    state.womb.semenVolume += volume;
+}
+
+function isFertile() {
+    if (state.parasite.canImpregnate) {
+        return true; // Parasite makes host always receptive to its own eggs
+    }
+    const day = state.menstrualCycle.currentDayInCycle;
+    // Simple fertility window model: Day 11 to 18
+    return day >= 11 && day <= 18;
+}
+
+function calculateConception() {
+    if (state.pregnancy.isPregnant) return; // Already pregnant
+
+    // Human pregnancy logic (parasite logic is now in advanceDay)
+    if (state.menstrualCycle.isFertile && state.womb.semenVolume > 0) {
+        const conceptionChance = Math.min(1, state.womb.semenVolume / 10) * 0.33; // Max 33% chance
+        if (Math.random() < conceptionChance) {
+            state.pregnancy.isPregnant = true;
+            state.pregnancy.type = 'human';
+            state.pregnancy.days = 0;
+            state.pregnancy.eggCount = 0;
+            state.pregnancy.discoveryEventTriggered = false;
+        }
+    }
+
+    // Semen is absorbed/cleared after one cycle, regardless of conception
+    state.womb.semenVolume = 0;
+}
+
+function addParasiteEgg() {
+    const now = state.currentTime.getTime();
+    // Hatching duration is 1-3 days in milliseconds
+    const hatchDuration = (Math.floor(Math.random() * 3) + 1) * 24 * 60 * 60 * 1000;
+
+    const newEgg = {
+        id: `egg_${now}_${Math.random()}`,
+        laidAtTime: now,
+        hatchTime: now + hatchDuration,
+        isDiscovered: false
+    };
+
+    state.parasite.eggs.push(newEgg);
+}
+
+function layParasiteEggs() {
+    if (!state.parasite.canImpregnate) return;
+
+    // 1. Lay the first egg (100% chance)
+    addParasiteEgg();
+
+    // 2. Loop for additional eggs with halving probability
+    let chance = 0.5;
+    while (Math.random() < chance) {
+        addParasiteEgg();
+        chance /= 2;
+    }
+}
+
+function advanceDay() {
+    // This function is called for each day that passes.
+    if (state.parasite.canImpregnate) {
+        // Disable menstrual cycle and lay eggs
+        state.menstrualCycle.isFertile = true;
+        layParasiteEggs();
+    } else {
+        state.menstrualCycle.currentDayInCycle++;
+        if (state.menstrualCycle.currentDayInCycle > state.menstrualCycle.cycleLength) {
+            state.menstrualCycle.currentDayInCycle = 1;
+        }
+        state.menstrualCycle.isFertile = isFertile();
+    }
+
+    if (state.pregnancy.isPregnant) {
+        // PARASITE TAKEOVER LOGIC
+        if (state.pregnancy.type === 'human' && state.parasite.canImpregnate && !state.storyEventActive) {
+            // Add a chance for parasite to overwrite a human pregnancy (15% chance per day)
+            if (Math.random() < 0.15) {
+                // Abort human pregnancy
+                state.pregnancy.isPregnant = false;
+                state.pregnancy.type = null;
+                state.pregnancy.days = 0;
+                state.pregnancy.discoveryEventTriggered = false;
+
+                // Trigger the story event
+                state.storyEventActive = true;
+                state.locationBeforeEvent = state.currentLocation;
+                goToScene('parasite_takeover_event', 0);
+                // The new egg laying logic will run in advanceDay on subsequent days
+                return; // Stop processing for this day
+            }
+        }
+
+        // PREGNANCY DISCOVERY EVENT
+        if (!state.pregnancy.discoveryEventTriggered && state.pregnancy.days >= 14 && !state.storyEventActive) {
+            state.pregnancy.discoveryEventTriggered = true; // Set flag so it only happens once
+            state.storyEventActive = true;
+            state.locationBeforeEvent = state.currentLocation;
+
+            if (state.pregnancy.type === 'human') {
+                goToScene('human_pregnancy_discovery', 0);
+            } else { // 'parasite'
+                goToScene('parasite_pregnancy_discovery', 0);
+            }
+            return; // Stop processing for this day
+        }
+
+        state.pregnancy.days++;
+        // Add a cumulative fatigue effect during pregnancy
+        state.needs.tiredness = Math.max(0, state.needs.tiredness - 150);
+
+        // Check for birth event trigger
+        if (state.pregnancy.type === 'human' && state.pregnancy.days > 40 && !state.storyEventActive) {
+            const chance = (state.pregnancy.days - 40) * 0.1; // 10% chance per day after day 40
+            if (Math.random() < chance) {
+                state.storyEventActive = true;
+                state.locationBeforeEvent = state.currentLocation;
+                goToScene('human_water_breaking_event', 0);
+                return; // Stop further processing for this day as an event is triggered
+            }
+        }
+    }
+
+    calculateConception();
+}
+
+function completeHumanBirth() {
+    // Reset pregnancy state
+    state.pregnancy.isPregnant = false;
+    state.pregnancy.type = null;
+    state.pregnancy.days = 0;
+    state.pregnancy.eggCount = 0;
+    state.pregnancy.discoveryEventTriggered = false;
+
+    // End the event and return to the previous location after 1 hour
+    state.storyEventActive = false;
+    goToScene(state.locationBeforeEvent, 3600);
+}
+
+function endTakeoverEvent() {
+    state.storyEventActive = false;
+    goToScene(state.locationBeforeEvent, 3600); // 1 hour penalty for the ordeal
+}
+
+function endDiscoveryEvent() {
+    state.storyEventActive = false;
+    // No time penalty for just a realization.
+    goToScene(state.locationBeforeEvent, 0);
+}
+
+function handleEggDiscovery() {
+    state.parasite.eggs.forEach(egg => {
+        if (!egg.isDiscovered) {
+            egg.isDiscovered = true;
+        }
+    });
+    state.needs.stress = Math.min(state.ranges.stress, state.needs.stress + 20);
+    state.needs.trauma = Math.min(state.ranges.trauma, state.needs.trauma + 5);
+
+    state.storyEventActive = false;
+    goToScene(state.locationBeforeEvent, 0);
+}
+
+function handleEggHatching() {
+    const now = state.currentTime.getTime();
+    const hatchedEggs = state.parasite.eggs.filter(egg => now >= egg.hatchTime);
+    const numHatched = hatchedEggs.length;
+
+    // Remove hatched eggs from the main array
+    state.parasite.eggs = state.parasite.eggs.filter(egg => now < egg.hatchTime);
+
+    // Apply stat penalties per egg
+    state.needs.stress = Math.min(state.ranges.stress, state.needs.stress + (50 * numHatched));
+    state.needs.trauma = Math.min(state.ranges.trauma, state.needs.trauma + (25 * numHatched));
+    state.needs.happiness = Math.max(0, state.needs.happiness - (40 * numHatched));
+    state.needs.tiredness = Math.max(0, state.needs.tiredness - (1000 * numHatched));
+
+    state.storyEventActive = false;
+    forceGlobalUIRefresh(); // Update UI immediately
+    goToScene(state.locationBeforeEvent, 3600); // 1 hour time penalty
+}
+
+/* ==============================================================
    UTILS
    ============================================================== */
 function fmtHM(d){ return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false}); }
-function fmtDate(d){ return d.toLocaleDateString(); }
+function fmtDate(d) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+}
 
 function formatMoney(amount) {
     if (amount >= 10000000) {
@@ -1460,6 +1882,14 @@ function formatMoney(amount) {
     } else {
         return `$${amount.toFixed(2)}`;
     }
+}
+
+function getDaysBetween(date1, date2) {
+    const oneDay = 24 * 60 * 60 * 1000;
+    // Discard time and timezone info for consistent day difference calculation
+    const d1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return Math.floor((d1 - d2) / oneDay);
 }
 
 function applySettings() {
@@ -1490,20 +1920,41 @@ function checkStatTriggers() {
 
   // Check for Stress max-out
   if (state.needs.stress >= state.ranges.stress) {
+    state.storyEventActive = true;
     state.locationBeforeEvent = state.currentLocation;
     goToScene('stress_collapse_event', 0);
   }
 
   // Check for Arousal max-out
   if (state.needs.arousal >= state.ranges.arousal) {
+    state.storyEventActive = true;
     state.locationBeforeEvent = state.currentLocation;
     goToScene('arousal_max_event', 0);
   }
 }
 
 /* Advance time by a given number of seconds and refresh the header */
+function checkEventCondition(condition) {
+    if (!condition) return true; // No condition means it can always trigger
+
+    switch (condition.type) {
+        case 'human_pregnancy_early':
+            return state.pregnancy.isPregnant &&
+                   state.pregnancy.type === 'human' &&
+                   state.pregnancy.days >= 7 &&
+                   state.pregnancy.days <= 35;
+        case 'parasite_pregnancy':
+            return state.parasite.eggs.length > 0;
+        // Future condition types can be added here
+        default:
+            return false;
+    }
+}
+
 function advanceTime(seconds, updateUI = true) {
   if (typeof seconds !== 'number' || seconds < 0) return;
+
+  const initialDay = Math.floor(state.currentTime.getTime() / (1000 * 60 * 60 * 24));
 
   const needs = state.needs;
   const ranges = state.ranges;
@@ -1543,9 +1994,44 @@ function advanceTime(seconds, updateUI = true) {
   }
 
   state.currentTime = new Date(state.currentTime.getTime() + (seconds * 1000));
+
+  const finalDay = Math.floor(state.currentTime.getTime() / (1000 * 60 * 60 * 24));
+  const daysPassed = finalDay - initialDay;
+
+  if (daysPassed > 0) {
+    for (let i = 0; i < daysPassed; i++) {
+      advanceDay();
+    }
+  }
+
   if (updateUI) {
     forceGlobalUIRefresh();
   }
+
+  // New Hatching Logic (moved from advanceDay)
+  if (!state.storyEventActive && state.parasite.eggs.some(egg => state.currentTime.getTime() >= egg.hatchTime)) {
+      state.storyEventActive = true;
+      state.locationBeforeEvent = state.currentLocation;
+      renderScene('parasite_hatch_event');
+      return; // Exit advanceTime to prevent other triggers
+  }
+
+  // New Egg Discovery Logic
+  if (!state.storyEventActive && state.parasite.eggs.some(egg => !egg.isDiscovered)) {
+      const discoveryTime = 8 * 60 * 60 * 1000; // 8 hours in ms
+      const hasUndiscoveredEggReady = state.parasite.eggs.some(egg =>
+          !egg.isDiscovered && (state.currentTime.getTime() - egg.laidAtTime >= discoveryTime)
+      );
+
+      if (hasUndiscoveredEggReady) {
+          state.storyEventActive = true;
+          state.locationBeforeEvent = state.currentLocation;
+          // Using renderScene directly to avoid advanceTime loop
+          renderScene('parasite_egg_discovery_event');
+          return; // Exit advanceTime to prevent other triggers
+      }
+  }
+
   checkStatTriggers();
 }
 
@@ -1588,7 +2074,13 @@ function buildJournalOverlay() {
     let remindersHtml = '<ul>';
     if (state.journal.reminders.length > 0) {
         state.journal.reminders.forEach(r => {
-            remindersHtml += `<li>${r}</li>`;
+            // Handle both old string-based reminders and new object-based ones for compatibility
+            if (typeof r === 'string') {
+                remindersHtml += `<li>${r}</li>`;
+            } else if (r && r.text && r.date) {
+                const reminderDate = new Date(r.date + 'T00:00:00'); // Use T00:00:00 to avoid timezone issues
+                remindersHtml += `<li>${r.text} (on ${reminderDate.toLocaleDateString()})</li>`;
+            }
         });
     } else {
         remindersHtml += '<li>No reminders.</li>';
@@ -1721,6 +2213,84 @@ function buildSavesOverlay() {
             </div>
         </div>
     `;
+}
+
+function buildCalendar(year, month) { // month is 0-indexed
+  const monthYearEl = document.getElementById('calendar-month-year');
+  const daysEl = document.getElementById('calendar-days');
+
+  daysEl.innerHTML = ''; // Clear previous days
+
+  const date = new Date(year, month, 1);
+  const monthName = date.toLocaleString('default', { month: 'long' });
+  monthYearEl.textContent = `${monthName} ${year}`;
+
+  const firstDay = date.getDay(); // 0 for Sunday, 1 for Monday, etc.
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Get reminders for the current month for efficiency
+  const remindersForMonth = state.journal.reminders.filter(r => {
+    const reminderDate = new Date(r.date + 'T00:00:00');
+    return reminderDate.getFullYear() === year && reminderDate.getMonth() === month;
+  });
+
+  // Create blank cells for the days before the first day of the month
+  for (let i = 0; i < firstDay; i++) {
+    const dayCell = document.createElement('div');
+    dayCell.classList.add('calendar-day', 'other-month');
+    daysEl.appendChild(dayCell);
+  }
+
+  // Create cells for each day of the month
+  for (let i = 1; i <= daysInMonth; i++) {
+    const dayCell = document.createElement('div');
+    dayCell.classList.add('calendar-day');
+
+    const daySpan = document.createElement('span');
+    daySpan.textContent = i;
+    dayCell.appendChild(daySpan);
+
+    const fullDate = new Date(year, month, i);
+    const currentDate = state.currentTime;
+
+    // Check if it's the current day
+    if (fullDate.getFullYear() === currentDate.getFullYear() &&
+        fullDate.getMonth() === currentDate.getMonth() &&
+        fullDate.getDate() === currentDate.getDate()) {
+      dayCell.classList.add('current-day');
+    }
+
+    // Check for reminders
+    const reminder = remindersForMonth.find(r => {
+        const reminderDate = new Date(r.date + 'T00:00:00');
+        return reminderDate.getDate() === i;
+    });
+
+    if (reminder) {
+      dayCell.classList.add('has-reminder');
+      dayCell.onclick = () => {
+        closeAllOverlays();
+        openOverlay('btnJournal');
+      };
+    }
+
+    // Check for period days
+    if (!state.parasite.canImpregnate) { // Only show for normal cycles
+        const dayDiff = getDaysBetween(fullDate, state.currentTime);
+        const cycleDayForCell = state.menstrualCycle.currentDayInCycle + dayDiff;
+        const cycleLength = state.menstrualCycle.cycleLength;
+        const periodLength = state.menstrualCycle.periodLength;
+
+        // Normalize the cycle day to be within 1 and cycleLength
+        const normalizedCycleDay = ((cycleDayForCell - 1) % cycleLength + cycleLength) % cycleLength + 1;
+
+        if (normalizedCycleDay <= periodLength) {
+            dayCell.classList.add('period-day');
+        }
+    }
+
+    daysEl.appendChild(dayCell);
+  }
 }
 
 function saveGame(slotId) {
@@ -2524,18 +3094,48 @@ function buildInventoryTab() {
 function updateCharStatusTab() {
     const statusDiv = document.getElementById('char-status');
     if (!statusDiv) return;
-    let text = "Maya is feeling ";
+
+    // General mood/feeling text
+    let moodText = "Maya is feeling ";
     const tirednessPct = getFillPct('tiredness');
-    if (tirednessPct <= 20) text += "exhausted";
-    else if (tirednessPct <= 50) text += "tired";
-    else text += "well-rested";
+    if (tirednessPct <= 20) moodText += "exhausted";
+    else if (tirednessPct <= 50) moodText += "tired";
+    else moodText += "well-rested";
 
     const stressPct = getFillPct('stress');
-    if (stressPct > 80) text += " and is panicking.";
-    else if (stressPct > 50) text += " and feels very stressed.";
-    else text += ".";
+    if (stressPct > 80) moodText += " and is panicking.";
+    else if (stressPct > 50) moodText += " and feels very stressed.";
+    else moodText += ".";
+
+    let pregnancyText = '';
+    if (state.pregnancy.isPregnant) {
+        const days = state.pregnancy.days;
+        if (state.pregnancy.type === 'human') {
+            pregnancyText += `<br><br>She is ${days} day(s) into her pregnancy.`;
+            if (days >= 45) {
+                pregnancyText += "<br>Her belly is pronounced and round, clearly pregnant.";
+            } else if (days >= 30) {
+                pregnancyText += "<br>Her belly is softly rounded, showing the first clear signs of pregnancy.";
+            } else if (days >= 15) {
+                pregnancyText += "<br>There's a slight, almost unnoticeable swell to her belly.";
+            } else {
+                pregnancyText += "<br>Her belly is still flat.";
+            }
+        }
+    }
+
+    // New Parasite Egg Status Text
+    if (state.parasite.eggs.length > 0) {
+        const eggCount = state.parasite.eggs.length;
+        pregnancyText += `<br><br>Her abdomen feels strangely tight, bloated with ${eggCount} parasite egg(s).`;
+        if (eggCount >= 10) {
+            pregnancyText += "<br>Her belly is unnaturally distended and occasionally ripples with movement.";
+        } else if (eggCount >= 5) {
+            pregnancyText += "<br>Her belly is swollen and firm to the touch.";
+        }
+    }
     
-    statusDiv.textContent = text;
+    statusDiv.innerHTML = moodText + pregnancyText;
 }
 
 function updateCharSkillsTab() {
@@ -2837,7 +3437,8 @@ function goToScene(sceneName, seconds) {
   const destinationScene = state.scenes[sceneName];
   if (destinationScene && destinationScene.randomEvents) {
     for (const event of destinationScene.randomEvents) {
-      if (Math.random() < event.chance) {
+      const conditionMet = checkEventCondition(event.condition);
+      if (conditionMet && Math.random() < event.chance) {
         // The random event triggered!
         renderScene(event.scene); // Go to the event scene instead
         return; // Stop processing further
@@ -2884,6 +3485,7 @@ function recoverFromStressCollapse() {
   state.needs.stress = state.ranges.stress * 0.35;
   state.needs.trauma = Math.min(state.ranges.trauma, state.needs.trauma + (state.ranges.trauma * 0.1));
   state.stats.timesCollapsedFromStress++;
+  state.storyEventActive = false;
 
   // Go back to the previous location after a 1-hour time penalty
   goToScene(state.locationBeforeEvent, 3600);
@@ -2893,9 +3495,32 @@ function recoverFromArousalMax() {
   // Reset arousal and increment counter
   state.needs.arousal = 0;
   state.stats.timesClimaxed++;
+  state.storyEventActive = false;
 
   // Go back to the previous location after a 10-minute time penalty
   goToScene(state.locationBeforeEvent, 600);
+}
+
+function handleMorningSickness() {
+    state.needs.happiness = Math.max(0, state.needs.happiness - 25);
+    state.needs.stress = Math.min(state.ranges.stress, state.needs.stress + 50);
+    forceGlobalUIRefresh();
+    goToScene('bathroom', 0); // Return to the bathroom
+}
+
+function handleParasiteCraving() {
+    state.needs.stress = Math.min(state.ranges.stress, state.needs.stress + 75);
+    state.needs.corruption = Math.min(state.ranges.corruption, state.needs.corruption + 5);
+    forceGlobalUIRefresh();
+    goToScene('kitchen', 0); // Return to the kitchen
+}
+
+function passDayInLounge() {
+    advanceTime(86400); // 24 hours
+    state.needs.tiredness = state.ranges.tiredness;
+    state.needs.happiness = state.ranges.happiness;
+    forceGlobalUIRefresh(); // Update UI to show maxed stats
+    // Player remains in the lounge, scene does not need to be re-rendered.
 }
 
 /* Helper – positions a .navColumn just below a given element */
@@ -3360,6 +3985,42 @@ function initBottomButtons(){
   document.getElementById('cheatsBtn'  ).onclick = () => openOverlay('cheatsBtn');
 }
 
+function positionCalendar() {
+    const sidebar = document.getElementById('sidebar');
+    const calendar = document.getElementById('calendar-overlay');
+    if (sidebar && calendar) {
+        const sidebarRect = sidebar.getBoundingClientRect();
+        const dateRect = document.getElementById('date').getBoundingClientRect();
+        calendar.style.left = `${sidebarRect.right + 10}px`; // 10px gap
+        calendar.style.top = `${dateRect.top}px`;
+    }
+}
+
+function initCalendar() {
+  document.getElementById('date').onclick = () => {
+    const calOverlay = document.getElementById('calendar-overlay');
+    if (calOverlay.style.display === 'block') {
+      calOverlay.style.display = 'none';
+    } else {
+      closeAllOverlays();
+      state.calendarDate = new Date(state.currentTime);
+      buildCalendar(state.calendarDate.getFullYear(), state.calendarDate.getMonth());
+      positionCalendar(); // Position it dynamically
+      calOverlay.style.display = 'block';
+    }
+  };
+
+  document.getElementById('calendar-prev-btn').onclick = () => {
+    state.calendarDate.setMonth(state.calendarDate.getMonth() - 1);
+    buildCalendar(state.calendarDate.getFullYear(), state.calendarDate.getMonth());
+  };
+
+  document.getElementById('calendar-next-btn').onclick = () => {
+    state.calendarDate.setMonth(state.calendarDate.getMonth() + 1);
+    buildCalendar(state.calendarDate.getFullYear(), state.calendarDate.getMonth());
+  };
+}
+
 /* Generic overlay toggler (click again to hide) */
 function openOverlay(btnId){
   const ov = document.getElementById(`${btnId}-overlay`);
@@ -3438,6 +4099,38 @@ function cheatModifyNpcStat(npcName, stat, amount) {
     }
 }
 
+function buildDebugCheatTab() {
+    const debugTab = document.getElementById('cheat-tab-debug');
+    if (!debugTab) return;
+
+    const createSection = (title, dataObject) => {
+        let content = `<h4 style="color: #00ff00; border-bottom: 1px solid #444; padding-bottom: 0.3rem; margin-top: 1rem;">${title}</h4>`;
+        content += '<div style="font-family: monospace; font-size: 0.9em; white-space: pre; background: #111; padding: 0.5rem; border-radius: 4px;">';
+        for (const key in dataObject) {
+            const value = dataObject[key];
+            // Format boolean values for better readability
+            let displayValue = value;
+            if (typeof value === 'boolean') {
+                displayValue = value ? '<span style="color: lightgreen;">true</span>' : '<span style="color: salmon;">false</span>';
+            } else if (typeof value === 'object' && value !== null) {
+                displayValue = JSON.stringify(value, null, 2);
+            }
+            content += `${key.padEnd(20)}: ${displayValue}\n`;
+        }
+        content += '</div>';
+        return content;
+    };
+
+    let html = '<div style="padding: 0 1rem;">';
+    html += createSection('Womb', state.womb);
+    html += createSection('Menstrual Cycle', state.menstrualCycle);
+    html += createSection('Human Pregnancy', state.pregnancy); // Renamed for clarity
+    html += createSection('Parasite', state.parasite);
+    html += '</div>';
+
+    debugTab.innerHTML = html;
+}
+
 function cheatModifyNeed(key, delta) {
   const max = state.ranges[key];
   const min = 0;
@@ -3489,10 +4182,12 @@ function buildCheatOverlay() {
             <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('general')">General</button>
             <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('skills')">Skills</button>
             <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('npcs')">NPCs</button>
+            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('debug')">Body/Debug</button>
         </div>
         <div id="cheat-tab-general" class="cheat-tab-content" style="height: 90%; overflow-y: auto;"></div>
         <div id="cheat-tab-skills" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
         <div id="cheat-tab-npcs" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
+        <div id="cheat-tab-debug" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
     `;
 
     // --- Build General Tab ---
@@ -3522,6 +4217,13 @@ function buildCheatOverlay() {
         pos_actions: [ { label: '+10', onclick: `cheatMoney(10)` }, { label: '+100', onclick: `cheatMoney(100)` }, { label: '+1k', onclick: `cheatMoney(1000)` } ]
     });
     rightCol += `<div style="text-align: center; padding: 1rem;"><label><input type="checkbox" onchange="toggleCorruptionDisplay(this)" ${state.showCorruption?'checked':''}> Show Corruption Bar</label></div>`;
+    rightCol += `
+        <div style="text-align: center; padding: 0.5rem;">
+            <button class="overlayBtn" onclick="toggleParasitePregnancyCheat()">
+                Parasite Pregnancy: ${state.parasite.canImpregnate ? '<span style=\\"color: red\\">Enabled</span>' : 'Disabled'}
+            </button>
+        </div>
+    `;
     rightCol += '</div>';
 
     generalContent += leftCol + rightCol + '</div>';
@@ -3592,6 +4294,9 @@ function buildCheatOverlay() {
     npcCol2Html += '</div>';
     npcsTab.innerHTML = npcsHtml + npcCol1Html + npcCol2Html + '</div>';
 
+    // --- Build Debug Tab ---
+    buildDebugCheatTab();
+
     showCheatTab(activeTab);
 }
 
@@ -3600,6 +4305,11 @@ function cheatMoney(delta){
   state.money = Math.round((state.money + delta) * 100) / 100;
   updateHeader();
   buildCheatOverlay();
+}
+
+function toggleParasitePregnancyCheat() {
+    state.parasite.canImpregnate = !state.parasite.canImpregnate;
+    buildCheatOverlay(); // Re-render the cheat overlay to update the button text
 }
 
 /* toggle the hidden “Corruption” bar */
@@ -3622,6 +4332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Initialise physical body
             state.playerBody = createPlayerBody(state.sex);
+            initMenstrualCycle();
 
             // Switch to the main game screen
             switchScreen('gameScreen');
@@ -3633,6 +4344,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Build UI pieces that depend on JS
             initBottomButtons();    // hook up the bottom‑button bar
+            initCalendar();         // hook up the calendar overlay
             buildCheatOverlay();    // populate the Cheats overlay
             applySettings();        // apply default/loaded settings
             applyCheatsUI();        // apply default/loaded cheat settings
@@ -3687,6 +4399,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (subOverlay && subOverlay.style.display === 'block') {
                 subOverlay.style.display = 'none';
                 return; // Prioritize closing the sub-overlay
+            }
+
+            const calOverlay = document.getElementById('calendar-overlay');
+            if (calOverlay && calOverlay.style.display === 'block') {
+                calOverlay.style.display = 'none';
+                return; // Close calendar and we're done
             }
 
             // If no sub-overlay is open, close any main overlay
