@@ -1669,11 +1669,13 @@ const clothingTemplates = {
   glasses_reading: { id: 'glasses_reading', name: 'Reading Glasses', slot: 'head', layer: 'outer', covers: ['face'], tags: ['glasses'], allowedTags: ['casual', 'business', 'formal', 'plastic', 'metal'] },
   glasses_sunglasses: { id: 'glasses_sunglasses', name: 'Sunglasses', slot: 'head', layer: 'outer', covers: ['face'], tags: ['glasses'], allowedTags: ['casual', 'cool', 'sexy', 'plastic', 'metal'] },
   headband: { id: 'headband', name: 'Headband', slot: 'head', layer: 'outer', covers: ['head'], tags: ['accessory'], allowedTags: ['casual', 'athletic', 'cotton', 'plastic', 'spandex', 'nylon', 'polyester'] },
+  head_costume: { id: 'head_costume', name: 'Head Costume', slot: 'head', layer: 'outer', covers: ['head'], tags: ['hat', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk'] },
 
   // Neck
   neck_scarf: { id: 'neck_scarf', name: 'Scarf', slot: 'neck', layer: 'outer', covers: ['neck'], tags: ['accessory'], allowedTags: ['casual', 'cool', 'formal', 'cotton', 'wool', 'silk', 'polyester'] },
   neck_necklace: { id: 'neck_necklace', name: 'Necklace', slot: 'neck', layer: 'outer', covers: ['neck'], tags: ['accessory', 'jewelry'], allowedTags: ['casual', 'formal', 'sexy', 'goth', 'metal', 'plastic'] },
   neck_choker: { id: 'neck_choker', name: 'Choker', slot: 'neck', layer: 'skin', covers: ['neck'], tags: ['accessory', 'jewelry'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'lace', 'metal', 'plastic', 'vinyl', 'satin'] },
+  neck_costume: { id: 'neck_costume', name: 'Neck Costume', slot: 'neck', layer: 'outer', covers: ['neck'], tags: ['accessory', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk'] },
 
   // Upper Body
   upper_bra: { id: 'upper_bra', name: 'Bra', slot: 'upper', layer: 'skin', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple'], tags: ['underwear'], allowedTags: ['sexy', 'fetish-wear', 'transparent', 'cotton', 'lace', 'satin', 'silk', 'spandex', 'leather', 'vinyl', 'nylon', 'polyester'], forcedTags: ['belly showing'] },
@@ -1702,7 +1704,15 @@ const clothingTemplates = {
   upper_dress_short: { id: 'upper_dress_short', name: 'Short Dress', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['dress'], allowedTags: ['casual', 'formal', 'sexy', 'goth', 'cotton', 'silk', 'satin', 'lace', 'denim', 'leather', 'vinyl', 'polyester', 'belly showing'] },
   upper_dress_medium: { id: 'upper_dress_medium', name: 'Medium Dress', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek', 'left_thigh', 'right_thigh'], tags: ['dress'], allowedTags: ['casual', 'formal', 'sexy', 'goth', 'cotton', 'silk', 'satin', 'lace', 'denim', 'wool', 'polyester', 'belly showing'] },
   upper_dress_long: { id: 'upper_dress_long', name: 'Long Dress', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['dress'], allowedTags: ['formal', 'sexy', 'goth', 'cotton', 'silk', 'satin', 'lace', 'wool', 'polyester', 'belly showing'] },
-  upper_costume_leotard: { id: 'upper_costume_leotard', name: 'Leotard', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['costume', 'top'], allowedTags: ['sexy', 'athletic', 'goth', 'fetish-wear', 'nylon', 'polyester', 'spandex', 'vinyl', 'leather', 'lace'] },
+  upper_leotard: { id: 'upper_leotard', name: 'Leotard', slot: 'upper', layer: 'middle', covers: ['chest', 'left_breast', 'right_breast', 'left_nipple', 'right_nipple', 'belly', 'upper_back', 'lower_back', 'groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['top', 'fetish-wear'], allowedTags: ['sexy', 'athletic', 'goth', 'nylon', 'polyester', 'spandex', 'vinyl', 'leather', 'lace'] },
+  upper_costume: { id: 'upper_costume', name: 'Upper Body Costume', slot: 'upper', layer: 'outer', covers: ['chest', 'belly', 'upper_back', 'lower_back', 'left_arm', 'right_arm'], tags: ['top', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk', 'spandex'] },
+
+  // Waist
+  waist_belt: { id: 'waist_belt', name: 'Belt', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory'], allowedTags: ['casual', 'formal', 'business', 'goth', 'sexy', 'leather', 'metal', 'plastic', 'vinyl'] },
+  waist_sash_wrap: { id: 'waist_sash_wrap', name: 'Sash Wrap', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory'], allowedTags: ['casual', 'formal', 'sexy', 'silk', 'satin', 'cotton'] },
+  waist_corset: { id: 'waist_corset', name: 'Waist Corset', slot: 'waist', layer: 'middle', covers: ['belly', 'waist'], tags: ['accessory'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'lace', 'satin', 'denim', 'vinyl', 'costume'] },
+  waist_apron: { id: 'waist_apron', name: 'Waist Apron', slot: 'waist', layer: 'outer', covers: ['groin', 'waist'], tags: ['costume'], allowedTags: ['cotton', 'costume'] },
+  waist_costume: { id: 'waist_costume', name: 'Waist Costume', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk'] },
 
   // Lower Body
   lower_panties: { id: 'lower_panties', name: 'Panties', slot: 'lower', layer: 'skin', covers: ['groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['underwear'], allowedTags: ['sexy', 'fetish-wear', 'transparent', 'cotton', 'lace', 'satin', 'silk', 'spandex', 'leather', 'vinyl', 'nylon', 'polyester'] },
@@ -1718,24 +1728,7 @@ const clothingTemplates = {
   lower_skirt_short: { id: 'lower_skirt_short', name: 'Short Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek', 'left_thigh'], tags: ['skirt'], allowedTags: ['casual', 'sexy', 'goth', 'cotton', 'denim', 'wool', 'satin', 'leather', 'vinyl', 'polyester'] },
   lower_mini_skirt: { id: 'lower_mini_skirt', name: 'Mini Skirt', slot: 'lower', layer: 'middle', covers: ['groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek'], tags: ['skirt'], allowedTags: ['casual', 'sexy', 'goth', 'fetish-wear', 'cotton', 'denim', 'satin', 'leather', 'vinyl', 'lace', 'costume'] },
   lower_cargo_pants: { id: 'lower_cargo_pants', name: 'Cargo Pants', slot: 'lower', layer: 'middle', covers: ['groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants'], allowedTags: ['casual', 'cotton', 'denim', 'polyester'] },
-
-  // Arms
-  arms_detached_sleeves: { id: 'arms_detached_sleeves', name: 'Detached Sleeves', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['goth', 'sexy', 'cool', 'lace', 'spandex', 'cotton', 'leather', 'vinyl', 'nylon', 'polyester', 'fishnet'] },
-  arms_arm_warmers: { id: 'arms_arm_warmers', name: 'Arm Warmers', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['goth', 'cool', 'casual', 'wool', 'cotton', 'spandex', 'nylon', 'polyester'] },
-  arms_wristbands: { id: 'arms_wristbands', name: 'Wristbands', slot: 'arms', layer: 'outer', covers: ['left_wrist', 'right_wrist'], tags: ['accessory'], allowedTags: ['athletic', 'goth', 'cool', 'casual', 'cotton', 'leather', 'plastic'] },
-  arms_armbands: { id: 'arms_armbands', name: 'Armbands', slot: 'arms', layer: 'outer', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['athletic', 'goth', 'cool', 'sexy', 'metal', 'leather', 'plastic'] },
-
-  // Hands
-  hands_gloves: { id: 'hands_gloves', name: 'Gloves', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory'], allowedTags: ['formal', 'goth', 'sexy', 'fetish-wear', 'leather', 'lace', 'satin', 'cotton', 'spandex', 'vinyl', 'nylon', 'polyester'] },
-  hands_watches: { id: 'hands_watches', name: 'Watches', slot: 'hands', layer: 'outer', covers: ['left_wrist'], tags: ['accessory', 'jewelry'], allowedTags: ['formal', 'business', 'casual', 'athletic', 'sexy', 'metal'] },
-  hands_bracelets: { id: 'hands_bracelets', name: 'Bracelets', slot: 'hands', layer: 'outer', covers: ['left_wrist', 'right_wrist'], tags: ['accessory', 'jewelry'], allowedTags: ['goth', 'sexy', 'casual', 'metal', 'leather', 'plastic'] },
-  hands_rings: { id: 'hands_rings', name: 'Rings', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory', 'jewelry'], allowedTags: ['formal', 'goth', 'sexy', 'casual', 'metal'] },
-
-  // Waist
-  waist_belt: { id: 'waist_belt', name: 'Belt', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory'], allowedTags: ['casual', 'formal', 'business', 'goth', 'sexy', 'leather', 'metal', 'plastic', 'vinyl'] },
-  waist_sash_wrap: { id: 'waist_sash_wrap', name: 'Sash Wrap', slot: 'waist', layer: 'outer', covers: ['waist'], tags: ['accessory'], allowedTags: ['casual', 'formal', 'sexy', 'silk', 'satin', 'cotton'] },
-  waist_corset: { id: 'waist_corset', name: 'Waist Corset', slot: 'waist', layer: 'middle', covers: ['belly', 'waist'], tags: ['accessory'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'lace', 'satin', 'denim', 'vinyl', 'costume'] },
-  waist_apron: { id: 'waist_apron', name: 'Waist Apron', slot: 'waist', layer: 'outer', covers: ['groin', 'waist'], tags: ['costume'], allowedTags: ['cotton', 'costume'] },
+  lower_costume: { id: 'lower_costume', name: 'Lower Body Costume', slot: 'lower', layer: 'middle', covers: ['groin', 'vagina', 'anus', 'butt', 'left_ass_cheek', 'right_ass_cheek', 'left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['pants', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk', 'spandex'] },
 
   // Legs
   legs_legwarmers: { id: 'legs_legwarmers', name: 'Legwarmers', slot: 'legs', layer: 'middle', covers: ['left_calf', 'right_calf'], tags: ['accessory'], allowedTags: ['goth', 'cool', 'casual', 'wool', 'cotton', 'polyester'] },
@@ -1743,6 +1736,21 @@ const clothingTemplates = {
   legs_thigh_high_socks: { id: 'legs_thigh_high_socks', name: 'Thigh High Socks', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf', 'left_thigh', 'right_thigh', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['sexy', 'goth', 'cotton', 'wool', 'spandex', 'lace', 'nylon', 'polyester', 'fishnet'] },
   legs_stockings: { id: 'legs_stockings', name: 'Stockings', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf', 'left_thigh', 'right_thigh', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['sexy', 'formal', 'goth', 'fetish-wear', 'spandex', 'lace', 'vinyl', 'nylon', 'fishnet'] },
   legs_tights: { id: 'legs_tights', name: 'Tights', slot: 'legs', layer: 'skin', covers: ['left_foot', 'right_foot', 'left_calf', 'right_calf', 'left_thigh', 'right_thigh', 'butt', 'waist', 'left_ankle', 'right_ankle'], tags: ['hosiery'], allowedTags: ['sexy', 'formal', 'goth', 'fetish-wear', 'spandex', 'lace', 'vinyl', 'wool', 'cotton', 'nylon', 'polyester', 'fishnet', 'costume'] },
+  legs_costume: { id: 'legs_costume', name: 'Legs Costume', slot: 'legs', layer: 'middle', covers: ['left_thigh', 'right_thigh', 'left_calf', 'right_calf'], tags: ['hosiery', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk', 'spandex'] },
+
+  // Arms
+  arms_detached_sleeves: { id: 'arms_detached_sleeves', name: 'Detached Sleeves', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['goth', 'sexy', 'cool', 'lace', 'spandex', 'cotton', 'leather', 'vinyl', 'nylon', 'polyester', 'fishnet'] },
+  arms_arm_warmers: { id: 'arms_arm_warmers', name: 'Arm Warmers', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['goth', 'cool', 'casual', 'wool', 'cotton', 'spandex', 'nylon', 'polyester'] },
+  arms_wristbands: { id: 'arms_wristbands', name: 'Wristbands', slot: 'arms', layer: 'outer', covers: ['left_wrist', 'right_wrist'], tags: ['accessory'], allowedTags: ['athletic', 'goth', 'cool', 'casual', 'cotton', 'leather', 'plastic'] },
+  arms_armbands: { id: 'arms_armbands', name: 'Armbands', slot: 'arms', layer: 'outer', covers: ['left_arm', 'right_arm'], tags: ['accessory'], allowedTags: ['athletic', 'goth', 'cool', 'sexy', 'metal', 'leather', 'plastic'] },
+  arms_costume: { id: 'arms_costume', name: 'Arms Costume', slot: 'arms', layer: 'middle', covers: ['left_arm', 'right_arm'], tags: ['accessory', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk', 'spandex'] },
+
+  // Hands
+  hands_gloves: { id: 'hands_gloves', name: 'Gloves', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory'], allowedTags: ['formal', 'goth', 'sexy', 'fetish-wear', 'leather', 'lace', 'satin', 'cotton', 'spandex', 'vinyl', 'nylon', 'polyester'] },
+  hands_watches: { id: 'hands_watches', name: 'Watches', slot: 'hands', layer: 'outer', covers: ['left_wrist'], tags: ['accessory', 'jewelry'], allowedTags: ['formal', 'business', 'casual', 'athletic', 'sexy', 'metal'] },
+  hands_bracelets: { id: 'hands_bracelets', name: 'Bracelets', slot: 'hands', layer: 'outer', covers: ['left_wrist', 'right_wrist'], tags: ['accessory', 'jewelry'], allowedTags: ['goth', 'sexy', 'casual', 'metal', 'leather', 'plastic'] },
+  hands_rings: { id: 'hands_rings', name: 'Rings', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory', 'jewelry'], allowedTags: ['formal', 'goth', 'sexy', 'casual', 'metal'] },
+  hands_costume: { id: 'hands_costume', name: 'Hands Costume', slot: 'hands', layer: 'outer', covers: ['left_hand', 'right_hand'], tags: ['accessory', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk', 'spandex'] },
 
   // Feet
   feet_ankle_cuffs: { id: 'feet_ankle_cuffs', name: 'Ankle Cuffs', slot: 'feet', layer: 'outer', covers: ['left_ankle', 'right_ankle'], tags: ['accessory'], allowedTags: ['sexy', 'goth', 'fetish-wear', 'leather', 'metal', 'lace'] },
@@ -1760,9 +1768,13 @@ const clothingTemplates = {
   feet_sneakers: { id: 'feet_sneakers', name: 'Sneakers', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['casual', 'cool', 'athletic', 'cotton', 'leather'] },
   feet_pumps: { id: 'feet_pumps', name: 'Pumps', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['formal', 'business', 'sexy', 'leather', 'satin', 'vinyl', 'costume'], forcedTags: ['high heeled'] },
   feet_heels: { id: 'feet_heels', name: 'Heels', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes'], allowedTags: ['formal', 'sexy', 'fetish-wear', 'leather', 'satin', 'vinyl', 'plastic', 'metal', 'costume'], forcedTags: ['high heeled'] },
+  feet_costume: { id: 'feet_costume', name: 'Feet Costume', slot: 'feet', layer: 'outer', covers: ['left_foot', 'right_foot'], tags: ['shoes', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk'] },
 
-  // Bags
+  // Back
   back_backpack: { id: 'back_backpack', name: 'Backpack', slot: 'back', layer: null, covers: [], tags: ['bag'], allowedTags: ['casual', 'athletic', 'cool', 'cotton', 'denim', 'leather'] },
+  back_costume: { id: 'back_costume', name: 'Back Costume', slot: 'back', layer: null, covers: [], tags: ['bag', 'costume'], allowedTags: ['plastic', 'metal', 'leather', 'cotton', 'wool', 'silk'] },
+
+  // Hand-held
   handheld_handbag: { id: 'handheld_handbag', name: 'Handbag', slot: 'hand-held', layer: null, covers: [], tags: ['bag'], allowedTags: ['casual', 'formal', 'sexy', 'leather', 'satin', 'vinyl'] },
 };
 
@@ -1771,22 +1783,22 @@ const clothingTemplates = {
    ============================================================== */
 const bodyPartDescriptors = {
   // Female Descriptors
-  breasts: ['small', 'pert', 'ample', 'large', 'heavy', 'pendulous'],
-  nipples: ['tiny', 'puffy', 'inverted', 'protruding', 'sensitive'],
-  vagina: ['tight', 'loose', 'pristine', 'swollen'],
+  breasts: ['flat', 'tiny', 'small', 'pert', 'modest', 'ample', 'large', 'heavy', 'massive', 'huge'],
+  nipples: ['inverted', 'tiny', 'small', 'puffy', 'protruding', 'large'],
+  vagina: ['very tight', 'tight', 'snug', 'loose', 'gaping'],
   // Male Descriptors
-  penis: ['small', 'average', 'large', 'thick', 'veiny'],
+  penis: ['tiny', 'small', 'slender', 'average', 'thick', 'large', 'huge', 'massive'],
   // Universal Descriptors
-  face: ['angular', 'soft', 'youthful', 'stern', 'scarred', 'plain'],
-  eyes: ['bright', 'dull', 'narrow', 'wide-set', 'hooded'],
-  lips: ['thin', 'full', 'pouty', 'plump'],
-  arms: ['slender', 'toned', 'strong', 'lanky', 'muscular'],
-  hands: ['delicate', 'strong', 'long-fingered', 'calloused'],
-  belly: ['flat', 'toned', 'soft', 'pudgy', 'defined'],
-  buttocks: ['flat', 'toned', 'ample', 'large', 'bouncy', 'heart-shaped'],
-  thighs: ['slender', 'toned', 'thick', 'strong', 'muscular'],
-  calves: ['slender', 'toned', 'strong', 'muscular'],
-  feet: ['small', 'large', 'dainty', 'arched'],
+  face: ['soft', 'oval', 'round', 'heart-shaped', 'delicate', 'chiseled', 'freckled'],
+  eyes: ['almond-shaped', 'round', 'upturned', 'large', 'doe-eyed', 'soulful', 'bright'],
+  lips: ['thin', 'slender', 'average', 'full', 'plump', 'pillowy'],
+  arms: ['thin', 'slender', 'average', 'thick', 'burly'],
+  hands: ['tiny', 'small', 'delicate', 'average-sized', 'large', 'huge'],
+  belly: ['washboard', 'flat', 'soft', 'pudgy', 'pot-bellied', 'bloated'],
+  buttocks: ['flat', 'small', 'pert', 'rounded', 'large', 'ample', 'huge'],
+  thighs: ['thin', 'slender', 'average', 'sturdy', 'thick', 'massive'],
+  calves: ['thin', 'slender', 'average', 'strong', 'thick'],
+  feet: ['tiny', 'small', 'dainty', 'average-sized', 'large', 'huge'],
 };
 
 // Define which descriptors are gender-specific to allow for filtering
@@ -2251,10 +2263,12 @@ function updateCharDesc() {
     const exposureParts = [];
     // Use the coverage map for accurate exposure checks
     if (!coverageMap.has('left_breast')) { // Check one breast as a proxy for both
-        exposureParts.push(`<span style="color: ${red};">your breasts are exposed!</span>`);
+        const breastDescText = state.playerBody.left_breast.descriptor ? `${state.playerBody.left_breast.descriptor} ` : '';
+        exposureParts.push(`Your ${breastDescText}breasts are exposed!`);
     }
     if (!coverageMap.has('vagina')) {
-        exposureParts.push(`<span style="color: ${red};">your vagina is exposed!</span>`);
+        const vaginaDescText = state.playerBody.vagina.descriptor ? `${state.playerBody.vagina.descriptor} ` : '';
+        exposureParts.push(`Your ${vaginaDescText}vagina is exposed!`);
     }
 
     // --- Part 3: Construct the final description ---
@@ -2265,26 +2279,40 @@ function updateCharDesc() {
         return;
     }
 
-    const allParts = clothingParts.concat(exposureParts);
-    let finalDesc = `You are wearing ${allParts.join(' and ')}`;
+    // 1. Start with the "wearing" part.
+    let finalDesc = `You are wearing ${clothingParts.join(' and ')}`;
 
-    // "underneath" logic
-    const upperUnder = upperSlot.skin && upperSlot.skin.tags.includes('underwear') ? upperSlot.skin : null;
-    const lowerUnder = lowerSlot.skin && lowerSlot.skin.tags.includes('underwear') ? lowerSlot.skin : null;
-    // Use a Set to avoid duplicates if a single item is both upper and lower underwear (e.g. bodysuit)
-    const underParts = [...new Set([upperUnder, lowerUnder].filter(Boolean))];
+    // 2. Append the "underneath" part.
+    const actuallyUnderUpper = upperSlot.skin && upperSlot.skin.tags.includes('underwear') && (upperSlot.middle || upperSlot.outer);
+    const actuallyUnderLower = lowerSlot.skin && lowerSlot.skin.tags.includes('underwear') && (lowerSlot.middle || lowerSlot.outer);
 
-    const hasOuterwear = (upperVisible && !upperVisible.tags.includes('underwear')) || (lowerVisible && !lowerVisible.tags.includes('underwear'));
+    const underPartsToShow = [];
+    if (actuallyUnderUpper) {
+        underPartsToShow.push(upperSlot.skin);
+    }
+    if (actuallyUnderLower) {
+        underPartsToShow.push(lowerSlot.skin);
+    }
+    const finalUnderParts = [...new Set(underPartsToShow)];
 
-    if (hasOuterwear) {
-        if (underParts.length > 0) {
-            finalDesc += ` with ${underParts.map(item => formatItemName(item, false)).join(' and ')} underneath`;
+    const upperSkinNonUnderwear = upperSlot.skin && !upperSlot.skin.tags.includes('underwear');
+    const lowerSkinNonUnderwear = lowerSlot.skin && !lowerSlot.skin.tags.includes('underwear');
+    const hasAnyOuterwear = upperSlot.middle || upperSlot.outer || lowerSlot.middle || lowerSlot.outer || upperSkinNonUnderwear || lowerSkinNonUnderwear;
+
+    if (hasAnyOuterwear) {
+        if (finalUnderParts.length > 0) {
+            finalDesc += ` with ${finalUnderParts.map(item => formatItemName(item, false)).join(' and ')} underneath`;
         } else {
             finalDesc += ` with <span style="color: ${purple};">nothing</span> underneath`;
         }
     }
-    
     finalDesc += '.';
+
+    // 3. Append the "exposure" part as a new sentence.
+    if (exposureParts.length > 0) {
+        finalDesc += ` <span style="color: ${red};">${exposureParts.join(' ')}</span>`;
+    }
+
     descEl.innerHTML = finalDesc;
 }
 
@@ -5144,7 +5172,7 @@ function generateCharacterDescription(appearance, body) {
     // --- Build Paragraph 1 ---
     const hairColor = appearance.hairColor.hex;
     const hairShadowColor = getLuminance(hairColor) < 70 ? 'white' : 'black';
-    const hairShadow = `0 0 5px ${hairShadowColor}`;
+    const hairShadow = `0 0 9px ${hairShadowColor}`;
     const hairLengthLabel = getHairLengthLabel(appearance.hairLength);
     const hairColorName = appearance.hairColor.name.toLowerCase();
     const hairStr = `${hairLengthLabel} <span style="color: ${hairColor}; font-weight: bold; text-shadow: ${hairShadow};">${hairColorName} hair</span>`;
@@ -5153,7 +5181,7 @@ function generateCharacterDescription(appearance, body) {
     // --- Build Paragraph 2 ---
     const eyeColor = appearance.eyeColor.hex;
     const eyeShadowColor = getLuminance(eyeColor) < 70 ? 'white' : 'black';
-    const eyeShadow = `0 0 5px ${eyeShadowColor}`;
+    const eyeShadow = `0 0 9px ${eyeShadowColor}`;
     const eyeDescriptor = getDescriptor('eyes', body);
     const eyeColorName = appearance.eyeColor.name.toLowerCase();
     const eyesStr = `${eyeDescriptor} <span style="color: ${eyeColor}; font-weight: bold; text-shadow: ${eyeShadow};">${eyeColorName} eyes</span>`;
