@@ -216,14 +216,12 @@ body{
   width:auto !important;          /* ignore the global width:100% */
   flex:0 1 auto;                  /* allow shrinking, no forced growth */
   display:inline-block;           /* size to its intrinsic content */
-  padding:.35rem .6rem;           /* comfortable click/tap area */
-  margin:0 .2rem;                 /* tiny gap between neighbour elements */
+  padding:.3rem .25rem;           /* comfortable click/tap area */
+  margin:0;                       /* tiny gap between neighbour elements */
   min-width:0;                    /* clear any inherited min‑width */
   box-sizing:border-box;          /* include padding in the width */
-}
 
-/* OPTIONAL: give overlay buttons a distinct look (colour, hover, etc.) */
-.overlayBtn{
+  /* Visuals */
   background:#222;                /* darker background than sidebar buttons */
   color:#00ff00;                  /* bright green text – matches the UI theme */
   border:0.0625rem solid #00ff00;
@@ -384,6 +382,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 #calendar-overlay {
   width: 11vw;
   height: auto;
+  min-height: 0;
+  max-height: none;
   min-width: 9.375rem;
   font-size: 0.8rem;
   /* top and left are now set by JS */
@@ -466,9 +466,12 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 }
 
 /* ----- Inventory Tab Styles ----- */
-#char-inventory, #char-equipment {
+#char-inventory {
     /* The parent overlay has a fixed height, this allows the grid to fill it */
     height: 100%;
+}
+#char-equipment {
+    height: 700px; /* Give the equipment tab a fixed, larger height to fit the ASCII art */
 }
 .inventory-grid {
     display: grid;
@@ -3046,7 +3049,7 @@ function buildEquipmentTab() {
     // Container for the slot columns
     const slotContainer = document.createElement('div');
     slotContainer.style.display = 'flex';
-    slotContainer.style.justifyContent = 'space-around';
+    slotContainer.style.justifyContent = 'space-between';
     slotContainer.style.width = '100%';
     slotContainer.style.height = '100%';
     slotContainer.style.gap = '1rem';
@@ -3057,23 +3060,26 @@ function buildEquipmentTab() {
     leftCol.style.flexShrink = '0';
     leftCol.style.display = 'flex';
     leftCol.style.flexDirection = 'column';
-    leftCol.style.justifyContent = 'space-between';
+    leftCol.style.justifyContent = 'flex-start';
     leftCol.style.overflowY = 'auto';
+    leftCol.style.gap = '0.5rem'; // Add gap between widgets
 
     const leftCol2 = document.createElement('div');
     leftCol2.style.flexBasis = '12rem';
     leftCol2.style.flexShrink = '0';
     leftCol2.style.display = 'flex';
     leftCol2.style.flexDirection = 'column';
-    leftCol2.style.justifyContent = 'space-between'; // Center the single 'back' item
+    leftCol2.style.justifyContent = 'flex-start';
     leftCol2.style.overflowY = 'auto';
+    leftCol2.style.gap = '0.5rem'; // Add gap between widgets
 
     const rightCol = document.createElement('div');
     rightCol.style.flexBasis = '12rem';
     rightCol.style.flexShrink = '0';
     rightCol.style.display = 'flex';
     rightCol.style.flexDirection = 'column';
-    rightCol.style.justifyContent = 'space-between';
+    rightCol.style.justifyContent = 'flex-start';
+    rightCol.style.gap = '0.5rem'; // Add gap between widgets
     rightCol.style.overflowY = 'auto';
 
     // --- Create and Place Slot Widgets ---
@@ -3087,7 +3093,7 @@ function buildEquipmentTab() {
         const nameDiv = document.createElement('div');
         nameDiv.style.fontWeight = 'bold';
         nameDiv.style.color = '#00ff00';
-        nameDiv.style.marginBottom = '0.3rem';
+        nameDiv.style.marginBottom = '0.1rem';
         nameDiv.textContent = slot.name;
         widget.appendChild(nameDiv);
 
@@ -3103,7 +3109,7 @@ function buildEquipmentTab() {
             button.style.cursor = 'pointer';
             button.style.width = '100%';
             button.style.textAlign = 'left';
-            button.style.marginBottom = '0.1rem';
+            button.style.marginBottom = '0.05rem';
             button.style.whiteSpace = 'nowrap';
             button.style.overflow = 'hidden';
             button.style.textOverflow = 'ellipsis';
@@ -3174,9 +3180,15 @@ function buildEquipmentTab() {
     rightCol.appendChild(createSlotWidget('feet'));
 
 
-    // Append columns to slot container, and containers to the main div
-    slotContainer.appendChild(leftCol);
-    slotContainer.appendChild(leftCol2);
+    // Create a wrapper for the left columns to group them
+    const leftGroup = document.createElement('div');
+    leftGroup.style.display = 'flex';
+    leftGroup.style.gap = '1rem';
+    leftGroup.appendChild(leftCol);
+    leftGroup.appendChild(leftCol2);
+
+    // Append the left group and the right column to the main slot container
+    slotContainer.appendChild(leftGroup);
     slotContainer.appendChild(rightCol);
     container.appendChild(slotContainer);
     equipmentDiv.appendChild(container);
