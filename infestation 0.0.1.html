@@ -383,7 +383,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   width: 11vw;
   height: auto;
   min-height: 0;
-  max-height: none;
+  max-height: 25rem;
   min-width: 9.375rem;
   font-size: 0.8rem;
   /* top and left are now set by JS */
@@ -549,11 +549,137 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 }
 
 /* -------------------------------------------------------------
+   CHARACTER CREATION SCREEN
+------------------------------------------------------------- */
+#creationScreen {
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg,#110011,#001122);
+}
+
+.creation-container {
+  width: 80vw;
+  height: 80vh;
+  background: #1a1a2d;
+  border: 1px solid #00ff00;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.creation-header {
+  text-align: center;
+  color: #00ff00;
+  border-bottom: 1px solid #444;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.creation-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  flex-grow: 1;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.creation-column {
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.creation-column:not(:last-child) {
+    border-right: 1px solid #444;
+}
+
+.creation-main > .creation-column:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.creation-footer {
+    text-align: center;
+    border-top: 1px solid #444;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.option-group {
+  margin-bottom: 1.5rem;
+}
+.option-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #00ff00;
+}
+.option-group input[type="text"],
+.option-group input[type="range"] {
+  width: 100%;
+}
+
+.color-swatch-container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.color-swatch {
+  width: 30px;
+  height: 30px;
+  border: 2px solid #555;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.color-swatch.selected {
+  border-color: #00ff00;
+  box-shadow: 0 0 5px #00ff00;
+}
+
+/* -------------------------------------------------------------
    RESPONSIVE ADJUSTMENTS (optional)
 ------------------------------------------------------------- */
 @media (max-width:37.5rem){
   #sidebar{width:100%;height:auto;}
   #gameScreen{flex-direction:column;}
+}
+</style>
+<style>
+/* Additional styles for Hex Color Picker */
+.hex-picker-container {
+    margin-top: 0.5rem;
+    max-width: 160px; /* Accommodates up to 7 20px-hexagons + padding */
+}
+
+.hex-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: -5px; /* Overlap hexagons slightly */
+}
+
+.hex-row:nth-child(even) {
+    margin-left: 10px; /* Half the width of a hexagon to offset */
+}
+
+.hex-swatch {
+    width: 20px;
+    height: 23.1px; /* width * sqrt(3) / 2 * 2 */
+    background-color: #888;
+    position: relative;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    cursor: pointer;
+    transition: transform 0.1s ease-out;
+}
+
+.hex-swatch:hover {
+    transform: scale(1.1);
+}
+
+.hex-swatch.selected {
+    transform: scale(1.25);
+    z-index: 10;
+    box-shadow: 0 0 8px #00ff00;
 }
 </style>
 </head>
@@ -586,6 +712,62 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
   <div class="overlayBody"></div>
 </div>
+
+<!-- ==================== CHARACTER CREATION SCREEN ==================== -->
+<section id="creationScreen" class="screen">
+  <div class="creation-container">
+    <div class="creation-header">
+      <h2>Create Your Character</h2>
+    </div>
+    <div class="creation-main">
+      <!-- Column 1: Sliders & Colors -->
+      <div class="creation-column">
+        <!-- Height Slider -->
+        <div class="option-group">
+          <label for="heightSlider">Height: <span id="heightValue">170</span> cm</label>
+          <input type="range" id="heightSlider" min="150" max="200" value="170">
+        </div>
+        <!-- Hair Length Slider -->
+        <div class="option-group">
+          <label for="hairLengthSlider">Hair Length: <span id="hairLengthValue">10</span> cm</label>
+          <input type="range" id="hairLengthSlider" min="0" max="100" value="10">
+        </div>
+        <!-- Skin Color Picker -->
+        <div class="option-group">
+            <label>Skin Color:</label>
+            <div id="skin-color-picker" class="hex-picker-container"></div>
+        </div>
+        <!-- Hair Color Picker -->
+        <div class="option-group">
+            <label>Hair Color:</label>
+            <div id="hair-color-picker" class="hex-picker-container"></div>
+        </div>
+        <!-- Eye Color Picker -->
+        <div class="option-group">
+            <label>Eye Color:</label>
+            <div id="eye-color-picker" class="hex-picker-container"></div>
+        </div>
+      </div>
+
+      <!-- Column 2: Body Descriptors -->
+      <div class="creation-column">
+        <!-- Body Shape Descriptors -->
+        <div class="option-group">
+            <label>Body Shape:</label>
+            <div id="bodyShapeOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"></div>
+        </div>
+      </div>
+
+      <!-- Column 3: Preview -->
+      <div id="creation-preview" class="creation-column">
+        <!-- Character preview will be generated by JS here -->
+      </div>
+    </div>
+    <div class="creation-footer">
+        <button id="finalizeBtn" class="overlayBtn">Finalize Character</button>
+    </div>
+  </div>
+</section>
 
 <!-- ==================== MAIN GAME SCREEN ==================== -->
 <section id="gameScreen" class="screen">
@@ -930,6 +1112,7 @@ class BodyPart {
     constructor(id, name, adjectives = [], size = 'average') {
         this.id = id; // e.g., 'left_thigh'
         this.name = name; // e.g., 'Left Thigh'
+        this.descriptor = null; // e.g., 'small', 'large', 'toned'
         this.adjectives = adjectives; // e.g., ['strong', 'scarred']
         this.size = size;
         // Tattoos, piercings, etc. can be added here later
@@ -1006,6 +1189,7 @@ function createPlayerBody(sex = 'female') {
     addPairedParts('eye', 'Eye');
     addPairedParts('ear', 'Ear');
     addPart('nose', 'Nose');
+    addPart('lips', 'Lips');
     addPart('tongue', 'Tongue');
 
     // Torso
@@ -1017,7 +1201,7 @@ function createPlayerBody(sex = 'female') {
 
     // Groin & Butt
     addPart('groin', 'Groin');
-    addPart('butt', 'Buttocks');
+    // addPart('butt', 'Buttocks'); // Removed to prevent duplicate descriptor issues
     addPairedParts('ass_cheek', 'Ass Cheek');
     addPart('anus', 'Anus');
 
@@ -1041,7 +1225,6 @@ function createPlayerBody(sex = 'female') {
 
     return body;
 }
-
 
 /* ==============================================================
    GLOBAL STATE
@@ -1108,6 +1291,13 @@ const state = {
   /* -------------------- Character Physicality -------------------- */
   sex: 'female',
   playerBody: {}, // Will be populated by factory
+  appearance: {
+      hairLength: 10, // Default value, maybe cm
+      height: 170, // Default value, cm
+      skinColor: { name: 'Pale', hex: '#F0D4C2' },
+      hairColor: { name: 'Brown', hex: '#5C4033' },
+      eyeColor: { name: 'Brown', hex: '#5C4033' }
+  },
   equipment: {
     head: new EquipmentSlot('head', 'Head'),
     neck: new EquipmentSlot('neck', 'Neck'),
@@ -1534,6 +1724,62 @@ const clothingTemplates = {
   // Bags
   back_backpack: { id: 'back_backpack', name: 'Backpack', slot: 'back', layer: null, covers: [], tags: ['bag'], allowedTags: ['casual', 'athletic', 'cool', 'cotton', 'denim', 'leather'] },
   handheld_handbag: { id: 'handheld_handbag', name: 'Handbag', slot: 'hand-held', layer: null, covers: [], tags: ['bag'], allowedTags: ['casual', 'formal', 'sexy', 'leather', 'satin', 'vinyl'] },
+};
+
+/* ==============================================================
+   BODY PART DESCRIPTORS
+   ============================================================== */
+const bodyPartDescriptors = {
+  // Female Descriptors
+  breasts: ['small', 'pert', 'ample', 'large', 'heavy', 'pendulous'],
+  nipples: ['tiny', 'puffy', 'inverted', 'protruding', 'sensitive'],
+  vagina: ['tight', 'loose', 'pristine', 'swollen'],
+  // Male Descriptors
+  penis: ['small', 'average', 'large', 'thick', 'veiny'],
+  // Universal Descriptors
+  face: ['angular', 'soft', 'youthful', 'stern', 'scarred', 'plain'],
+  eyes: ['bright', 'dull', 'narrow', 'wide-set', 'hooded'],
+  lips: ['thin', 'full', 'pouty', 'plump'],
+  arms: ['slender', 'toned', 'strong', 'lanky', 'muscular'],
+  hands: ['delicate', 'strong', 'long-fingered', 'calloused'],
+  belly: ['flat', 'toned', 'soft', 'pudgy', 'defined'],
+  buttocks: ['flat', 'toned', 'ample', 'large', 'bouncy', 'heart-shaped'],
+  thighs: ['slender', 'toned', 'thick', 'strong', 'muscular'],
+  calves: ['slender', 'toned', 'strong', 'muscular'],
+  feet: ['small', 'large', 'dainty', 'arched'],
+};
+
+// Define which descriptors are gender-specific to allow for filtering
+const femaleOnlyDescriptors = ['breasts', 'nipples', 'vagina'];
+const maleOnlyDescriptors = ['penis'];
+
+const colorPalettes = {
+    skin: {
+        "Pale": ["#F2E5D9", "#F0D4C2", "#E8BEAC"],
+        "Tan": ["#C68642", "#B87333", "#A48B70"],
+        "Brown": ["#8D5524", "#6D4C41", "#5D4037"],
+        "Dark": ["#4E342E", "#3B2F2F", "#2C170E"]
+    },
+    hair: {
+        "Black": ["#0a0a0a", "#1b1b1b", "#2c2c2c", "#333333"],
+        "Gray": ["#5d5d5d", "#8c8c8c", "#a9a9a9", "#c0c0c0", "#dddddd", "#ffffff"],
+        "Brown": ["#3b2f2f", "#4e342e", "#5d4037", "#6d4c41", "#795548", "#8d6e63", "#a1887f", "#bcaaa4"],
+        "Blonde": ["#c5b7a5", "#d4ac6e", "#e6c384", "#e6be8a", "#f0e68c", "#fffacd"],
+        "Red": ["#610b0b", "#800000", "#a52a2a", "#b76e79", "#b87333", "#b06500", "#dc143c", "#ff4500"],
+        "Blue": ["#000080", "#00008b", "#4169e1", "#4682b4", "#87ceeb", "#add8e6"],
+        "Green": ["#008080", "#009b77", "#228b22", "#2e8b57", "#32cd32", "#808000"],
+        "Purple": ["#4b0082", "#800080", "#8a2be2", "#9932cc", "#e6e6fa"],
+        "Pink": ["#ff00ff", "#ff69b4", "#ff7f50", "#ffb6c1"],
+        "Colorful": ["#ff0000", "#ffd700", "#00ffff", "#40e0d0"]
+    },
+    eyes: {
+        "Brown": ["#3b2f2f", "#5d4037", "#6d4c41", "#8d6e63", "#a1887f", "#bcaaa4", "#c5a563"],
+        "Amber": ["#ffbf00", "#d4ac6e", "#adac4e"],
+        "Blue": ["#000080", "#00008b", "#4169e1", "#4682b4", "#6c7b8b", "#87ceeb", "#93a2b3", "#add8e6"],
+        "Green": ["#009b77", "#00a86b", "#228b22", "#2e8b57", "#32cd32", "#726d41", "#808000", "#8f9779"],
+        "Gray": ["#5d5d5d", "#8c8c8c", "#c0c0c0"],
+        "Exotic": ["#8a2be2", "#800080", "#ff0000", "#ffc0cb", "#0d98ba"]
+    }
 };
 
 /* ==============================================================
@@ -1988,6 +2234,7 @@ function finishBirthing() {
 /* ==============================================================
    UTILS
    ============================================================== */
+
 function fmtHM(d){ return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false}); }
 function fmtDate(d) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -3225,68 +3472,13 @@ function updateCharStatusTab() {
     const statusDiv = document.getElementById('char-status');
     if (!statusDiv) return;
 
-    // General mood/feeling text
-    let moodText = "Maya is feeling ";
-    const tirednessPct = getFillPct('tiredness');
-    if (tirednessPct <= 20) moodText += "exhausted";
-    else if (tirednessPct <= 50) moodText += "tired";
-    else moodText += "well-rested";
-
-    const stressPct = getFillPct('stress');
-    if (stressPct > 80) moodText += " and is panicking.";
-    else if (stressPct > 50) moodText += " and feels very stressed.";
-    else moodText += ".";
-
-    let pregnancyText = '';
-    if (state.pregnancy.isPregnant) {
-        const days = state.pregnancy.days;
-        if (state.pregnancy.type === 'human') {
-            pregnancyText += `<br><br>She is ${days} day(s) into her pregnancy.`;
-            if (days >= 45) {
-                pregnancyText += "<br>Her belly is pronounced and round, clearly pregnant.";
-            } else if (days >= 30) {
-                pregnancyText += "<br>Her belly is softly rounded, showing the first clear signs of pregnancy.";
-            } else if (days >= 15) {
-                pregnancyText += "<br>There's a slight, almost unnoticeable swell to her belly.";
-            } else {
-                pregnancyText += "<br>Her belly is still flat.";
-            }
-        }
-    }
-
-    // New Parasite Status Text
-    let parasiteText = '';
-    const eggCount = state.parasite.eggs.length;
-    const wormCount = state.parasite.worms.length;
-
-    if (eggCount > 0) {
-        if (eggCount >= 10) {
-            parasiteText += "Her belly is unnaturally distended and bloated with eggs.";
-        } else if (eggCount >= 5) {
-            parasiteText += "Her belly is swollen and firm to the touch, bloated with eggs.";
-        } else {
-            parasiteText += "Her abdomen feels strangely tight, bloated with eggs.";
-        }
-    }
-
-    if (wormCount > 0) {
-        if (eggCount > 0) {
-            parasiteText += " "; // Add a space if there's already egg text.
-        }
-        if (wormCount >= 10) {
-            parasiteText += "Her abdomen is visibly writhing from the sheer mass of worms inside.";
-        } else if (wormCount >= 5) {
-            parasiteText += "The constant, sickening writhing in her womb is nauseating.";
-        } else {
-            parasiteText += "A disgusting squirming from within reminds her of the alien worms growing inside.";
-        }
-    }
-
-    if (parasiteText) {
-        pregnancyText += `<br><br>${parasiteText}`;
-    }
+    let html = '<h4>Appearance</h4>';
+    html += generateCharacterDescription(state.appearance, state.playerBody);
     
-    statusDiv.innerHTML = moodText + pregnancyText;
+    // We can add other status info (mood, health, etc.) here later if needed
+    // For now, the appearance description is the main content.
+
+    statusDiv.innerHTML = html;
 }
 
 function updateCharSkillsTab() {
@@ -4289,6 +4481,11 @@ function buildDebugCheatTab() {
     html += createSection('Menstrual Cycle', state.menstrualCycle);
     html += createSection('Human Pregnancy', state.pregnancy); // Renamed for clarity
     html += createSection('Parasite', state.parasite);
+    html += `
+        <div style="text-align: center; padding: 1rem; border-top: 1px solid #444; margin-top: 1rem;">
+            <!-- Removed testGenerateNpc button as it was out of scope -->
+        </div>
+    `;
     html += '</div>';
 
     debugTab.innerHTML = html;
@@ -4488,75 +4685,385 @@ function toggleCorruptionDisplay(cb){
 /* --------------------------------------------------------------
    INITIALISATION
    -------------------------------------------------------------- */
+function getHairLengthLabel(length) {
+    if (length == 0) return 'shaved head';
+    if (length <= 2) return 'buzzed hair';
+    if (length <= 15) return 'short';
+    if (length <= 30) return 'chin-length';
+    if (length <= 45) return 'shoulder-length';
+    if (length <= 60) return 'chest-length';
+    if (length <= 80) return 'waist-length';
+    return 'thigh-length';
+}
+
+const bodyPartDisplayOrder = [
+    'face', 'eyes', 'lips', 'neck', 'breasts', 'nipples', 'arms', 'hands', 'belly', 'buttocks', 'vagina', 'thighs', 'calves', 'feet'
+];
+
+const descriptorGroupMap = {
+    'face': { display: 'face' }, 'eye': { display: 'eyes' }, 'lips': { display: 'lips' },
+    'neck': { display: 'neck' }, 'breast': { display: 'breasts' }, 'nipple': { display: 'nipples' },
+    'arm': { display: 'arms' }, 'hand': { display: 'hands' }, 'belly': { display: 'belly' },
+    'ass_cheek': { display: 'buttocks' }, 'vagina': { display: 'vagina' },
+    'thigh': { display: 'thighs' }, 'calf': { display: 'calves' }, 'foot': { display: 'feet' }
+};
+
+function generateCharacterDescription(appearance, body) {
+    const name = "Maya";
+    const age = 18;
+
+    // Helper to get a descriptor for a given group from the provided body object.
+    const getDescriptor = (group, bodyObject) => {
+        for (const partId in bodyObject) {
+            const partInfo = bodyObject[partId];
+            if (partInfo && partInfo.descriptor) {
+                const basePartName = partId.replace(/left_|right_/, '');
+                const groupInfo = descriptorGroupMap[basePartName];
+                if (groupInfo && groupInfo.display === group) {
+                    return partInfo.descriptor;
+                }
+            }
+        }
+        return ''; // Return empty string if no descriptor is found
+    };
+
+    // --- Build Paragraph 1 ---
+    const hairStr = `<span style="color: ${appearance.hairColor.hex}; font-weight: bold;">${getHairLengthLabel(appearance.hairLength)} ${appearance.hairColor.name.toLowerCase()} hair</span>`;
+    let para1 = `<p><strong>${name}</strong> is an ${age}-year-old woman, standing ${appearance.height} cm tall. She has ${hairStr} and ${appearance.skinColor.name.toLowerCase()} skin.</p>`;
+
+    // --- Build Paragraph 2 ---
+    const eyeDescriptor = getDescriptor('eyes', body);
+    const eyesStr = `<span style="color: ${appearance.eyeColor.hex}; font-weight: bold;">${eyeDescriptor} eyes</span>`;
+    
+    // Sentence parts - fetch all descriptors first
+    const faceDesc = getDescriptor('face', body);
+    const lipsDesc = getDescriptor('lips', body);
+    const breastsDesc = getDescriptor('breasts', body);
+    const nipplesDesc = getDescriptor('nipples', body);
+    const bellyDesc = getDescriptor('belly', body);
+    const buttocksDesc = getDescriptor('buttocks', body);
+    const vaginaDesc = getDescriptor('vagina', body);
+    const armsDesc = getDescriptor('arms', body);
+    const handsDesc = getDescriptor('hands', body);
+    const thighsDesc = getDescriptor('thighs', body);
+    const calvesDesc = getDescriptor('calves', body);
+    const feetDesc = getDescriptor('feet', body);
+
+    // Assemble sentences, only including parts that have descriptors
+    const faceParts = [];
+    if (faceDesc) faceParts.push(`a ${faceDesc} face`);
+    if (eyeDescriptor) faceParts.push(`with ${eyesStr}`);
+    if (lipsDesc) faceParts.push(`and ${lipsDesc} lips`);
+    
+    const bodyParts = [];
+    if (breastsDesc) bodyParts.push(`${breastsDesc} breasts`);
+    if (nipplesDesc) bodyParts.push(`with ${nipplesDesc} nipples`);
+    if (bellyDesc) bodyParts.push(`a ${bellyDesc} belly`);
+    if (buttocksDesc) bodyParts.push(`${buttocksDesc} buttocks`);
+    if (vaginaDesc) bodyParts.push(`and a ${vaginaDesc} vagina`);
+
+    const limbsParts = [];
+    if (armsDesc) limbsParts.push(`She has ${armsDesc} arms`);
+    if (handsDesc) limbsParts.push(`with ${handsDesc} hands`);
+    if (thighsDesc) limbsParts.push(`her thighs are ${thighsDesc}`);
+    if (calvesDesc) limbsParts.push(`with ${calvesDesc} calves`);
+    if (feetDesc) limbsParts.push(`and ${feetDesc} feet`);
+
+    let para2 = `<p>She has ${faceParts.join(' ')}.`;
+    if (bodyParts.length > 0) para2 += ` Her body has ${bodyParts.join(', ').replace(/, and/g, ' and')}.`;
+    if (limbsParts.length > 0) para2 += ` ${limbsParts.join(', ').replace(/, her/g, ' her').replace(/, with/g, ' with').replace(/, and/g, ' and')}.`;
+    para2 += `</p>`;
+
+    return para1 + para2;
+}
+
+function applyBodyDescriptorsFromUI(bodyObject) {
+    const descriptorSelects = document.querySelectorAll('#bodyShapeOptions select');
+    descriptorSelects.forEach(select => {
+        const group = select.dataset.partGroup;
+        const descriptor = select.value;
+        
+        for (const partId in bodyObject) {
+            const basePartName = partId.replace(/left_|right_/, '');
+            const groupInfo = descriptorGroupMap[basePartName];
+            if (groupInfo && groupInfo.display === group) {
+                bodyObject[partId].descriptor = descriptor;
+            }
+        }
+    });
+}
+
+function updateCreationPreview() {
+    const previewContainer = document.getElementById('creation-preview');
+    if (!previewContainer) return;
+
+    // Build a temporary appearance object from the current UI values for the preview
+    const tempAppearance = {
+        height: parseInt(document.getElementById('heightSlider').value, 10),
+        hairLength: parseInt(document.getElementById('hairLengthSlider').value, 10),
+        skinColor: { name: document.querySelector('#skin-color-picker .hex-swatch.selected')?.dataset.colorName || state.appearance.skinColor.name },
+        hairColor: state.appearance.hairColor, // This is updated directly from the picker
+        eyeColor: state.appearance.eyeColor,   // This is updated directly from the picker
+    };
+
+    // Build a temporary body object for the preview and apply descriptors
+    const tempBody = createPlayerBody(state.sex);
+    applyBodyDescriptorsFromUI(tempBody);
+
+    previewContainer.innerHTML = `<h4>Preview</h4>` + generateCharacterDescription(tempAppearance, tempBody);
+}
+
+function populateHexPicker(containerId, paletteName, targetProperty) {
+    const palette = colorPalettes[paletteName];
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = ''; // Clear previous content
+
+    // 1. Flatten the data structure and sort by hex value for a gradient effect
+    const allColors = [];
+    for (const label in palette) {
+        palette[label].forEach(hex => {
+            allColors.push({ name: label, hex: hex });
+        });
+    }
+    allColors.sort((a, b) => parseInt(a.hex.slice(1), 16) - parseInt(b.hex.slice(1), 16));
+
+    // 2. Create the specific honeycomb shape based on user request
+    const shape = [4, 5, 6, 7, 6, 5, 4];
+    let colorIndex = 0;
+
+    shape.forEach(itemsThisRow => {
+        if (colorIndex >= allColors.length) return;
+
+        const row = document.createElement('div');
+        row.className = 'hex-row';
+        
+        for (let i = 0; i < itemsThisRow && colorIndex < allColors.length; i++) {
+            const color = allColors[colorIndex];
+            
+            const swatch = document.createElement('div');
+            swatch.className = 'hex-swatch';
+            swatch.style.backgroundColor = color.hex;
+            swatch.dataset.colorName = color.name;
+            swatch.dataset.colorHex = color.hex;
+            swatch.title = `${color.name} (${color.hex})`;
+
+            swatch.onclick = () => {
+                container.querySelectorAll('.hex-swatch').forEach(s => s.classList.remove('selected'));
+                swatch.classList.add('selected');
+                state.appearance[targetProperty] = { name: color.name, hex: color.hex };
+                updateCreationPreview();
+            };
+
+            row.appendChild(swatch);
+            colorIndex++;
+        }
+        
+        container.appendChild(row);
+    });
+
+    // 3. Set the default selection
+    const currentHex = state.appearance[targetProperty].hex;
+    const defaultSwatch = Array.from(container.querySelectorAll('.hex-swatch')).find(s => s.dataset.colorHex === currentHex);
+    if (defaultSwatch) {
+        defaultSwatch.classList.add('selected');
+    } else if (container.querySelector('.hex-swatch')) {
+        // Fallback to selecting the first swatch if default isn't found
+        const firstSwatch = container.querySelector('.hex-swatch');
+        firstSwatch.classList.add('selected');
+        // Also update the state to match the fallback selection
+        state.appearance[targetProperty] = { 
+            name: firstSwatch.dataset.colorName, 
+            hex: firstSwatch.dataset.colorHex 
+        };
+        updateCreationPreview();
+    }
+}
+
+function initCreationScreen() {
+    // Populate Skin Color Swatches
+    populateHexPicker('skin-color-picker', 'skin', 'skinColor');
+
+    // Set initial values and add listeners for sliders
+    const heightSlider = document.getElementById('heightSlider');
+    const heightValue = document.getElementById('heightValue');
+    heightSlider.value = state.appearance.height;
+    heightValue.textContent = state.appearance.height;
+    heightSlider.oninput = (e) => {
+        heightValue.textContent = e.target.value;
+        updateCreationPreview();
+    };
+
+    const hairLengthSlider = document.getElementById('hairLengthSlider');
+    const hairLengthValue = document.getElementById('hairLengthValue');
+    hairLengthSlider.value = state.appearance.hairLength;
+    hairLengthValue.textContent = state.appearance.hairLength;
+    hairLengthSlider.oninput = (e) => {
+        hairLengthValue.textContent = e.target.value;
+        updateCreationPreview();
+    };
+
+    // Set initial name - field removed, name is fixed.
+    // const nameInput = document.getElementById('charNameInput');
+    // nameInput.value = "Maya";
+    // nameInput.oninput = updateCreationPreview;
+
+    // Populate the new hexagonal color pickers
+    populateHexPicker('hair-color-picker', 'hair', 'hairColor');
+    populateHexPicker('eye-color-picker', 'eyes', 'eyeColor');
+
+    // Initial call to populate the preview pane
+    updateCreationPreview();
+
+    // Set initial color previews - REMOVED as the picker is now inline
+    // document.getElementById('hairColorPreview').style.backgroundColor = state.appearance.hairColor.hex;
+    // document.getElementById('eyeColorPreview').style.backgroundColor = state.appearance.eyeColor.hex;
+
+    // Populate Body Shape Descriptor Dropdowns
+    const bodyShapeContainer = document.getElementById('bodyShapeOptions');
+    bodyShapeContainer.innerHTML = '';
+    for (const groupName in bodyPartDescriptors) {
+        // Filter out descriptors based on character's sex
+        const isFemaleOnly = femaleOnlyDescriptors.includes(groupName);
+        const isMaleOnly = maleOnlyDescriptors.includes(groupName);
+
+        if (state.sex === 'female' && isMaleOnly) continue;
+        if (state.sex === 'male' && isFemaleOnly) continue;
+
+        const descriptors = bodyPartDescriptors[groupName];
+        
+        const controlWrapper = document.createElement('div');
+        
+        const label = document.createElement('label');
+        label.textContent = groupName.charAt(0).toUpperCase() + groupName.slice(1);
+        label.style.display = 'block';
+        label.style.marginBottom = '0.25rem';
+        
+        const select = document.createElement('select');
+        select.dataset.partGroup = groupName;
+        select.style.width = '100%';
+        select.onchange = updateCreationPreview;
+
+        descriptors.forEach(desc => {
+            const option = document.createElement('option');
+            option.value = desc;
+            option.textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
+            select.appendChild(option);
+        });
+        
+        controlWrapper.appendChild(label);
+        controlWrapper.appendChild(select);
+        bodyShapeContainer.appendChild(controlWrapper);
+    }
+
+    // Initial call to populate the preview pane
+    updateCreationPreview();
+}
+
+function startGame() {
+    // Set story flag to protect intro
+    state.storyEventActive = true;
+
+    // Initialise physical body - THIS IS NOW DONE IN THE FINALIZE BUTTON
+    // state.playerBody = createPlayerBody(state.sex);
+    initMenstrualCycle();
+
+    // Switch to the main game screen
+    switchScreen('gameScreen');
+
+    // Initialise dynamic values
+    state.money = 0.00;
+    updateHeader();          // date | time | money row
+    updateNeedsUI();         // draw need bars (all green at start)
+
+    // Build UI pieces that depend on JS
+    initBottomButtons();    // hook up the bottom‑button bar
+    initCalendar();         // hook up the calendar overlay
+    buildCheatOverlay();    // populate the Cheats overlay
+    applySettings();        // apply default/loaded settings
+    applyCheatsUI();        // apply default/loaded cheat settings
+
+    // Create and equip starting gear
+    const startingGear = [
+        'upper_bra', 'lower_panties', 'upper_tshirt', 'lower_jeans', 'feet_sneakers'
+    ];
+    
+    state.inventory = startingGear.map(templateId => {
+        const template = clothingTemplates[templateId];
+        return new ClothingItem({
+            ...template,
+            templateId: template.id, // Keep track of the original template
+            name: `Plain ${template.name}`, // Prepend "Plain" to the name
+            id: `${template.id}_${Date.now()}_${Math.random()}` // Ensure unique ID
+        });
+    });
+
+    // Equip the default outfit by finding the unique ID of each item in the inventory
+    const bra = state.inventory.find(i => i.name === 'Plain Bra');
+    if (bra) equipItem(bra.id, 'skin');
+
+    const panties = state.inventory.find(i => i.name === 'Plain Panties');
+    if (panties) equipItem(panties.id, 'skin');
+
+    const tshirt = state.inventory.find(i => i.name === 'Plain T-shirt');
+    if (tshirt) equipItem(tshirt.id, 'middle');
+
+    const jeans = state.inventory.find(i => i.name === 'Plain Jeans');
+    if (jeans) equipItem(jeans.id, 'middle');
+
+    const sneakers = state.inventory.find(i => i.name === 'Plain Sneakers');
+    if (sneakers) equipItem(sneakers.id, 'outer');
+    
+    updateCharDesc();
+
+    // Show the first intro event
+    showCurrentEvent();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     processClothingRules(); // Process all template rules once on load
 
     const startBtn = document.getElementById('startBtn');
     if (startBtn) {
         startBtn.addEventListener('click', () => {
-            // Set story flag to protect intro
-            state.storyEventActive = true;
-
-            // Initialise physical body
-            state.playerBody = createPlayerBody(state.sex);
-            initMenstrualCycle();
-
-            // Switch to the main game screen
-            switchScreen('gameScreen');
-
-            // Initialise dynamic values
-            state.money = 0.00;
-            updateHeader();          // date | time | money row
-            updateNeedsUI();         // draw need bars (all green at start)
-
-            // Build UI pieces that depend on JS
-            initBottomButtons();    // hook up the bottom‑button bar
-            initCalendar();         // hook up the calendar overlay
-            buildCheatOverlay();    // populate the Cheats overlay
-            applySettings();        // apply default/loaded settings
-            applyCheatsUI();        // apply default/loaded cheat settings
-
-            // Create and equip starting gear
-            const startingGear = [
-                'upper_bra', 'lower_panties', 'upper_tshirt', 'lower_jeans', 'feet_sneakers'
-            ];
-            
-            state.inventory = startingGear.map(templateId => {
-                const template = clothingTemplates[templateId];
-                return new ClothingItem({
-                    ...template,
-                    templateId: template.id, // Keep track of the original template
-                    name: `Plain ${template.name}`, // Prepend "Plain" to the name
-                    id: `${template.id}_${Date.now()}_${Math.random()}` // Ensure unique ID
-                });
-            });
-
-            // Equip the default outfit by finding the unique ID of each item in the inventory
-            const bra = state.inventory.find(i => i.name === 'Plain Bra');
-            if (bra) equipItem(bra.id, 'skin');
-
-            const panties = state.inventory.find(i => i.name === 'Plain Panties');
-            if (panties) equipItem(panties.id, 'skin');
-
-            const tshirt = state.inventory.find(i => i.name === 'Plain T-shirt');
-            if (tshirt) equipItem(tshirt.id, 'middle');
-
-            const jeans = state.inventory.find(i => i.name === 'Plain Jeans');
-            if (jeans) equipItem(jeans.id, 'middle');
-
-            const sneakers = state.inventory.find(i => i.name === 'Plain Sneakers');
-            if (sneakers) equipItem(sneakers.id, 'outer');
-            
-            updateCharDesc();
-
-            // Show the first intro event
-            showCurrentEvent();
+            initCreationScreen();
+            switchScreen('creationScreen');
         });
     }
 
     const loadBtn = document.getElementById('loadBtn');
     if (loadBtn) {
         loadBtn.addEventListener('click', () => openOverlay('loadBtn'));
+    }
+
+    const finalizeBtn = document.getElementById('finalizeBtn');
+    if(finalizeBtn) {
+        finalizeBtn.addEventListener('click', () => {
+            // --- Step 1: Gather all UI data and update appearance state ---
+            const heightSlider = document.getElementById('heightSlider');
+            const hairLengthSlider = document.getElementById('hairLengthSlider');
+            const selectedSkinSwatch = document.querySelector('#skin-color-picker .hex-swatch.selected');
+
+            state.appearance.height = parseInt(heightSlider.value, 10);
+            state.appearance.hairLength = parseInt(hairLengthSlider.value, 10);
+            if (selectedSkinSwatch) {
+                state.appearance.skinColor = {
+                    name: selectedSkinSwatch.dataset.colorName,
+                    hex: selectedSkinSwatch.dataset.colorHex
+                };
+            }
+            // Note: Name and hair/eye color are already handled by their own event listeners or are set in state directly.
+
+            // --- Step 2: Create the base player body object ---
+            state.playerBody = createPlayerBody(state.sex);
+
+            // --- Step 3: Apply the body descriptors to the newly created body ---
+            applyBodyDescriptorsFromUI(state.playerBody);
+            
+            // --- Step 4: Start the game with the fully customized state ---
+            startGame();
+        });
     }
 
     // Global Escape key handler
