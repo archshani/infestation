@@ -289,12 +289,15 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   background:#222;
   border:0.125rem solid #00ff00;
   padding:1rem;
-  width:65vw;
-  max-width: 75rem;
-  max-height: 90vh;
+  width: 60rem;
+  min-width: 900px;
+  max-width: 1350px;
+  min-height: 800px;
+  max-height: 850px;
   z-index:1000;
   display:none;
   flex-direction:column;
+  overflow: hidden;
 }
 .overlayHeader{
   font-weight:bold;
@@ -313,9 +316,54 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   flex-grow: 1;
   min-height: 0;
   word-wrap: break-word; /* Prevent horizontal overflow from long words */
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+#char-tab-content-wrapper, .cheat-panels-container, #journal-content-wrapper {
+    flex-grow: 1;
+    min-height: 0; /* Crucial for enabling scrolling in a flex child */
+}
+
+#char-buttons, .cheat-tabs-container {
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.8rem;
+    margin-bottom: 0.8rem;
+}
+
+/* CHEAT OVERLAY SPECIFIC STYLES - NEW STRATEGY */
+.cheatsOverlay .overlayBody {
+  display: flex;
+  flex-direction: column;
+  height: 43vw; /* Ensure it fills the parent's height */
+  max-height: 795px;
+}
+
+.cheat-tabs-container {
+  flex-shrink: 0; /* Prevent tabs from shrinking */
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cheat-panels-container {
+  position: relative; /* For positioning panels inside */
+}
+
+.cheat-tab-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.skills-column-container {
+  column-count: 2;
+  column-gap: 1rem;
 }
 
 .tooltip-overlay {
@@ -418,7 +466,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 }
 
 /* ----- Inventory Tab Styles ----- */
-#char-inventory {
+#char-inventory, #char-equipment {
     /* The parent overlay has a fixed height, this allows the grid to fill it */
     height: 100%;
 }
@@ -1128,7 +1176,8 @@ const state = {
   },
 
   ui: {
-    lastCharTab: 'status'
+    lastCharTab: 'status',
+    lastCheatTab: 'general'
   },
 
   /* -------------------- Game Location ------------------ */
@@ -1528,11 +1577,10 @@ function processClothingRules() {
 
 function updateCharDesc() {
     const descEl = document.getElementById('charDesc');
-    const coverageMap = getCoverageInfo();
+    const coverageMap = getCoverageInfo(); // This is the key
     const purple = 'purple';
     const red = '#ff4d4d';
 
-    // Helper to format item names based on tags and context
     const formatItemName = (item, isOuter) => {
         if (!item) return '';
         if (isOuter && item.tags.includes('underwear')) {
@@ -1547,37 +1595,44 @@ function updateCharDesc() {
     const upperVisible = upperSlot.outer || upperSlot.middle || upperSlot.skin;
     const lowerVisible = lowerSlot.outer || lowerSlot.middle || lowerSlot.skin;
 
-    // Handle completely naked case first
-    if (!upperVisible && !lowerVisible) {
-        descEl.innerHTML = `<span style="color: ${red};">You are completely naked!</span>`;
-        return;
-    }
-
-    // New logic based on user feedback
+    // --- Part 1: Determine what is being worn visibly ---
     const clothingParts = [];
-    const exposureParts = [];
-
     if (upperVisible) {
         clothingParts.push(formatItemName(upperVisible, true));
-    } else {
-        exposureParts.push(`<span style="color: ${red};">your breasts are exposed!</span>`);
+    }
+    // Only add the lower item to the description if it's not covered by the upper item.
+    const upperCoversGroin = upperVisible && upperVisible.covers.includes('groin');
+    if (!upperCoversGroin && lowerVisible) {
+        clothingParts.push(formatItemName(lowerVisible, true));
     }
 
-    if (lowerVisible) {
-        clothingParts.push(formatItemName(lowerVisible, true));
-    } else {
+    // --- Part 2: Determine what parts are exposed ---
+    const exposureParts = [];
+    // Use the coverage map for accurate exposure checks
+    if (!coverageMap.has('left_breast')) { // Check one breast as a proxy for both
+        exposureParts.push(`<span style="color: ${red};">your breasts are exposed!</span>`);
+    }
+    if (!coverageMap.has('vagina')) {
         exposureParts.push(`<span style="color: ${red};">your vagina is exposed!</span>`);
+    }
+
+    // --- Part 3: Construct the final description ---
+
+    // Handle completely naked case
+    if (clothingParts.length === 0 && exposureParts.length > 0) {
+        descEl.innerHTML = `<span style="color: ${red};">You are completely naked!</span>`;
+        return;
     }
 
     const allParts = clothingParts.concat(exposureParts);
     let finalDesc = `You are wearing ${allParts.join(' and ')}`;
 
-    // Revised "underneath" logic
+    // "underneath" logic
     const upperUnder = upperSlot.skin && upperSlot.skin.tags.includes('underwear') ? upperSlot.skin : null;
     const lowerUnder = lowerSlot.skin && lowerSlot.skin.tags.includes('underwear') ? lowerSlot.skin : null;
-    const underParts = [upperUnder, lowerUnder].filter(Boolean);
+    // Use a Set to avoid duplicates if a single item is both upper and lower underwear (e.g. bodysuit)
+    const underParts = [...new Set([upperUnder, lowerUnder].filter(Boolean))];
 
-    // Outerwear is anything visible that is NOT underwear.
     const hasOuterwear = (upperVisible && !upperVisible.tags.includes('underwear')) || (lowerVisible && !lowerVisible.tags.includes('underwear'));
 
     if (hasOuterwear) {
@@ -2135,21 +2190,23 @@ function buildJournalOverlay() {
     remindersHtml += '</ul>';
 
     body.innerHTML = `
-        <div>
-            <h4>Active Quests</h4>
-            ${activeQuestsHtml}
-        </div>
-        <div style="margin-top: 1rem;">
-            <h4>Completed Quests</h4>
-            ${completedQuestsHtml}
-        </div>
-        <div style="margin-top: 1rem;">
-            <h4>Reminders</h4>
-            ${remindersHtml}
-        </div>
-        <div style="margin-top: 1rem;">
-            <h4>Notes</h4>
-            <textarea id="journal-notepad" rows="20" style="width: 98%; background: #111; color: #eee; border: 0.0625rem solid #444;"></textarea>
+        <div id="journal-content-wrapper">
+            <div>
+                <h4>Active Quests</h4>
+                ${activeQuestsHtml}
+            </div>
+            <div style="margin-top: 1rem;">
+                <h4>Completed Quests</h4>
+                ${completedQuestsHtml}
+            </div>
+            <div style="margin-top: 1rem;">
+                <h4>Reminders</h4>
+                ${remindersHtml}
+            </div>
+            <div style="margin-top: 1rem; display: flex; flex-direction: column; flex-grow: 1;">
+                <h4>Notes</h4>
+                <textarea id="journal-notepad" style="width: 98%; background: #111; color: #eee; border: 0.0625rem solid #444; flex-grow: 1;"></textarea>
+            </div>
         </div>
     `;
 
@@ -2761,38 +2818,14 @@ function buildEquipmentTab() {
     const equipmentDiv = document.getElementById('char-equipment');
     equipmentDiv.innerHTML = ''; // Clear previous content
 
-    // Main container with 3-column layout
+    // Main container for positioning context
     const container = document.createElement('div');
-    container.style.display = 'flex';
-    container.style.justifyContent = 'space-between';
+    container.style.position = 'relative';
+    container.style.width = '100%';
     container.style.height = '100%';
-
-    // Define columns
-    const leftCol = document.createElement('div');
-    leftCol.style.flexBasis = '12rem';
-    leftCol.style.flexShrink = '0';
-    leftCol.style.display = 'flex';
-    leftCol.style.flexDirection = 'column';
-    leftCol.style.gap = '0.5rem';
-    leftCol.style.overflowY = 'auto';
-    leftCol.style.alignItems = 'flex-end'; // Align widgets to the right of the left column
-
-    const centerCol = document.createElement('div');
-    centerCol.style.flexGrow = '1';
-    centerCol.style.display = 'flex';
-    centerCol.style.justifyContent = 'center';
-    centerCol.style.alignItems = 'center';
-    centerCol.style.position = 'relative'; // Needed for positioning the overlay
-    centerCol.style.minWidth = '0'; // Prevents flexbox overflow issues
-
-    const rightCol = document.createElement('div');
-    rightCol.style.flexBasis = '12rem';
-    rightCol.style.flexShrink = '0';
-    rightCol.style.display = 'flex';
-    rightCol.style.flexDirection = 'column';
-    rightCol.style.gap = '0.5rem';
-    rightCol.style.overflowY = 'auto';
-    rightCol.style.alignItems = 'flex-start'; // Align widgets to the left of the right column
+    container.style.display = 'flex';
+    container.style.justifyContent = 'center';
+    container.style.alignItems = 'center';
 
     // --- ASCII Art as background ---
     const asciiArt = `
@@ -3001,21 +3034,54 @@ function buildEquipmentTab() {
     pre.textContent = asciiArt;
     pre.style.position = 'absolute';
     pre.style.top = '50%';
-    pre.style.left = '50%';
+    pre.style.left = '45%';
     pre.style.transform = 'translate(-50%, -50%)';
-    pre.style.fontSize = '0.20vw';
+    pre.style.fontSize = '3.55px';
     pre.style.lineHeight = '0.85';
     pre.style.fontFamily = 'monospace';
     pre.style.color = '#0c0';
     pre.style.zIndex = '-1'; // Put it behind the widgets
-    centerCol.appendChild(pre);
+    container.appendChild(pre);
+
+    // Container for the slot columns
+    const slotContainer = document.createElement('div');
+    slotContainer.style.display = 'flex';
+    slotContainer.style.justifyContent = 'space-around';
+    slotContainer.style.width = '100%';
+    slotContainer.style.height = '100%';
+    slotContainer.style.gap = '1rem';
+
+    // Define columns
+    const leftCol = document.createElement('div');
+    leftCol.style.flexBasis = '12rem';
+    leftCol.style.flexShrink = '0';
+    leftCol.style.display = 'flex';
+    leftCol.style.flexDirection = 'column';
+    leftCol.style.justifyContent = 'space-between';
+    leftCol.style.overflowY = 'auto';
+
+    const leftCol2 = document.createElement('div');
+    leftCol2.style.flexBasis = '12rem';
+    leftCol2.style.flexShrink = '0';
+    leftCol2.style.display = 'flex';
+    leftCol2.style.flexDirection = 'column';
+    leftCol2.style.justifyContent = 'space-between'; // Center the single 'back' item
+    leftCol2.style.overflowY = 'auto';
+
+    const rightCol = document.createElement('div');
+    rightCol.style.flexBasis = '12rem';
+    rightCol.style.flexShrink = '0';
+    rightCol.style.display = 'flex';
+    rightCol.style.flexDirection = 'column';
+    rightCol.style.justifyContent = 'space-between';
+    rightCol.style.overflowY = 'auto';
 
     // --- Create and Place Slot Widgets ---
     const createSlotWidget = (slotId) => {
         const slot = state.equipment[slotId];
         const widget = document.createElement('div');
-        widget.style.border = '0.0625rem solid #444';
-        widget.style.padding = '0.5rem';
+        widget.style.border = '0 solid #444';
+        widget.style.padding = '0';
         widget.style.width = '9.375rem';
 
         const nameDiv = document.createElement('div');
@@ -3099,18 +3165,20 @@ function buildEquipmentTab() {
     leftCol.appendChild(createSlotWidget('legs'));
     leftCol.appendChild(createSlotWidget('hand-held'));
 
+    leftCol2.appendChild(createSlotWidget('back'));
+
     rightCol.appendChild(createSlotWidget('head'));
     rightCol.appendChild(createSlotWidget('upper'));
     rightCol.appendChild(createSlotWidget('lower'));
     rightCol.appendChild(createSlotWidget('waist'));
     rightCol.appendChild(createSlotWidget('feet'));
-    rightCol.appendChild(createSlotWidget('back'));
 
 
-    // Append columns to container, and container to the main div
-    container.appendChild(leftCol);
-    container.appendChild(centerCol);
-    container.appendChild(rightCol);
+    // Append columns to slot container, and containers to the main div
+    slotContainer.appendChild(leftCol);
+    slotContainer.appendChild(leftCol2);
+    slotContainer.appendChild(rightCol);
+    container.appendChild(slotContainer);
     equipmentDiv.appendChild(container);
 }
 
@@ -4245,57 +4313,47 @@ function createCheatControlRow(config) {
 function showCheatTab(tabName) {
     document.querySelectorAll('.cheat-tab-content').forEach(el => el.style.display = 'none');
     document.getElementById(`cheat-tab-${tabName}`).style.display = 'block';
+    if (state.ui) {
+        state.ui.lastCheatTab = tabName;
+    }
 }
 
 function buildCheatOverlay() {
     const body = document.querySelector('#cheatsBtn-overlay .overlayBody');
     body.innerHTML = ''; // Clear previous content
 
-    // --- Remember current tab ---
-    let activeTab = 'general';
-    const activeTabEl = document.querySelector('.cheat-tab-content[style*="display: block"]');
-    if (activeTabEl) {
-        activeTab = activeTabEl.id.replace('cheat-tab-', '');
-    }
+    // --- Get active tab from state ---
+    const activeTab = (state.ui && state.ui.lastCheatTab) ? state.ui.lastCheatTab : 'general';
 
-    // --- Create Tab Buttons (Grid Row 1) ---
+    // --- Create Tab Buttons ---
     const tabButtonContainer = document.createElement('div');
-    tabButtonContainer.id = 'cheat-tabs';
-    tabButtonContainer.style.cssText = 'display: flex; justify-content: center; gap: 0.5rem;';
-    const tabNames = ['General', 'Skills', 'NPCs', 'Body/Debug'];
-    tabNames.forEach(name => {
+    tabButtonContainer.className = 'cheat-tabs-container';
+    const tabConfigs = [
+        { name: 'General', id: 'general' },
+        { name: 'Skills', id: 'skills' },
+        { name: 'NPCs', id: 'npcs' },
+        { name: 'Body/Debug', id: 'debug' }
+    ];
+    tabConfigs.forEach(config => {
         const btn = document.createElement('button');
         btn.className = 'overlayBtn';
         btn.style.flexGrow = '1';
-        btn.textContent = name;
-        const tabId = name.toLowerCase().replace('/debug', 'debug');
-        btn.onclick = () => showCheatTab(tabId);
+        btn.textContent = config.name;
+        btn.onclick = () => showCheatTab(config.id);
         tabButtonContainer.appendChild(btn);
     });
 
-    // --- Create Content Wrapper (Grid Row 2) ---
-    const contentWrapper = document.createElement('div');
-    contentWrapper.id = 'cheat-tab-content-wrapper';
-    contentWrapper.style.overflowY = 'auto';
-    contentWrapper.style.minHeight = '0';
+    // --- Create Panels Container ---
+    const panelsContainer = document.createElement('div');
+    panelsContainer.className = 'cheat-panels-container';
 
-    const tabIds = ['general', 'skills', 'npcs', 'debug'];
-    tabIds.forEach(id => {
-        const tabContent = document.createElement('div');
-        tabContent.id = `cheat-tab-${id}`;
-        tabContent.className = 'cheat-tab-content';
-        contentWrapper.appendChild(tabContent);
-    });
-    
-    body.appendChild(tabButtonContainer);
-    body.appendChild(contentWrapper);
+    // --- Build and Append All Tabs ---
 
-
-    // --- Build General Tab ---
-    const generalTab = document.getElementById('cheat-tab-general');
+    // 1. General Tab
+    const generalTab = document.createElement('div');
+    generalTab.id = 'cheat-tab-general';
+    generalTab.className = 'cheat-tab-content';
     let generalContent = '<div style="display: flex; gap: 2rem;">';
-
-    // Left Column
     let leftCol = '<div style="flex-basis: 50%;">';
     leftCol += '<h4 style="text-align: center;">Needs</h4>';
     for (const key in state.needs) {
@@ -4308,8 +4366,6 @@ function buildCheatOverlay() {
         });
     }
     leftCol += '</div>';
-
-    // Right Column
     let rightCol = '<div style="flex-basis: 50%;">';
     rightCol += '<h4 style="text-align: center;">Money & Toggles</h4>';
     rightCol += createCheatControlRow({
@@ -4318,48 +4374,34 @@ function buildCheatOverlay() {
         pos_actions: [ { label: '+10', onclick: `cheatMoney(10)` }, { label: '+100', onclick: `cheatMoney(100)` }, { label: '+1k', onclick: `cheatMoney(1000)` } ]
     });
     rightCol += `<div style="text-align: center; padding: 1rem;"><label><input type="checkbox" onchange="toggleCorruptionDisplay(this)" ${state.showCorruption?'checked':''}> Show Corruption Bar</label></div>`;
-    rightCol += `
-        <div style="text-align: center; padding: 0.5rem;">
-            <button class="overlayBtn" onclick="toggleParasitePregnancyCheat()">
-                Parasite Pregnancy: ${state.parasite.canImpregnate ? '<span style=\\"color: red\\">Enabled</span>' : 'Disabled'}
-            </button>
-        </div>
-    `;
+    rightCol += `<div style="text-align: center; padding: 0.5rem;"><button class="overlayBtn" onclick="toggleParasitePregnancyCheat()">Parasite Pregnancy: ${state.parasite.canImpregnate ? '<span style=\\"color: red\\">Enabled</span>' : 'Disabled'}</button></div>`;
     rightCol += '</div>';
-
     generalContent += leftCol + rightCol + '</div>';
     generalTab.innerHTML = generalContent;
+    panelsContainer.appendChild(generalTab);
 
-
-    // --- Build Skills Tab (2 columns) ---
-    const skillsTab = document.getElementById('cheat-tab-skills');
-    let skillsHtml = '<h4 style="text-align: center;">Skills</h4><div style="display: flex; gap: 1rem;">';
-    const skills = Object.keys(state.skills);
-    const mid = Math.ceil(skills.length / 2);
-    const col1 = skills.slice(0, mid);
-    const col2 = skills.slice(mid);
-    let col1Html = '<div style="flex-basis: 50%;">';
-    col1.forEach(skillName => {
-        col1Html += createCheatControlRow({
+    // 2. Skills Tab
+    const skillsTab = document.createElement('div');
+    skillsTab.id = 'cheat-tab-skills';
+    skillsTab.className = 'cheat-tab-content';
+    const skillsColumnContainer = document.createElement('div');
+    skillsColumnContainer.className = 'skills-column-container';
+    let skillsHtml = '';
+    for (const skillName in state.skills) {
+        skillsHtml += createCheatControlRow({
             label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
             neg_actions: [ {label: '-64', onclick:`cheatAddSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`cheatAddSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`cheatAddSkillExp('${skillName}', -1)`} ],
             pos_actions: [ {label: '+1', onclick:`cheatAddSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`cheatAddSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`cheatAddSkillExp('${skillName}', 64)`} ],
         });
-    });
-    col1Html += '</div>';
-    let col2Html = '<div style="flex-basis: 50%;">';
-    col2.forEach(skillName => {
-        col2Html += createCheatControlRow({
-            label: skillName, value: `${state.skills[skillName].exp.toFixed(0)} exp`,
-            neg_actions: [ {label: '-64', onclick:`cheatAddSkillExp('${skillName}', -64)`}, {label: '-8', onclick:`cheatAddSkillExp('${skillName}', -8)`}, {label: '-1', onclick:`cheatAddSkillExp('${skillName}', -1)`} ],
-            pos_actions: [ {label: '+1', onclick:`cheatAddSkillExp('${skillName}', 1)`}, {label: '+8', onclick:`cheatAddSkillExp('${skillName}', 8)`}, {label: '+64', onclick:`cheatAddSkillExp('${skillName}', 64)`} ],
-        });
-    });
-    col2Html += '</div>';
-    skillsTab.innerHTML = skillsHtml + col1Html + col2Html + '</div>';
+    }
+    skillsColumnContainer.innerHTML = skillsHtml;
+    skillsTab.appendChild(skillsColumnContainer);
+    panelsContainer.appendChild(skillsTab);
 
-    // --- Build NPCs Tab (2 columns) ---
-    const npcsTab = document.getElementById('cheat-tab-npcs');
+    // 3. NPCs Tab
+    const npcsTab = document.createElement('div');
+    npcsTab.id = 'cheat-tab-npcs';
+    npcsTab.className = 'cheat-tab-content';
     let npcsHtml = '<h4 style="text-align: center;">NPCs</h4><div style="display: flex; gap: 1rem;">';
     const npcs = Object.keys(state.npcs);
     const npcMid = Math.ceil(npcs.length / 2);
@@ -4394,10 +4436,22 @@ function buildCheatOverlay() {
     });
     npcCol2Html += '</div>';
     npcsTab.innerHTML = npcsHtml + npcCol1Html + npcCol2Html + '</div>';
+    panelsContainer.appendChild(npcsTab);
 
-    // --- Build Debug Tab ---
+    // 4. Debug Tab
+    const debugTab = document.createElement('div');
+    debugTab.id = 'cheat-tab-debug';
+    debugTab.className = 'cheat-tab-content';
+    panelsContainer.appendChild(debugTab); // Append empty, will be filled by its own function
+
+    // Append main containers to the overlay body
+    body.appendChild(tabButtonContainer);
+    body.appendChild(panelsContainer);
+
+    // Populate the debug tab content
     buildDebugCheatTab();
 
+    // Show the correct tab
     showCheatTab(activeTab);
 }
 
