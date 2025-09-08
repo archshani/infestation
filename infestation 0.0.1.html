@@ -751,7 +751,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
       <div class="creation-column">
         <div class="option-group">
           <label for="heightSlider">Height: <span id="heightValue">170</span> cm</label>
-          <input type="range" id="heightSlider" min="150" max="200" value="170">
+          <input type="range" id="heightSlider" min="150" max="185" value="170">
         </div>
         <div class="option-group">
           <label for="hairLengthSlider">Hair Length: <span id="hairLengthValue">10</span> cm</label>
@@ -768,6 +768,12 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
         <div class="option-group">
             <label>Skin Color:</label>
             <div id="skin-color-picker" class="hex-picker-container"></div>
+        </div>
+        <div class="option-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+                <input type="checkbox" id="unnaturalColorsToggle">
+                Show Unnatural Colors
+            </label>
         </div>
         <div class="option-group push-to-bottom">
             <label>Hair Color:</label>
@@ -1125,7 +1131,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 </div>
 
 <!-- ==================== SAVE PROMPT OVERLAY ==================== -->
-<div id="save-prompt-overlay" class="overlay" style="width: 25vw; height: auto;">
+<div id="save-prompt-overlay" class="overlay" style="width: 25vw; height: auto; min-height: 0;">
   <div class="overlayHeader">Enter Save Name</div>
   <div class="overlayBody">
     <input type="text" id="save-name-input" style="width: 100%; margin-bottom: 1rem; padding: 0.4rem;">
@@ -1788,13 +1794,9 @@ const femaleOnlyDescriptors = ['breasts', 'nipples', 'vagina'];
 const maleOnlyDescriptors = ['penis'];
 
 /* ==============================================================
-   PALETTE GENERATOR
+   PALETTE UTILITIES (SHARED)
    ============================================================== */
-// Note: A block of helper functions to programmatically generate the complex 91-color hexagonal palette.
-// This ensures the color logic is maintainable and accurate.
-
-const hexPaletteGenerator = {
-    // --- Color Conversion Utilities ---
+const paletteUtils = {
     hexToRgb(hex) {
         let r = 0, g = 0, b = 0;
         if (hex.length == 4) {
@@ -1817,6 +1819,219 @@ const hexPaletteGenerator = {
         if (b.length == 1) b = "0" + b;
         return "#" + r + g + b;
     },
+    interpolateLinear(start, end, factor) {
+        return start + (end - start) * factor;
+    },
+    interpolateRgb(color1, color2, factor) {
+        const r = this.interpolateLinear(color1.r, color2.r, factor);
+        const g = this.interpolateLinear(color1.g, color2.g, factor);
+        const b = this.interpolateLinear(color1.b, color2.b, factor);
+        return { r, g, b };
+    },
+    mapIdsToCoords(shape) {
+        const coordMap = new Map();
+        let id = 1;
+        const numRows = shape.length;
+        const r_offset = Math.floor(numRows / 2);
+
+        for (let i = 0; i < numRows; i++) {
+            const rowSize = shape[i];
+            const r = i - r_offset;
+            const q_start = -Math.floor(rowSize / 2) + (rowSize % 2 === 0 ? 0 : 0);
+            for (let j = 0; j < rowSize; j++) {
+                let q = q_start + j;
+                if (rowSize % 2 === 0 && q >= 0) {
+                    q += 1;
+                }
+                coordMap.set(id++, { q, r });
+            }
+        }
+        return coordMap;
+    },
+    getAxialDistance(coord1, coord2) {
+        return (Math.abs(coord1.q - coord2.q)
+              + Math.abs(coord1.q + coord1.r - coord2.q - coord2.r)
+              + Math.abs(coord1.r - coord2.r)) / 2;
+    }
+};
+
+/* ==============================================================
+   NATURAL HAIR PALETTE GENERATOR
+   ============================================================== */
+const naturalHairPaletteGenerator = {
+    // --- Main Generator Function ---
+    generate() {
+        const shape = [6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6];
+        const totalSlots = shape.reduce((a, b) => a + b, 0);
+        const coordMap = paletteUtils.mapIdsToCoords(shape);
+        const palette = new Array(totalSlots).fill(null);
+
+        const regions = {
+            blonde: {
+                name: 'Blonde',
+                center: { q: -4, r: -2 },
+                light: paletteUtils.hexToRgb('#FCF6D5'), // Platinum Blonde
+                dark: paletteUtils.hexToRgb('#A5833B')   // Darkest Dirty Blonde
+            },
+            brown: {
+                name: 'Brown',
+                center: { q: 4, r: -2 },
+                light: paletteUtils.hexToRgb('#B58A6F'), // Warmer Light Brown
+                dark: paletteUtils.hexToRgb('#2F0F05')   // Darkest Reddish Brown
+            },
+            red: {
+                name: 'Red',
+                center: { q: -4, r: 3 },
+                light: paletteUtils.hexToRgb('#D38D5F'), // Strawberry Blonde
+                dark: paletteUtils.hexToRgb('#3D0D00')   // Deepest Auburn
+            },
+            black: {
+                name: 'Black/Gray',
+                center: { q: 4, r: 3 },
+                light: paletteUtils.hexToRgb('#505050'), // Dark Gray
+                dark: paletteUtils.hexToRgb('#010101')   // Near Black
+            }
+        };
+
+        const maxDist = 5.5; // Max distance for interpolation scaling
+
+        for (let id = 1; id <= totalSlots; id++) {
+            const coord = coordMap.get(id);
+
+            // Find closest region
+            let closestRegionName = null;
+            let minDistance = Infinity;
+            for (const regionName in regions) {
+                const distance = paletteUtils.getAxialDistance(coord, regions[regionName].center);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestRegionName = regionName;
+                }
+            }
+
+            const region = regions[closestRegionName];
+
+            // Calculate interpolation factor based on distance from the region's center
+            // Clamp factor between 0 and 1
+            const factor = Math.min(1, minDistance / maxDist);
+
+            const finalRgb = paletteUtils.interpolateRgb(region.light, region.dark, factor);
+            const finalHex = paletteUtils.rgbToHex(finalRgb.r, finalRgb.g, finalRgb.b);
+
+            // Generate a name
+            let colorName = '';
+            if (factor < 0.33) colorName = 'Light ';
+            else if (factor > 0.66) colorName = 'Dark ';
+            colorName += region.name.split('/')[0]; // Use "Black" from "Black/Gray"
+
+            palette[id - 1] = { name: colorName, hex: finalHex };
+        }
+
+        return palette;
+    }
+};
+
+/* ==============================================================
+   NATURAL EYE PALETTE GENERATOR
+   ============================================================== */
+const naturalEyePaletteGenerator = {
+    // --- Main Generator ---
+    generate() {
+        const shape = [6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6];
+        const coordMap = paletteUtils.mapIdsToCoords(shape);
+        const palette = new Array(shape.reduce((a, b) => a + b, 0)).fill(null);
+
+        const regions = {
+            blue:   { name: 'Blue',   center: { q: 0, r: -3 }, light: paletteUtils.hexToRgb('#ADD8E6'), dark: paletteUtils.hexToRgb('#00004B') },
+            brown:  { name: 'Brown',  center: { q: 5,  r: 0 }, light: paletteUtils.hexToRgb('#B8860B'), dark: paletteUtils.hexToRgb('#452301') },
+            green:  { name: 'Green',  center: { q: 0,  r: 3 },  light: paletteUtils.hexToRgb('#98FB98'), dark: paletteUtils.hexToRgb('#002400') },
+            // rare region is manually placed, so we use the 4th quadrant for hazel
+            hazel:  { name: 'Hazel',  center: { q: -5, r: 0 },  light: paletteUtils.hexToRgb('#D3D3D3'), dark: paletteUtils.hexToRgb('#354B0F') }
+        };
+        const maxDist = 5.5;
+
+        for (let id = 1; id <= palette.length; id++) {
+            const coord = coordMap.get(id);
+            let closestRegionName = null;
+            let minDistance = Infinity;
+            for (const regionName in regions) {
+                const distance = paletteUtils.getAxialDistance(coord, regions[regionName].center);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestRegionName = regionName;
+                }
+            }
+            const region = regions[closestRegionName];
+            const factor = Math.min(1, minDistance / maxDist);
+            const finalRgb = paletteUtils.interpolateRgb(region.light, region.dark, factor);
+
+            let colorName = '';
+            if (factor < 0.33) colorName = 'Light ';
+            else if (factor > 0.66) colorName = 'Dark ';
+            palette[id - 1] = { name: colorName + region.name, hex: paletteUtils.rgbToHex(finalRgb.r, finalRgb.g, finalRgb.b) };
+        }
+
+        // Manually overwrite hexes for the 3x3 rare colors
+        // Amber shades
+        palette[70] = { name: 'Light Amber', hex: '#FFD700' }; // ID 71
+        palette[71] = { name: 'Amber', hex: '#FFBF00' };       // ID 72
+        palette[72] = { name: 'Dark Amber', hex: '#B8860B' };  // ID 73
+        // Crimson shades
+        palette[78] = { name: 'Light Crimson', hex: '#F08080' };// ID 79
+        palette[79] = { name: 'Crimson', hex: '#DC143C' };      // ID 80
+        palette[80] = { name: 'Dark Crimson', hex: '#8B0000' }; // ID 81
+        // Violet shades
+        palette[85] = { name: 'Light Violet', hex: '#D8BFD8' }; // ID 86
+        palette[86] = { name: 'Violet', hex: '#9932CC' };       // ID 87
+        palette[87] = { name: 'Dark Violet', hex: '#4B0082' };  // ID 88
+
+        return palette;
+    }
+};
+
+/* ==============================================================
+   PALETTE GENERATOR
+   ============================================================== */
+// Note: A block of helper functions to programmatically generate the complex 91-color hexagonal palette.
+// This ensures the color logic is maintainable and accurate.
+
+const unnaturalPaletteGenerator = {
+    // --- Color Naming ---
+    getColorName(h, s, l) {
+        let name = '';
+        // Handle grayscales first, as they have low saturation
+        if (s < 0.15) {
+            if (l > 0.95) return 'White';
+            if (l < 0.05) return 'Black';
+            if (l < 0.3) return 'Dark Gray';
+            if (l > 0.7) return 'Light Gray';
+            return 'Gray';
+        }
+
+        // Add lightness descriptors
+        if (l > 0.8) name += 'Pale ';
+        else if (l < 0.3) name += 'Dark ';
+
+        // Add saturation/vibrancy descriptors
+        if (s > 0.8 && l >= 0.4 && l <= 0.6) name += 'Vivid ';
+
+        // Determine the base hue name
+        const hue = h * 360;
+        if (hue < 15) name += 'Red';
+        else if (hue < 35) name += 'Orange';
+        else if (hue < 60) name += 'Yellow';
+        else if (hue < 90) name += 'Lime';
+        else if (hue < 150) name += 'Green';
+        else if (hue < 210) name += 'Cyan';
+        else if (hue < 255) name += 'Blue';
+        else if (hue < 285) name += 'Purple';
+        else if (hue < 335) name += 'Magenta';
+        else name += 'Red'; // Wrap around
+
+        return name.trim();
+    },
+
+    // --- Color Conversion Utilities ---
     rgbToHsl(r, g, b) {
         r /= 255; g /= 255; b /= 255;
         let max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -1857,52 +2072,11 @@ const hexPaletteGenerator = {
         return { r: r * 255, g: g * 255, b: b * 255 };
     },
 
-    // --- Grid and Coordinate Logic ---
-    mapIdsToCoords(shape) {
-        const coordMap = new Map();
-        let id = 1;
-        const numRows = shape.length;
-        const r_offset = Math.floor(numRows / 2);
-
-        for (let i = 0; i < numRows; i++) {
-            const rowSize = shape[i];
-            const r = i - r_offset;
-            // This logic correctly calculates the starting q coordinate for both even and odd rows
-            // to ensure the row is centered around the q=0 axis.
-            const q_start = -Math.floor(rowSize / 2) + (rowSize % 2 === 0 ? 0 : 0);
-            for (let j = 0; j < rowSize; j++) {
-                let q = q_start + j;
-                 // For even rows, there is no 0 q-coordinate, so we skip it.
-                if (rowSize % 2 === 0 && q >= 0) {
-                    q += 1;
-                }
-                coordMap.set(id++, { q, r });
-            }
-        }
-        return coordMap;
-    },
-    getAxialDistance(coord1, coord2) {
-        return (Math.abs(coord1.q - coord2.q) 
-              + Math.abs(coord1.q + coord1.r - coord2.q - coord2.r) 
-              + Math.abs(coord1.r - coord2.r)) / 2;
-    },
-
-    // --- Color Generation Logic ---
-    interpolateLinear(start, end, factor) {
-        return start + (end - start) * factor;
-    },
-    interpolateRgb(color1, color2, factor) {
-        const r = this.interpolateLinear(color1.r, color2.r, factor);
-        const g = this.interpolateLinear(color1.g, color2.g, factor);
-        const b = this.interpolateLinear(color1.b, color2.b, factor);
-        return { r, g, b };
-    },
-
     // --- Main Generator Function ---
     generate() {
         const shape = [6, 7, 8, 9, 10, 11, 10, 9, 8, 7, 6];
         const totalSlots = shape.reduce((a, b) => a + b, 0);
-        const coordMap = this.mapIdsToCoords(shape);
+        const coordMap = paletteUtils.mapIdsToCoords(shape);
         const centerCoord = { q: 0, r: 0 };
         const palette = new Array(totalSlots).fill(null);
 
@@ -1920,7 +2094,7 @@ const hexPaletteGenerator = {
         // Generate colors for each slot
         for (let id = 1; id <= totalSlots; id++) {
             const coord = coordMap.get(id);
-            const ring = this.getAxialDistance(coord, centerCoord);
+            const ring = paletteUtils.getAxialDistance(coord, centerCoord);
 
             // Handle colors
             // 1. Calculate angle of the current hexagon in degrees (0-360)
@@ -1965,27 +2139,23 @@ const hexPaletteGenerator = {
             let finalL;
             if (ring <= 3) {
                 // From ring 1 (L=0.9) to ring 3 (L=0.5)
-                finalL = this.interpolateLinear(0.9, 0.5, (ring - 1) / 2);
+                finalL = paletteUtils.interpolateLinear(0.9, 0.5, (ring - 1) / 2);
             } else {
                 // From ring 3 (L=0.5) to ring 5 (L=0.2)
-                finalL = this.interpolateLinear(0.5, 0.33, (ring - 3) / 2);
+                finalL = paletteUtils.interpolateLinear(0.5, 0.33, (ring - 3) / 2);
             }
 
             const {r, g, b} = this.hslToRgb(finalH, finalS, finalL);
-            palette[id - 1] = { name: 'Color', hex: this.rgbToHex(r, g, b) };
+            const colorName = this.getColorName(finalH, finalS, finalL);
+            palette[id - 1] = { name: colorName, hex: paletteUtils.rgbToHex(r, g, b) };
         }
 
         // Manually set the center hex (ID 46) to white to act as the grayscale picker button
         palette[45] = { name: 'Grays...', hex: '#FFFFFF' };
-        palette[48] = { name: 'RED', hex: '#FF0000' };
-        palette[15] = { name: 'GREE', hex: '#00FF00' };
-        //palette[72] = { name: 'BLUE', hex: '#0000FF' };
         
         return palette;
     }
 };
-
-const newHexPalette = hexPaletteGenerator.generate();
 
 const colorPalettes = {
     skin: {
@@ -1994,8 +2164,14 @@ const colorPalettes = {
         "Brown": ["#8D5524", "#6D4C41", "#5D4037"],
         "Dark": ["#4E342E", "#3B2F2F", "#2C170E"]
     },
-    hair: newHexPalette,
-    eyes: newHexPalette
+    hair: {
+        natural: naturalHairPaletteGenerator.generate(),
+        unnatural: unnaturalPaletteGenerator.generate()
+    },
+    eyes: {
+        natural: naturalEyePaletteGenerator.generate(),
+        unnatural: unnaturalPaletteGenerator.generate()
+    }
 };
 
 /* ==============================================================
@@ -5195,7 +5371,8 @@ function showGrayscaleOverlay(event, targetProperty) {
 }
 
 function populateHexPicker(containerId, paletteName, targetProperty) {
-    const palette = colorPalettes[paletteName];
+    const useUnnatural = document.getElementById('unnaturalColorsToggle').checked;
+    const palette = useUnnatural ? colorPalettes[paletteName].unnatural : colorPalettes[paletteName].natural;
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -5260,10 +5437,26 @@ function populateHexPicker(containerId, paletteName, targetProperty) {
 }
 
 function initCreationScreen() {
-    // Populate Skin Color Swatches
+    // --- Randomize all values ---
+    state.appearance.height = 150 + Math.floor(Math.random() * 36); // 150-185
+    state.appearance.hairLength = Math.floor(Math.random() * 101); // 0-100
+
+    const skinPalette = colorPalettes.skin;
+    const skinGroups = Object.keys(skinPalette);
+    const randomSkinGroup = skinGroups[Math.floor(Math.random() * skinGroups.length)];
+    const randomSkinColors = skinPalette[randomSkinGroup];
+    const randomSkinHex = randomSkinColors[Math.floor(Math.random() * randomSkinColors.length)];
+    state.appearance.skinColor = { name: randomSkinGroup, hex: randomSkinHex };
+
+    const naturalHairPalette = colorPalettes.hair.natural;
+    state.appearance.hairColor = naturalHairPalette[Math.floor(Math.random() * naturalHairPalette.length)];
+
+    const naturalEyePalette = colorPalettes.eyes.natural;
+    state.appearance.eyeColor = naturalEyePalette[Math.floor(Math.random() * naturalEyePalette.length)];
+
+    // --- Populate UI elements ---
     populateSkinPicker('skin-color-picker', 'skin', 'skinColor');
 
-    // Set initial values and add listeners for sliders
     const heightSlider = document.getElementById('heightSlider');
     const heightValue = document.getElementById('heightValue');
     heightSlider.value = state.appearance.height;
@@ -5282,41 +5475,21 @@ function initCreationScreen() {
         updateCreationPreview();
     };
 
-    // Set initial name - field removed, name is fixed.
-    // const nameInput = document.getElementById('charNameInput');
-    // nameInput.value = "Maya";
-    // nameInput.oninput = updateCreationPreview;
-
-    // Populate the new hexagonal color pickers
-    populateHexPicker('hair-color-picker', 'hair', 'hairColor');
-    populateHexPicker('eye-color-picker', 'eyes', 'eyeColor');
-
-    // Initial call to populate the preview pane
-    updateCreationPreview();
-
-    // Set initial color previews - REMOVED as the picker is now inline
-    // document.getElementById('hairColorPreview').style.backgroundColor = state.appearance.hairColor.hex;
-    // document.getElementById('eyeColorPreview').style.backgroundColor = state.appearance.eyeColor.hex;
-
-    // Populate Body Shape Descriptor Dropdowns
+    // Populate Body Shape Descriptor Dropdowns and randomize them
     const bodyShapeContainer = document.getElementById('bodyShapeOptions');
     bodyShapeContainer.innerHTML = '';
     const bodyPartDisplayOrder = [
         'face', 'eyes', 'lips', 'neck', 'breasts', 'nipples', 'arms', 'hands', 'belly', 'buttocks', 'vagina', 'thighs', 'calves', 'feet'
     ];
     for (const groupName of bodyPartDisplayOrder) {
-        // Filter out descriptors based on character's sex
         const isFemaleOnly = femaleOnlyDescriptors.includes(groupName);
         const isMaleOnly = maleOnlyDescriptors.includes(groupName);
-
         if (state.sex === 'female' && isMaleOnly) continue;
         if (state.sex === 'male' && isFemaleOnly) continue;
-
         if (!bodyPartDescriptors[groupName]) continue;
+
         const descriptors = bodyPartDescriptors[groupName];
-        
         const controlWrapper = document.createElement('div');
-        
         const label = document.createElement('label');
         label.textContent = groupName.charAt(0).toUpperCase() + groupName.slice(1);
         label.style.display = 'block';
@@ -5334,12 +5507,27 @@ function initCreationScreen() {
             select.appendChild(option);
         });
         
+        // Randomize selection
+        select.selectedIndex = Math.floor(Math.random() * select.options.length);
+
         controlWrapper.appendChild(label);
         controlWrapper.appendChild(select);
         bodyShapeContainer.appendChild(controlWrapper);
     }
 
-    // Initial call to populate the preview pane
+    // Populate color pickers
+    populateHexPicker('hair-color-picker', 'hair', 'hairColor');
+    populateHexPicker('eye-color-picker', 'eyes', 'eyeColor');
+
+    // Add listener for the unnatural colors toggle
+    const unnaturalToggle = document.getElementById('unnaturalColorsToggle');
+    unnaturalToggle.onchange = () => {
+        populateHexPicker('hair-color-picker', 'hair', 'hairColor');
+        populateHexPicker('eye-color-picker', 'eyes', 'eyeColor');
+        updateCreationPreview(); // Update preview after palette changes
+    };
+
+    // Initial call to populate the preview pane with all randomized values
     updateCreationPreview();
 }
 
