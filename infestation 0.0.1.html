@@ -27,14 +27,14 @@ body{
   background:linear-gradient(135deg,#220022,#001122);
 }
 #startScreen h1{font-size:3rem;margin-bottom:.5rem;}
-#startScreen p{font-size:1.2rem;max-width:500px;text-align:center;}
+#startScreen p{font-size:1.2rem;max-width:31.25rem;text-align:center;}
 #ascii-title{
   font-family:monospace;
   font-size:.65vw;
   line-height:1.2;
   color:#00ff00;
   margin-bottom:1rem;
-  text-shadow: 4px 4px 4px #000, 3px 3px 0px #f0f, -3px -3px 0px #0ff;
+  text-shadow: 0.25rem 0.25rem 0.25rem #000, 0.1875rem 0.1875rem 0 #f0f, -0.1875rem -0.1875rem 0 #0ff;
 }
 #startBtn, #loadBtn{
   margin-top:2rem;padding:.8rem 1.6rem;font-size:1.2rem;
@@ -50,7 +50,7 @@ body{
 
 /* ----- Sidebar (always visible) ----- */
 #sidebar{
-  width:300px;
+  width:18.75rem;
   background:#1a1a2d;
   padding:1rem;
   box-sizing:border-box;
@@ -118,7 +118,7 @@ body{
 /* thin, sharp‑edge bar */
 .bar{
   width:100%;
-  height:6px;                      /* thin rectangle */
+  height:0.375rem;                      /* thin rectangle */
   background:#444;
   overflow:hidden;
 }
@@ -158,7 +158,7 @@ body{
   color:#fff;
   font-size:.75rem;
   white-space:nowrap;
-  border-radius:3px;
+  border-radius:0.1875rem;
   opacity:0;
   pointer-events:none;
   transition:opacity .15s ease;
@@ -170,7 +170,7 @@ body{
   top:100%;
   left:50%;
   transform:translateX(-50%);
-  border-width:5px 5px 0 5px;
+  border-width:0.3125rem 0.3125rem 0 0.3125rem;
   border-style:solid;
   border-color:#222 transparent transparent transparent;
 }
@@ -198,8 +198,8 @@ body{
   /* NEW – visual styling */
   background:#444;                /* dark‑gray background (feel free to adjust) */
   color:#fff;                     /* white text for contrast */
-  border:2px solid transparent;   /* invisible border so the button size doesn’t jump on hover */
-  border-radius:4px;              /* optional rounded corners */
+  border:0.125rem solid transparent;   /* invisible border so the button size doesn’t jump on hover */
+  border-radius:0.25rem;              /* optional rounded corners */
   transition:border-color .15s ease, background .15s ease; /* smooth hover effect */
 }
 
@@ -226,8 +226,8 @@ body{
 .overlayBtn{
   background:#222;                /* darker background than sidebar buttons */
   color:#00ff00;                  /* bright green text – matches the UI theme */
-  border:1px solid #00ff00;
-  border-radius:4px;
+  border:0.0625rem solid #00ff00;
+  border-radius:0.25rem;
 }
 .overlayBtn:hover{
   background:#333;
@@ -287,14 +287,14 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   top:50%; left:50%;
   transform:translate(-50%,-50%);
   background:#222;
-  border:2px solid #00ff00;
+  border:0.125rem solid #00ff00;
   padding:1rem;
   width:65vw;
-  height:45vw;
-  max-width:80;
-  max-height:80;
+  max-width: 75rem;
+  max-height: 90vh;
   z-index:1000;
   display:none;
+  flex-direction:column;
 }
 .overlayHeader{
   font-weight:bold;
@@ -308,18 +308,26 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   cursor:pointer;
   color:#ff5555;
 }
-.overlayBody{margin-top:1.2rem;}
+.overlayBody{
+  margin-top:1.2rem;
+  flex-grow: 1;
+  min-height: 0;
+  word-wrap: break-word; /* Prevent horizontal overflow from long words */
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 1rem;
+}
 
 .tooltip-overlay {
   position: absolute;
   background: #2a2a3a;
-  border: 1px solid #00ff00;
+  border: 0.0625rem solid #00ff00;
   padding: 0.8rem;
-  width: 250px;
+  width: 15.625rem;
   z-index: 1001;
   display: none;
-  border-radius: 4px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  border-radius: 0.25rem;
+  box-shadow: 0 0.3125rem 0.9375rem rgba(0,0,0,0.5);
 }
 
 /* -------------------------------------------------------------
@@ -328,7 +336,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 #calendar-overlay {
   width: 11vw;
   height: auto;
-  min-width: 150px;
+  min-width: 9.375rem;
   font-size: 0.8rem;
   /* top and left are now set by JS */
   transform: none;
@@ -350,12 +358,12 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 #calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 0.25rem;
 }
 
 .calendar-day {
   background: #2a2a3a;
-  border: 1px solid #444;
+  border: 0.0625rem solid #444;
   height: 0;
   padding-bottom: 100%; /* Creates a square aspect ratio */
   position: relative;
@@ -389,24 +397,24 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 /* For the current day */
 .calendar-day.current-day {
   border-color: #00ff00;
-  box-shadow: 0 0 5px #00ff00;
+  box-shadow: 0 0 0.3125rem #00ff00;
 }
 
 /* For period days */
 .calendar-day.period-day {
-  box-shadow: 0 0 0 2px #ff4d4d inset;
+  box-shadow: 0 0 0 0.125rem #ff4d4d inset;
 }
 
 /* For days with a reminder */
 .calendar-day.has-reminder::after {
   content: "!";
   position: absolute;
-  top: 2px;
-  right: 4px;
+  top: 0.125rem;
+  right: 0.25rem;
   color: yellow;
   font-weight: bold;
   font-size: 1.2em;
-  text-shadow: 1px 1px 1px #000;
+  text-shadow: 0.0625rem 0.0625rem 0.0625rem #000;
 }
 
 /* ----- Inventory Tab Styles ----- */
@@ -424,7 +432,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
     box-sizing: border-box;
 }
 .inventory-item {
-    border: 1px solid #444;
+    border: 0.0625rem solid #444;
     padding: 0.5rem;
     text-align: center;
     cursor: pointer;
@@ -433,7 +441,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    border-radius: 4px; /* Added for consistency */
+    border-radius: 0.25rem; /* Added for consistency */
 }
 .inventory-item:hover {
     background-color: #3a3a4a;
@@ -457,9 +465,9 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   background: #ff0000;
   color: #fff;
   padding: 1rem 2rem;
-  border-radius: 8px;
-  border: 2px solid #000;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  border: 0.125rem solid #000;
+  box-shadow: 0 0 0.9375rem rgba(255, 0, 0, 0.5);
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
@@ -471,15 +479,15 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 #craft-notification-overlay {
   position: fixed;
-  top: 30px;
+  top: 1.875rem;
   left: 50%;
   transform: translateX(-50%);
   background: #00ff00;
   color: #000;
   padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  border: 2px solid #000;
-  box-shadow: 0 0 15px rgba(0,255,0,0.5);
+  border-radius: 0.5rem;
+  border: 0.125rem solid #000;
+  box-shadow: 0 0 0.9375rem rgba(0,255,0,0.5);
   z-index: 2000;
   pointer-events: none;
   opacity: 0;
@@ -492,7 +500,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 /* -------------------------------------------------------------
    RESPONSIVE ADJUSTMENTS (optional)
 ------------------------------------------------------------- */
-@media (max-width:600px){
+@media (max-width:37.5rem){
   #sidebar{width:100%;height:auto;}
   #gameScreen{flex-direction:column;}
 }
@@ -645,18 +653,20 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   <div class="overlayHeader">Character</div>
   <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
   <div class="overlayBody">
-    <div id="char-buttons" style="display: flex; justify-content: space-between; margin-bottom: 1rem; gap: 0.5rem;">
+    <div id="char-buttons" style="display: flex; justify-content: space-between; gap: 0.5rem;">
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('status')">Status</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('skills')">Skills</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('equipment')">Equipment</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('inventory')">Inventory</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('stats')">Stats</button>
     </div>
-    <div id="char-status" class="char-tab"></div>
-    <div id="char-skills" class="char-tab" style="display: none;"></div>
-    <div id="char-stats" class="char-tab" style="display: none;"></div>
-    <div id="char-equipment" class="char-tab" style="display: none;"></div>
-    <div id="char-inventory" class="char-tab" style="display: none;"></div>
+    <div id="char-tab-content-wrapper" style="overflow-y: auto; min-height: 0;">
+        <div id="char-status" class="char-tab"></div>
+        <div id="char-skills" class="char-tab" style="display: none;"></div>
+        <div id="char-stats" class="char-tab" style="display: none;"></div>
+        <div id="char-equipment" class="char-tab" style="display: none;"></div>
+        <div id="char-inventory" class="char-tab" style="display: none;"></div>
+    </div>
   </div>
 </div>
 
@@ -1091,7 +1101,8 @@ const state = {
   },
   parasite: {
       canImpregnate: false,
-      eggs: [] // Each egg: {id, laidAtTime, hatchDay, isDiscovered}
+      eggs: [], // Each egg: {id, laidAtTime, hatchAtTime, birthReadyTime, isDiscovered}
+      worms: [] // Each worm: { id, birthReadyTime }
   },
 
   /* -------------------- NPCs --------------------- */
@@ -1116,6 +1127,10 @@ const state = {
     fontSize: '1rem'
   },
 
+  ui: {
+    lastCharTab: 'status'
+  },
+
   /* -------------------- Game Location ------------------ */
   currentLocation: 'event_intro',
   locationBeforeEvent: '',
@@ -1128,6 +1143,7 @@ const state = {
         { text: 'Kitchen', action: "goToScene('kitchen', 30)" },
         { text: 'Lounge', action: "goToScene('lounge', 30)" },
         { text: 'Bathroom', action: "goToScene('bathroom', 30)" },
+        { text: 'Private Room', action: "goToScene('private_room', 30)" },
         { text: 'Visit the Tailor', action: "goToTailorHub()" },
         {
           text: 'Check in with Leah',
@@ -1163,6 +1179,37 @@ const state = {
           condition: { type: 'parasite_pregnancy' }
         }
       ]
+    },
+    'private_room': {
+      title: 'Private Room',
+      description: 'This is a small, quiet room off the main foyer. It seems to be unused, containing little more than a simple cot and a small desk. There is a strange, organic-looking structure in the corner.',
+      nav: [
+        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
+        {
+          text: 'Approach the Nest',
+          action: "goToScene('nest', 0)",
+          condition: { type: 'parasite_impregnate_enabled' }
+        }
+      ]
+    },
+    'nest': {
+      title: 'The Nest',
+      description: 'The structure is a grotesque, pulsating mass of organic tissue, clearly of alien origin. It seems to be... waiting. You feel a strange pull towards it, a primal urge to settle within its strange embrace.',
+      nav: [
+        { text: 'Leave the nest', action: "goToScene('private_room', 0)" },
+        {
+          text: 'Deliver the alien worms',
+          action: "deliverWorms()",
+          condition: { type: 'worms_ready_to_birth' }
+        }
+      ]
+    },
+    'birth_results': {
+        title: 'Delivery',
+        description: 'After a grueling and bizarre ordeal, you have delivered the alien worms into the nest. You feel a sense of relief, but also a deep violation. The nest pulses gently, seeming to nurture its new inhabitants.',
+        nav: [
+            { text: 'Leave the area', action: "finishBirthing()" }
+        ]
     },
     'lounge': {
       title: 'Lounge',
@@ -1316,20 +1363,6 @@ const state = {
       description: 'You\'ve been feeling off for a couple of weeks now—unusually tired, a bit nauseous in the mornings. Looking at the calendar, a sudden thought strikes you. Could you be... pregnant?',
       nav: [
         { text: 'A wave of uncertainty washes over you.', action: "endDiscoveryEvent()" }
-      ]
-    },
-    'parasite_pregnancy_discovery': {
-      title: 'A Horrifying Realization',
-      description: 'The tightness in your abdomen has grown into a constant, unsettling pressure. It\'s not a feeling of life, but of invasion. You realize with dawning horror that the parasite has done something inside you. It has laid eggs.',
-      nav: [
-        { text: 'A wave of dread washes over you.', action: "endDiscoveryEvent()" }
-      ]
-    },
-    'parasite_egg_discovery_event': {
-      title: 'An Unsettling Sensation',
-      description: 'You feel a strange, internal shifting, a faint popping sensation deep within your womb. It\\'s not painful, but it\\'s deeply unsettling. You have a horrifying certainty that the parasite has just laid another egg inside you.',
-      nav: [
-        { text: 'The violation is sickening...', action: "handleEggDiscovery()" }
       ]
     },
     'parasite_hatch_event': {
@@ -1710,14 +1743,15 @@ function calculateConception() {
 
 function addParasiteEgg() {
     const now = state.currentTime.getTime();
-    // Hatching duration is 1-3 days in milliseconds
-    const hatchDuration = (Math.floor(Math.random() * 3) + 1) * 24 * 60 * 60 * 1000;
+    const hatchDelay = (8 + Math.random() * 2) * 60 * 60 * 1000; // 8-10 hours in ms
+    const birthReadyDelay = (24 + Math.random() * 48) * 60 * 60 * 1000; // 1-3 days in ms
 
     const newEgg = {
         id: `egg_${now}_${Math.random()}`,
         laidAtTime: now,
-        hatchTime: now + hatchDuration,
-        isDiscovered: false
+        hatchAtTime: now + hatchDelay,
+        birthReadyTime: now + hatchDelay + birthReadyDelay, // 1-3 days *after* hatching
+        isDiscovered: false // This property may no longer be needed but is kept for safety.
     };
 
     state.parasite.eggs.push(newEgg);
@@ -1779,8 +1813,6 @@ function advanceDay() {
 
             if (state.pregnancy.type === 'human') {
                 goToScene('human_pregnancy_discovery', 0);
-            } else { // 'parasite'
-                goToScene('parasite_pregnancy_discovery', 0);
             }
             return; // Stop processing for this day
         }
@@ -1828,36 +1860,71 @@ function endDiscoveryEvent() {
     goToScene(state.locationBeforeEvent, 0);
 }
 
-function handleEggDiscovery() {
-    state.parasite.eggs.forEach(egg => {
-        if (!egg.isDiscovered) {
-            egg.isDiscovered = true;
-        }
-    });
-    state.needs.stress = Math.min(state.ranges.stress, state.needs.stress + 20);
-    state.needs.trauma = Math.min(state.ranges.trauma, state.needs.trauma + 5);
-
-    state.storyEventActive = false;
-    goToScene(state.locationBeforeEvent, 0);
-}
-
 function handleEggHatching() {
     const now = state.currentTime.getTime();
-    const hatchedEggs = state.parasite.eggs.filter(egg => now >= egg.hatchTime);
-    const numHatched = hatchedEggs.length;
+    const eggsToHatch = state.parasite.eggs.filter(egg => now >= egg.hatchAtTime);
+    const numHatched = eggsToHatch.length;
 
-    // Remove hatched eggs from the main array
-    state.parasite.eggs = state.parasite.eggs.filter(egg => now < egg.hatchTime);
+    if (numHatched === 0) {
+        // This case should ideally not be reached if called correctly, but it's a safeguard.
+        state.storyEventActive = false;
+        goToScene(state.locationBeforeEvent, 0);
+        return;
+    }
 
-    // Apply stat penalties per egg
+    // Create new worms from the eggs that are hatching
+    eggsToHatch.forEach(egg => {
+        const newWorm = {
+            id: `worm_${egg.id}`,
+            birthReadyTime: egg.birthReadyTime,
+        };
+        state.parasite.worms.push(newWorm);
+    });
+
+    // Remove the eggs that have hatched
+    state.parasite.eggs = state.parasite.eggs.filter(egg => now < egg.hatchAtTime);
+
+    // Apply stat penalties for each egg that hatched
     state.needs.stress = Math.min(state.ranges.stress, state.needs.stress + (50 * numHatched));
     state.needs.trauma = Math.min(state.ranges.trauma, state.needs.trauma + (25 * numHatched));
     state.needs.happiness = Math.max(0, state.needs.happiness - (40 * numHatched));
     state.needs.tiredness = Math.max(0, state.needs.tiredness - (1000 * numHatched));
 
     state.storyEventActive = false;
-    forceGlobalUIRefresh(); // Update UI immediately
-    goToScene(state.locationBeforeEvent, 3600); // 1 hour time penalty
+    forceGlobalUIRefresh(); // Update UI immediately to reflect changes
+    goToScene(state.locationBeforeEvent, 3600); // 1-hour time penalty for the ordeal
+}
+
+function deliverWorms() {
+    const now = state.currentTime.getTime();
+    const wormsToDeliver = state.parasite.worms.filter(worm => now >= worm.birthReadyTime);
+    const numToDeliver = wormsToDeliver.length;
+
+    if (numToDeliver === 0) {
+        // This should not be possible if the link is hidden, but it's a safeguard.
+        return;
+    }
+
+    let totalTimeInSeconds = 0;
+    for (let i = 0; i < numToDeliver; i++) {
+        totalTimeInSeconds += (10 + Math.random() * 10) * 60; // 10-20 minutes in seconds
+    }
+
+    // Block the player and advance time
+    state.storyEventActive = true;
+    advanceTime(totalTimeInSeconds);
+
+    // Remove the delivered worms from the state
+    state.parasite.worms = state.parasite.worms.filter(worm => now < worm.birthReadyTime);
+
+    // Update the result scene's description and go to it
+    state.scenes.birth_results.description = `After a grueling and bizarre ordeal, you have delivered ${numToDeliver} alien worms into the nest. You feel a sense of relief, but also a deep violation. The nest pulses gently, seeming to nurture its new inhabitants.`;
+    goToScene('birth_results', 0);
+}
+
+function finishBirthing() {
+    state.storyEventActive = false;
+    goToScene('private_room', 0);
 }
 
 /* ==============================================================
@@ -2008,28 +2075,12 @@ function advanceTime(seconds, updateUI = true) {
     forceGlobalUIRefresh();
   }
 
-  // New Hatching Logic (moved from advanceDay)
-  if (!state.storyEventActive && state.parasite.eggs.some(egg => state.currentTime.getTime() >= egg.hatchTime)) {
+  // New Hatching Logic
+  if (!state.storyEventActive && state.parasite.eggs.some(egg => state.currentTime.getTime() >= egg.hatchAtTime)) {
       state.storyEventActive = true;
       state.locationBeforeEvent = state.currentLocation;
       renderScene('parasite_hatch_event');
       return; // Exit advanceTime to prevent other triggers
-  }
-
-  // New Egg Discovery Logic
-  if (!state.storyEventActive && state.parasite.eggs.some(egg => !egg.isDiscovered)) {
-      const discoveryTime = 8 * 60 * 60 * 1000; // 8 hours in ms
-      const hasUndiscoveredEggReady = state.parasite.eggs.some(egg =>
-          !egg.isDiscovered && (state.currentTime.getTime() - egg.laidAtTime >= discoveryTime)
-      );
-
-      if (hasUndiscoveredEggReady) {
-          state.storyEventActive = true;
-          state.locationBeforeEvent = state.currentLocation;
-          // Using renderScene directly to avoid advanceTime loop
-          renderScene('parasite_egg_discovery_event');
-          return; // Exit advanceTime to prevent other triggers
-      }
   }
 
   checkStatTriggers();
@@ -2041,10 +2092,6 @@ function advanceTime(seconds, updateUI = true) {
 function buildJournalOverlay() {
     const body = document.querySelector('#btnJournal-overlay .overlayBody');
     if (!body) return;
-
-    // Make body scrollable
-    body.style.height = 'calc(100% - 3rem)';
-    body.style.overflowY = 'auto';
 
     // --- Active Quests ---
     let activeQuestsHtml = '<ul>';
@@ -2102,7 +2149,7 @@ function buildJournalOverlay() {
         </div>
         <div style="margin-top: 1rem;">
             <h4>Notes</h4>
-            <textarea id="journal-notepad" rows="20" style="width: 100%; background: #111; color: #eee; border: 1px solid #444;"></textarea>
+            <textarea id="journal-notepad" rows="20" style="width: 98%; background: #111; color: #eee; border: 0.0625rem solid #444;"></textarea>
         </div>
     `;
 
@@ -2149,7 +2196,7 @@ function buildLoadScreen() {
         }
 
         slotsHtml += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #444;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 0.0625rem solid #444;">
                 <div style="flex-grow: 1;">
                     <span style="font-weight: bold;">${i}: ${slotName}</span>
                     <span style="font-size: 0.8em; color: #aaa; margin-left: 1rem;">${slotDate}</span>
@@ -2164,11 +2211,9 @@ function buildLoadScreen() {
     }
 
     body.innerHTML = `
-        <div style="height: 100%; display: flex; flex-direction: column;">
-            <div style="flex-grow: 1; overflow-y: auto;">${slotsHtml}</div>
-            <div style="padding-top: 1rem; text-align: right;">
-                <button class="overlayBtn" onclick="importGame()">Import</button>
-            </div>
+        <div style="flex-grow: 1;">${slotsHtml}</div>
+        <div style="padding-top: 1rem; text-align: right;">
+            <button class="overlayBtn" onclick="importGame()">Import</button>
         </div>
     `;
 }
@@ -2191,7 +2236,7 @@ function buildSavesOverlay() {
         }
 
         slotsHtml += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #444;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 0.0625rem solid #444;">
                 <div style="flex-grow: 1;">
                     <span style="font-weight: bold;">${i}: ${slotName}</span>
                     <span style="font-size: 0.8em; color: #aaa; margin-left: 1rem;">${slotDate}</span>
@@ -2206,11 +2251,9 @@ function buildSavesOverlay() {
     }
 
     body.innerHTML = `
-        <div style="height: 100%; display: flex; flex-direction: column;">
-            <div style="flex-grow: 1; overflow-y: auto;">${slotsHtml}</div>
-            <div style="padding-top: 1rem; text-align: right;">
-                <button class="overlayBtn" onclick="importGame()">Import</button>
-            </div>
+        <div style="flex-grow: 1;">${slotsHtml}</div>
+        <div style="padding-top: 1rem; text-align: right;">
+            <button class="overlayBtn" onclick="importGame()">Import</button>
         </div>
     `;
 }
@@ -2542,6 +2585,10 @@ function showCharTab(tabName) {
     document.querySelectorAll('.char-tab').forEach(t => t.style.display = 'none');
     const tab = document.getElementById(`char-${tabName}`);
     if (tab) tab.style.display = 'block';
+
+    if (state.ui) {
+        state.ui.lastCharTab = tabName;
+    }
     
     if (tabName === 'status') updateCharStatusTab();
     else if (tabName === 'skills') updateCharSkillsTab();
@@ -2722,7 +2769,8 @@ function buildEquipmentTab() {
 
     // Define columns
     const leftCol = document.createElement('div');
-    leftCol.style.flexBasis = '30%';
+    leftCol.style.flexBasis = '12rem';
+    leftCol.style.flexShrink = '0';
     leftCol.style.display = 'flex';
     leftCol.style.flexDirection = 'column';
     leftCol.style.gap = '0.5rem';
@@ -2730,14 +2778,16 @@ function buildEquipmentTab() {
     leftCol.style.alignItems = 'flex-end'; // Align widgets to the right of the left column
 
     const centerCol = document.createElement('div');
-    centerCol.style.flexBasis = '40%';
+    centerCol.style.flexGrow = '1';
     centerCol.style.display = 'flex';
     centerCol.style.justifyContent = 'center';
     centerCol.style.alignItems = 'center';
     centerCol.style.position = 'relative'; // Needed for positioning the overlay
+    centerCol.style.minWidth = '0'; // Prevents flexbox overflow issues
 
     const rightCol = document.createElement('div');
-    rightCol.style.flexBasis = '30%';
+    rightCol.style.flexBasis = '12rem';
+    rightCol.style.flexShrink = '0';
     rightCol.style.display = 'flex';
     rightCol.style.flexDirection = 'column';
     rightCol.style.gap = '0.5rem';
@@ -2964,9 +3014,9 @@ function buildEquipmentTab() {
     const createSlotWidget = (slotId) => {
         const slot = state.equipment[slotId];
         const widget = document.createElement('div');
-        widget.style.border = '1px solid #444';
+        widget.style.border = '0.0625rem solid #444';
         widget.style.padding = '0.5rem';
-        widget.style.width = '150px';
+        widget.style.width = '9.375rem';
 
         const nameDiv = document.createElement('div');
         nameDiv.style.fontWeight = 'bold';
@@ -3124,15 +3174,36 @@ function updateCharStatusTab() {
         }
     }
 
-    // New Parasite Egg Status Text
-    if (state.parasite.eggs.length > 0) {
-        const eggCount = state.parasite.eggs.length;
-        pregnancyText += `<br><br>Her abdomen feels strangely tight, bloated with ${eggCount} parasite egg(s).`;
+    // New Parasite Status Text
+    let parasiteText = '';
+    const eggCount = state.parasite.eggs.length;
+    const wormCount = state.parasite.worms.length;
+
+    if (eggCount > 0) {
         if (eggCount >= 10) {
-            pregnancyText += "<br>Her belly is unnaturally distended and occasionally ripples with movement.";
+            parasiteText += "Her belly is unnaturally distended and bloated with eggs.";
         } else if (eggCount >= 5) {
-            pregnancyText += "<br>Her belly is swollen and firm to the touch.";
+            parasiteText += "Her belly is swollen and firm to the touch, bloated with eggs.";
+        } else {
+            parasiteText += "Her abdomen feels strangely tight, bloated with eggs.";
         }
+    }
+
+    if (wormCount > 0) {
+        if (eggCount > 0) {
+            parasiteText += " "; // Add a space if there's already egg text.
+        }
+        if (wormCount >= 10) {
+            parasiteText += "Her abdomen is visibly writhing from the sheer mass of worms inside.";
+        } else if (wormCount >= 5) {
+            parasiteText += "The constant, sickening writhing in her womb is nauseating.";
+        } else {
+            parasiteText += "A disgusting squirming from within reminds her of the alien worms growing inside.";
+        }
+    }
+
+    if (parasiteText) {
+        pregnancyText += `<br><br>${parasiteText}`;
     }
     
     statusDiv.innerHTML = moodText + pregnancyText;
@@ -3414,6 +3485,16 @@ function renderScene(sceneName) {
         const npc = state.npcs[link.condition.npc];
         if (!npc || npc.relationship < link.condition.value) {
           showLink = false;
+        }
+      } else if (link.condition.type === 'parasite_impregnate_enabled') {
+        if (!state.parasite.canImpregnate) {
+            showLink = false;
+        }
+      } else if (link.condition.type === 'worms_ready_to_birth') {
+        const now = state.currentTime.getTime();
+        const readyWorms = state.parasite.worms.filter(worm => now >= worm.birthReadyTime);
+        if (readyWorms.length === 0) {
+            showLink = false;
         }
       }
       // Future condition types can be added here
@@ -4038,7 +4119,9 @@ function openOverlay(btnId){
         document.querySelectorAll(`input[name="font"][value="${state.settings.fontFamily}"]`).forEach(el => el.checked = true);
         document.querySelectorAll(`input[name="fontsize"][value="${state.settings.fontSize}"]`).forEach(el => el.checked = true);
     } else if (btnId === 'btnChar') {
-        showCharTab('status');
+        // If ui state exists, open the last tab, otherwise default to 'status'
+        const lastTab = state.ui ? state.ui.lastCharTab : 'status';
+        showCharTab(lastTab || 'status');
     } else if (btnId === 'btnSocial') {
         buildSocialOverlay();
     } else if (btnId === 'btnJournal') {
@@ -4166,8 +4249,7 @@ function showCheatTab(tabName) {
 
 function buildCheatOverlay() {
     const body = document.querySelector('#cheatsBtn-overlay .overlayBody');
-    body.style.height = 'calc(100% - 2rem)';
-    body.style.overflowY = 'hidden';
+    body.innerHTML = ''; // Clear previous content
 
     // --- Remember current tab ---
     let activeTab = 'general';
@@ -4176,19 +4258,38 @@ function buildCheatOverlay() {
         activeTab = activeTabEl.id.replace('cheat-tab-', '');
     }
 
-    // --- Tab Setup ---
-    body.innerHTML = `
-        <div id="cheat-tabs" style="display: flex; justify-content: center; margin-bottom: 1rem; gap: 0.5rem;">
-            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('general')">General</button>
-            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('skills')">Skills</button>
-            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('npcs')">NPCs</button>
-            <button class="overlayBtn" style="flex-grow: 1;" onclick="showCheatTab('debug')">Body/Debug</button>
-        </div>
-        <div id="cheat-tab-general" class="cheat-tab-content" style="height: 90%; overflow-y: auto;"></div>
-        <div id="cheat-tab-skills" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
-        <div id="cheat-tab-npcs" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
-        <div id="cheat-tab-debug" class="cheat-tab-content" style="display: none; height: 90%; overflow-y: auto;"></div>
-    `;
+    // --- Create Tab Buttons (Grid Row 1) ---
+    const tabButtonContainer = document.createElement('div');
+    tabButtonContainer.id = 'cheat-tabs';
+    tabButtonContainer.style.cssText = 'display: flex; justify-content: center; gap: 0.5rem;';
+    const tabNames = ['General', 'Skills', 'NPCs', 'Body/Debug'];
+    tabNames.forEach(name => {
+        const btn = document.createElement('button');
+        btn.className = 'overlayBtn';
+        btn.style.flexGrow = '1';
+        btn.textContent = name;
+        const tabId = name.toLowerCase().replace('/debug', 'debug');
+        btn.onclick = () => showCheatTab(tabId);
+        tabButtonContainer.appendChild(btn);
+    });
+
+    // --- Create Content Wrapper (Grid Row 2) ---
+    const contentWrapper = document.createElement('div');
+    contentWrapper.id = 'cheat-tab-content-wrapper';
+    contentWrapper.style.overflowY = 'auto';
+    contentWrapper.style.minHeight = '0';
+
+    const tabIds = ['general', 'skills', 'npcs', 'debug'];
+    tabIds.forEach(id => {
+        const tabContent = document.createElement('div');
+        tabContent.id = `cheat-tab-${id}`;
+        tabContent.className = 'cheat-tab-content';
+        contentWrapper.appendChild(tabContent);
+    });
+    
+    body.appendChild(tabButtonContainer);
+    body.appendChild(contentWrapper);
+
 
     // --- Build General Tab ---
     const generalTab = document.getElementById('cheat-tab-general');
