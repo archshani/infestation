@@ -1613,66 +1613,66 @@ function createPlayerBody(sex = 'female') {
 const sexActions = {
     // Player-only actions
     player: {
+        mouth: [],
         vagina: [
-            { name: 'Contract vaginal muscles', requiredState: 'vaginal_sex', arousalGiver: 10, arousalReceiver: 5, tags: ['vaginal'] }
+            { name: 'Squeeze', description: "{actor} tightens their vaginal muscles around {target}, eliciting a soft groan.", requiredState: 'vaginal_sex', arousalGiver: 10, arousalReceiver: 5, tags: ['vaginal'] }
         ],
         anus: [
-            { name: 'Contract anal muscles', requiredState: 'anal_sex', arousalGiver: 10, arousalReceiver: 5, tags: ['anal'] }
-        ],
-        breasts: [
-            { name: 'Press breasts against them', requiredState: 'foreplay', arousalGiver: 10, arousalReceiver: 10, tags: ['foreplay'] }
+            { name: 'Squeeze', description: "{actor} tightens their anal muscles around {target}, eliciting a soft groan.", requiredState: 'anal_sex', arousalGiver: 10, arousalReceiver: 5, tags: ['anal'] }
         ]
     },
     // Universal actions that can be performed by anyone
     universal: {
         left_hand: [
-            { name: 'Undress Top', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'top'] },
-            { name: 'Undress Bottom', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'bottom'] },
-            { name: 'Undress Underwear', requiredState: 'foreplay', arousalGiver: 3, arousalReceiver: 7, tags: ['undress', 'underwear'] },
-            { name: 'Hold Hands', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 5, tags: ['foreplay', 'affectionate'] },
-            { name: 'Caress Cheek', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 7, tags: ['foreplay', 'affectionate'] },
-            { name: 'Caress Breasts', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 15, tags: ['manual', 'foreplay'], requires_no_clothing_on_target: 'chest' },
-            { name: 'Caress Vagina', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 20, tags: ['manual', 'foreplay', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
-            { name: 'Slip hand under panties', requiredState: 'foreplay', nextState: 'hand_in_panties', arousalGiver: 7, arousalReceiver: 15, tags: ['manual', 'foreplay', 'tease'], requires_clothing: 'underwear' },
-            { name: 'Finger Vagina', requiredState: 'hand_in_panties', arousalGiver: 10, arousalReceiver: 25, tags: ['manual', 'insertion', 'foreplay', 'vaginal'] }
+            { name: 'Remove Top', description: "{actor} deftly unbuttons and removes {target}'s top, revealing what lies beneath.", requiredState: 'main', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'top'] },
+            { name: 'Remove Bottoms', description: "{actor} slides {target}'s bottoms down and off, their eyes lingering on {target}'s form.", requiredState: 'main', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'bottom'] },
+            { name: 'Squeeze Hand', description: "{actor} gently takes {target}'s hand, giving it a reassuring squeeze before lacing their fingers together.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 5, tags: ['affectionate'] },
+            { name: 'Stroke Cheek', description: "{actor} softly cups {target}'s face, their thumb stroking gently across their cheek.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 7, tags: ['affectionate'] },
+            { name: 'Tease Breasts', description: "{actor} gently teases {target}'s breasts, their fingers dancing lightly over the sensitive skin.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 15, tags: ['manual'], requires_no_clothing_on_target: 'chest' },
+            { name: 'Explore Vagina', description: "{actor} slowly explores the folds of {target}'s vagina, their touch sending shivers through {target}.", requiredState: 'main', arousalGiver: 7, arousalReceiver: 20, tags: ['manual', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
+            { name: 'Tease through Fabric', description: "{actor} slips their hand under {target}'s panties, teasing them through the thin fabric.", requiredState: 'main', nextState: 'hand_in_panties', arousalGiver: 7, arousalReceiver: 15, tags: ['manual', 'tease'], requires_clothing: 'underwear' },
+            { name: 'Gentle Fingering', description: "{actor} begins to gently finger {target}'s vagina, their movements slow and deliberate.", requiredState: 'hand_in_panties', arousalGiver: 10, arousalReceiver: 25, tags: ['manual', 'insertion', 'vaginal'] }
         ],
         right_hand: [
             // Mirrored actions for the other hand
-            { name: 'Undress Top', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'top'] },
-            { name: 'Undress Bottom', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'bottom'] },
-            { name: 'Undress Underwear', requiredState: 'foreplay', arousalGiver: 3, arousalReceiver: 7, tags: ['undress', 'underwear'] },
-            { name: 'Hold Hands', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 5, tags: ['foreplay', 'affectionate'] },
-            { name: 'Caress Cheek', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 7, tags: ['foreplay', 'affectionate'] },
-            { name: 'Caress Breasts', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 15, tags: ['manual', 'foreplay'], requires_no_clothing_on_target: 'chest' },
-            { name: 'Caress Vagina', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 20, tags: ['manual', 'foreplay', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
-            { name: 'Slip hand under panties', requiredState: 'foreplay', nextState: 'hand_in_panties', arousalGiver: 7, arousalReceiver: 15, tags: ['manual', 'foreplay', 'tease'], requires_clothing: 'underwear' },
-            { name: 'Finger Vagina', requiredState: 'hand_in_panties', arousalGiver: 10, arousalReceiver: 25, tags: ['manual', 'insertion', 'foreplay', 'vaginal'] }
+            { name: 'Remove Top', description: "{actor} deftly unbuttons and removes {target}'s top, revealing what lies beneath.", requiredState: 'main', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'top'] },
+            { name: 'Remove Bottoms', description: "{actor} slides {target}'s bottoms down and off, their eyes lingering on {target}'s form.", requiredState: 'main', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'bottom'] },
+            { name: 'Squeeze Hand', description: "{actor} gently takes {target}'s hand, giving it a reassuring squeeze before lacing their fingers together.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 5, tags: ['affectionate'] },
+            { name: 'Stroke Cheek', description: "{actor} softly cups {target}'s face, their thumb stroking gently across their cheek.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 7, tags: ['affectionate'] },
+            { name: 'Tease Breasts', description: "{actor} gently teases {target}'s breasts, their fingers dancing lightly over the sensitive skin.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 15, tags: ['manual'], requires_no_clothing_on_target: 'chest' },
+            { name: 'Explore Vagina', description: "{actor} slowly explores the folds of {target}'s vagina, their touch sending shivers through {target}.", requiredState: 'main', arousalGiver: 7, arousalReceiver: 20, tags: ['manual', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
+            { name: 'Tease through Fabric', description: "{actor} slips their hand under {target}'s panties, teasing them through the thin fabric.", requiredState: 'main', nextState: 'hand_in_panties', arousalGiver: 7, arousalReceiver: 15, tags: ['manual', 'tease'], requires_clothing: 'underwear' },
+            { name: 'Gentle Fingering', description: "{actor} begins to gently finger {target}'s vagina, their movements slow and deliberate.", requiredState: 'hand_in_panties', arousalGiver: 10, arousalReceiver: 25, tags: ['manual', 'insertion', 'vaginal'] }
         ],
         mouth: [
-            { name: 'Kiss Passionately', requiredState: 'foreplay', arousalGiver: 10, arousalReceiver: 10, tags: ['oral', 'foreplay', 'affectionate'] },
-            { name: 'Kiss Neck', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 12, tags: ['oral', 'foreplay'] },
-            { name: 'Lick Nipples', requiredState: 'foreplay', arousalGiver: 12, arousalReceiver: 20, tags: ['oral', 'foreplay'], requires_no_clothing_on_target: 'left_nipple' },
-            { name: 'Perform Oral on Vagina', requiredState: 'foreplay', arousalGiver: 15, arousalReceiver: 30, tags: ['oral', 'foreplay', 'vaginal'], requires_no_clothing_on_target: 'vagina' }
+            { name: 'Whisper Seductively', description: "{actor} leans in close and whispers something seductive in {target}'s ear.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 10, arousalReceiver: 15, tags: ['oral', 'seduction'] },
+            { name: 'Passionate Kiss', description: "{actor} pulls {target} into a deep, passionate kiss, their tongues dancing together.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 10, arousalReceiver: 10, tags: ['oral', 'affectionate'] },
+            { name: 'Nibble on Neck', description: "{actor} presses their lips to {target}'s neck, leaving a trail of soft kisses and gentle nibbles.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 7, arousalReceiver: 12, tags: ['oral'] },
+            { name: 'Worship Nipples', description: "{actor} takes one of {target}'s nipples into their mouth, licking and sucking gently.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 12, arousalReceiver: 20, tags: ['oral'], requires_no_clothing_on_target: 'left_nipple' },
+            { name: 'Oral Worship', description: "{actor} kneels down and begins to worship {target}'s vagina with their mouth.", requiredState: 'main', arousalGiver: 15, arousalReceiver: 30, tags: ['oral', 'vaginal'], requires_no_clothing_on_target: 'vagina' }
         ],
         penis: [
             // This is an NPC-only action group for now
-            { name: 'Vaginal Penetration', requiredState: 'foreplay', nextState: 'vaginal_sex', arousalGiver: 20, arousalReceiver: 20, tags: ['insertion', 'penetration', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
-            { name: 'Anal Penetration', requiredState: 'foreplay', nextState: 'anal_sex', arousalGiver: 15, arousalReceiver: 30, tags: ['insertion', 'penetration', 'anal'], requires_no_clothing_on_target: 'anus' }
+            { name: 'Begin Vaginal Sex', description: "{actor} aligns themselves and slowly penetrates {target}'s vagina, a soft gasp escaping their lips.", requiredState: 'main', nextState: 'vaginal_sex', arousalGiver: 20, arousalReceiver: 20, tags: ['insertion', 'penetration', 'vaginal', 'npc-only'], requires_no_clothing_on_target: 'vagina' },
+            { name: 'Begin Anal Sex', description: "{actor} carefully positions themselves and penetrates {target}'s anus, their movements slow and deliberate.", requiredState: 'main', nextState: 'anal_sex', arousalGiver: 15, arousalReceiver: 30, tags: ['insertion', 'penetration', 'anal', 'npc-only'], requires_no_clothing_on_target: 'anus' }
         ],
         vagina: [
-             { name: 'Thrust gently', requiredState: 'vaginal_sex', arousalGiver: 10, arousalReceiver: 15, tags: ['vaginal', 'penetration'] },
-             { name: 'Thrust hard', requiredState: 'vaginal_sex', arousalGiver: 15, arousalReceiver: 20, tags: ['vaginal', 'penetration'] },
-             { name: 'Edge partner', requiredState: 'vaginal_sex', arousalGiver: 5, arousalReceiver: -10, tags: ['vaginal', 'penetration', 'edging'] },
-             { name: 'Pull out', requiredState: 'vaginal_sex', nextState: 'foreplay', arousalGiver: 2, arousalReceiver: -5, tags: ['vaginal'] }
+             { name: 'Gentle Thrusts', description: "{actor} begins a rhythm of slow, gentle thrusts, their bodies moving in sync.", requiredState: 'vaginal_sex', arousalGiver: 10, arousalReceiver: 15, tags: ['vaginal', 'penetration'] },
+             { name: 'Thrust hard', description: "{actor} thrusts hard into {target}, their movements becoming more forceful and demanding.", requiredState: 'vaginal_sex', arousalGiver: 15, arousalReceiver: 20, tags: ['vaginal', 'penetration'] },
+             { name: 'Tease and Deny', description: "{actor} slows their rhythm, teasing and denying {target} the release they crave.", requiredState: 'vaginal_sex', arousalGiver: 5, arousalReceiver: -10, tags: ['vaginal', 'penetration', 'edging'] },
+             { name: 'Withdraw', description: "{actor} slowly withdraws from {target}, their bodies separating with a soft sound.", requiredState: 'vaginal_sex', nextState: 'main', arousalGiver: 2, arousalReceiver: -5, tags: ['vaginal'] }
         ],
         anus: [
-             { name: 'Thrust gently', requiredState: 'anal_sex', arousalGiver: 10, arousalReceiver: 15, tags: ['anal', 'penetration'] },
-             { name: 'Thrust hard', requiredState: 'anal_sex', arousalGiver: 15, arousalReceiver: 25, tags: ['anal', 'penetration'] },
-             { name: 'Pull out', requiredState: 'anal_sex', nextState: 'foreplay', arousalGiver: 2, arousalReceiver: -5, tags: ['anal'] }
+             { name: 'Gentle Thrusts', description: "{actor} begins a rhythm of slow, gentle thrusts, their bodies moving in sync.", requiredState: 'anal_sex', arousalGiver: 10, arousalReceiver: 15, tags: ['anal', 'penetration'] },
+             { name: 'Thrust hard', description: "{actor} thrusts hard into {target}, their movements becoming more forceful and demanding.", requiredState: 'anal_sex', arousalGiver: 15, arousalReceiver: 25, tags: ['anal', 'penetration'] },
+             { name: 'Withdraw', description: "{actor} slowly withdraws from {target}, their bodies separating with a soft sound.", requiredState: 'anal_sex', nextState: 'main', arousalGiver: 2, arousalReceiver: -5, tags: ['anal'] }
         ],
         legs: [
-            { name: 'Wrap legs around them', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 10, tags: ['legs', 'tease'] },
-            { name: 'Rub legs against them', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 12, tags: ['legs', 'tease'] }
+            { name: 'Leg Lock', description: "{actor} wraps their legs tightly around {target}'s waist, pulling them closer.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 5, arousalReceiver: 10, tags: ['legs', 'tease'] },
+            { name: 'Sensual Rub', description: "{actor} slowly rubs their legs against {target}'s, the friction sending sparks between them.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 7, arousalReceiver: 12, tags: ['legs', 'tease'] }
+        ],
+        breasts: [
+            { name: 'Body Press', description: "{actor} presses their breasts firmly against {target}'s body, letting them feel their warmth.", requiredState: ['main', 'vaginal_sex', 'anal_sex'], arousalGiver: 10, arousalReceiver: 10, tags: ['tease'] }
         ]
     }
 };
@@ -1946,7 +1946,8 @@ const state = {
         { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
         { text: 'Relax', action: "goToScene('relaxing', 0)" },
         { text: 'Rest for the day', action: "passDayInLounge()" },
-        { text: 'Test Sex Scene with Toby', action: "startSexScene(['player', 'Toby'])" }
+        { text: 'Test Sex Scene with Toby', action: "startSexScene(['player', 'Toby'])" },
+        { text: 'Test Sex Scene with Leah', action: "startSexScene(['player', 'Leah'])" }
       ],
       randomEvents: [
         { chance: 0.2, scene: 'random_lounge_1' }
@@ -3279,6 +3280,7 @@ function startSexScene(participantIds) {
         const actor = {
             id: id,
             hasClimaxed: false,
+            lastAction: null,
             // NOTE: This clothing tracking is simplified. A real implementation would need to
             // differentiate between player and NPC clothing. For now, we assume all undress
             // actions target the player.
@@ -3294,7 +3296,7 @@ function startSexScene(participantIds) {
     });
 
     state.sexScene.turn = participantIds[0]; // Player always starts
-    state.sexScene.currentState = 'foreplay';
+    state.sexScene.currentState = 'main';
     state.sexScene.log = ['The scene begins. You are both fully clothed.'];
     
     state.storyEventActive = true;
@@ -3312,7 +3314,10 @@ function processSexAction(actorId, actionBundle, targetId) {
 
     actionBundle.forEach(action => {
         // State machine check
-        if (action.requiredState !== state.sexScene.currentState) {
+        const requiredState = action.requiredState;
+        const currentState = state.sexScene.currentState;
+        if ((Array.isArray(requiredState) && !requiredState.includes(currentState)) || 
+            (!Array.isArray(requiredState) && requiredState !== currentState)) {
             state.sexScene.log.push(`<i>You can't do that right now (${action.name}).</i>`);
             return; // 'continue' in a forEach loop
         }
@@ -3331,22 +3336,39 @@ function processSexAction(actorId, actionBundle, targetId) {
 
         // Undress logic
         if (action.tags.includes('undress')) {
-            let itemRemoved = null;
-            let slotId, layer;
-
+            let itemsRemoved = [];
             if (action.tags.includes('top')) {
-                if (state.equipment.upper.outer) { itemRemoved = state.equipment.upper.outer; slotId = 'upper'; layer = 'outer'; } 
-                else if (state.equipment.upper.middle) { itemRemoved = state.equipment.upper.middle; slotId = 'upper'; layer = 'middle'; }
+                // Remove ONE layer of clothing from top, from outer to inner
+                if (state.equipment.upper.outer) {
+                    itemsRemoved.push(state.equipment.upper.outer.name);
+                    unequipItem('upper', 'outer');
+                } else if (state.equipment.upper.middle) {
+                    itemsRemoved.push(state.equipment.upper.middle.name);
+                    unequipItem('upper', 'middle');
+                } else if (state.equipment.upper.skin) {
+                    itemsRemoved.push(state.equipment.upper.skin.name);
+                    unequipItem('upper', 'skin');
+                }
             } else if (action.tags.includes('bottom')) {
-                if (state.equipment.lower.middle) { itemRemoved = state.equipment.lower.middle; slotId = 'lower'; layer = 'middle'; }
-            } else if (action.tags.includes('underwear')) {
-                if (state.equipment.lower.skin) { itemRemoved = state.equipment.lower.skin; slotId = 'lower'; layer = 'skin'; } 
-                else if (state.equipment.upper.skin) { itemRemoved = state.equipment.upper.skin; slotId = 'upper'; layer = 'skin'; }
+                // Remove ONE layer of clothing from bottom, from outer to inner
+                if (state.equipment.lower.outer) {
+                    itemsRemoved.push(state.equipment.lower.outer.name);
+                    unequipItem('lower', 'outer');
+                } else if (state.equipment.lower.middle) {
+                    itemsRemoved.push(state.equipment.lower.middle.name);
+                    unequipItem('lower', 'middle');
+                } else if (state.equipment.lower.skin) {
+                    itemsRemoved.push(state.equipment.lower.skin.name);
+                    unequipItem('lower', 'skin');
+                }
             }
 
-            if (itemRemoved) {
-                state.sexScene.log.push(`<b>${actorId} removes ${targetId}'s ${itemRemoved.name}.</b>`);
-                unequipItem(slotId, layer);
+            if (itemsRemoved.length > 0) {
+                if (actorId === 'player') {
+                    state.sexScene.log.push(`<b>You remove your ${itemsRemoved.join(', ')}.</b>`);
+                } else {
+                    state.sexScene.log.push(`<b>${actorId} removes your ${itemsRemoved.join(', ')}.</b>`);
+                }
             } else {
                 state.sexScene.log.push(`<i>${actorId} tries to remove clothing, but there's nothing there.</i>`);
             }
@@ -3365,7 +3387,10 @@ function processSexAction(actorId, actionBundle, targetId) {
         }
         
         // Log generation
-        state.sexScene.log.push(`${actorId} uses ${action.name} on ${targetId}.`);
+        let logMessage = action.description || `${actorId} uses ${action.name} on ${targetId}.`;
+        logMessage = logMessage.replace(/{actor}/g, `<b>${actorId}</b>`).replace(/{target}/g, `<b>${targetId}</b>`);
+        state.sexScene.log.push(logMessage);
+        giver.lastAction = action.name;
 
         // Stat tracking
         if (actorId === 'player') {
@@ -3417,18 +3442,40 @@ function checkForClimax(actorId, action) {
             // This is an NPC climax
             const npc = state.npcs[actor.id];
             if (npc) {
-                if (action.tags.includes('vaginal')) {
-                    addSemen('vagina', npc.cumProduction, npc.semenId);
+                let semenLocation = 'body'; // Default
+
+                // Check for penetration states first
+                if (state.sexScene.currentState === 'vaginal_sex') {
+                    semenLocation = 'vagina';
                     state.stats.vaginalCreampiesReceived++;
-                } else if (action.tags.includes('anal')) {
-                    addSemen('anus', npc.cumProduction, npc.semenId);
+                } else if (state.sexScene.currentState === 'anal_sex') {
+                    semenLocation = 'anus';
                     state.stats.analCreampiesReceived++;
-                } else if (action.tags.includes('oral')) {
-                    addSemen('mouth', npc.cumProduction, npc.semenId);
-                    state.stats.oralCreampiesReceived++;
                 } else {
-                    addSemen('body', npc.cumProduction, npc.semenId);
+                    // If not in a penetration state, the location is based on context.
+                    // Default to 'body' unless a more specific target can be determined.
+                    const climaxingActor = state.sexScene.actors.find(a => a.id === actorId);
+                    const lastActionName = climaxingActor.lastAction;
+
+                    if (lastActionName) {
+                        let lastAction = null;
+                        // Find the action object from its name
+                        for (const part in sexActions.universal) {
+                            const foundAction = sexActions.universal[part].find(a => a.name === lastActionName);
+                            if (foundAction) {
+                                lastAction = foundAction;
+                                break;
+                            }
+                        }
+
+                        // If the NPC's last action was oral on the vagina, target the vagina.
+                        if (lastAction && lastAction.tags.includes('oral') && lastAction.tags.includes('vaginal')) {
+                            semenLocation = 'vagina';
+                        }
+                    }
                 }
+                
+                addSemen(semenLocation, npc.cumProduction, npc.semenId);
             }
             actor.arousal = 0; // Reset NPC's temporary arousal
         }
@@ -3558,6 +3605,9 @@ function renderSexScene() {
     if (npc) {
         const arousal = getArousalLabel(npc.arousal, npc.maxArousal);
         leftColumn.innerHTML = `<h4>${npc.id}'s State</h4><span style="color: ${arousal.color}; font-weight: bold;">${arousal.text}</span>`;
+        if (npc.lastAction) {
+            leftColumn.innerHTML += `<br><small>Last Action: ${npc.lastAction}</small>`;
+        }
     }
     columnsContainer.appendChild(leftColumn);
 
@@ -3565,25 +3615,51 @@ function renderSexScene() {
     rightColumn.style.flex = '3';
 
     if (state.sexScene.turn === 'player') {
+        const player = state.sexScene.actors.find(a => a.id === 'player');
+        if (player && player.lastAction) {
+            rightColumn.innerHTML += `<p style="margin-bottom: 0.5rem; font-style: italic;"><small>Your last action was: ${player.lastAction}</small></p>`;
+        }
         rightColumn.innerHTML += '<h4>Your Action</h4>';
         const actionContainer = document.createElement('div');
+        actionContainer.style.display = 'flex';
+        actionContainer.style.gap = '1rem';
 
-        const createActionRow = (partsInRow) => {
-            const rowDiv = document.createElement('div');
-            rowDiv.style.display = 'flex';
-            rowDiv.style.justifyContent = 'space-around';
-            rowDiv.style.marginBottom = '1rem';
+        // Helper function to generate action groups
+        const createActionColumn = (title, actionScope, parts) => {
+            const column = document.createElement('div');
+            column.style.flex = '1';
             
-            partsInRow.forEach(partName => {
-                const groupContainer = document.createElement('div');
-                groupContainer.style.flex = '1';
-                groupContainer.style.padding = '0 0.5rem';
+            let html = `<h5>${title}</h5>`;
+            
+            parts.forEach(partName => {
+                const actions = sexActions[actionScope][partName] ? sexActions[actionScope][partName].filter(a => {
+                    const required = a.requiredState;
+                    const current = state.sexScene.currentState;
+                    const passesStateCheck = Array.isArray(required) ? required.includes(current) : required === current;
+                    
+                    // Exclude NPC-only tags for player rendering
+                    const isNpcOnly = a.tags && a.tags.includes('npc-only');
+                    if (isNpcOnly) return false;
 
-                const actionCategories = { ...sexActions.player, ...sexActions.universal };
-                const actions = actionCategories[partName] ? actionCategories[partName].filter(a => a.requiredState === state.sexScene.currentState) : [];
-                
+                    // Hide undress actions if nothing is left to remove
+                    if (a.tags && a.tags.includes('undress')) {
+                        if (a.tags.includes('top')) {
+                            if (!state.equipment.upper.outer && !state.equipment.upper.middle && !state.equipment.upper.skin) {
+                                return false;
+                            }
+                        }
+                        if (a.tags.includes('bottom')) {
+                            if (!state.equipment.lower.outer && !state.equipment.lower.middle && !state.equipment.lower.skin) {
+                                return false;
+                            }
+                        }
+                    }
+                    
+                    return passesStateCheck;
+                }) : [];
+
                 if (actions.length > 0) {
-                    let groupHtml = `<strong>${partName.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>`;
+                    html += `<div style="margin-bottom: 0.8rem;"><strong>${partName.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>`;
                     actions.forEach((action, index) => {
                         let canPerform = true;
                         if (action.requires_clothing && !((state.equipment.lower.skin && state.equipment.lower.skin.tags.includes(action.requires_clothing)) || (state.equipment.upper.skin && state.equipment.upper.skin.tags.includes(action.requires_clothing)))) {
@@ -3594,26 +3670,30 @@ function renderSexScene() {
                         }
 
                         if (canPerform) {
-                            const group = sexActions.player[partName] ? 'player' : 'universal';
-                            const radioId = `action-${group}-${partName}-${index}`;
-                            groupHtml += `<br><label for="${radioId}"><input type="radio" id="${radioId}" name="sex-action-${partName}" value="${group}|${partName}|${index}"> ${action.name}</label>`;
+                            // Correctly construct the ID and value with the scope
+                            const radioId = `action-${actionScope}-${partName}-${index}`;
+                            html += `<br><label for="${radioId}"><input type="radio" id="${radioId}" name="sex-action-${partName}" value="${actionScope}|${partName}|${index}"> ${action.name}</label>`;
                         }
                     });
-                    groupContainer.innerHTML = groupHtml;
+                    html += `</div>`;
                 }
-                rowDiv.appendChild(groupContainer);
             });
-            actionContainer.appendChild(rowDiv);
+
+            column.innerHTML = html;
+            return column;
         };
 
-        createActionRow(['left_hand', 'right_hand']);
-        createActionRow(['breasts', 'legs', 'mouth']);
-        createActionRow(['vagina', 'anus']);
+        const universalParts = ['left_hand', 'right_hand', 'mouth', 'breasts', 'legs'];
+        const playerParts = ['mouth', 'vagina', 'anus']; // Player-specific actions
+
+        const universalColumn = createActionColumn('Universal Actions', 'universal', universalParts);
+        const playerColumn = createActionColumn('Personal Actions', 'player', playerParts);
+
+        actionContainer.appendChild(universalColumn);
+        actionContainer.appendChild(playerColumn);
         
         rightColumn.appendChild(actionContainer);
         rightColumn.innerHTML += '<button id="submit-sex-action" class="overlayBtn" style="margin-top: 1rem;">Perform Action</button>';
-    } else {
-        rightColumn.innerHTML += `<h4>Waiting for ${state.sexScene.turn}...</h4>`;
     }
     columnsContainer.appendChild(rightColumn);
     mainContainer.appendChild(columnsContainer);
@@ -3642,8 +3722,9 @@ function handlePlayerAction() {
 
     const actionBundle = [];
     selectedRadios.forEach(radio => {
-        const [group, bodyPart, actionIndex] = radio.value.split('|');
-        const action = sexActions[group][bodyPart][actionIndex];
+        const [scope, bodyPart, actionIndex] = radio.value.split('|');
+        // Fetch action from the correct scope (universal or player)
+        const action = sexActions[scope][bodyPart][actionIndex];
         actionBundle.push(action);
     });
     
@@ -3655,7 +3736,7 @@ function handlePlayerAction() {
     updateNeedsUI();
     
     if (state.sexScene.isActive && state.sexScene.turn !== 'player') {
-        setTimeout(handleNpcTurn, 1500);
+        handleNpcTurn();
     }
 }
 
@@ -3666,17 +3747,47 @@ function handleNpcTurn() {
     const currentState = state.sexScene.currentState;
     const actionBundle = [];
 
+    const player = state.sexScene.actors.find(a => a.id === 'player');
+    const playerLastActionName = player ? player.lastAction : null;
+    let playerLastActionTags = [];
+    if (playerLastActionName) {
+        for (const part in sexActions.universal) {
+            const action = sexActions.universal[part].find(a => a.name === playerLastActionName);
+            if (action) {
+                playerLastActionTags = action.tags;
+                break;
+            }
+        }
+    }
+
     // For each body part, find valid actions and randomly choose one
     for (const bodyPart in sexActions.universal) {
-        const validActions = sexActions.universal[bodyPart].filter(action => 
-            action.requiredState === currentState && !action.tags.includes('player-only')
-        );
+        const validActions = sexActions.universal[bodyPart].filter(action => {
+            const required = action.requiredState;
+            const passesStateCheck = Array.isArray(required) ? required.includes(currentState) : required === currentState;
+            return passesStateCheck && !action.tags.includes('player-only');
+        });
 
         if (validActions.length > 0) {
-            // NPC has a 50% chance to perform an action with this body part
-            if (Math.random() < 0.5) {
-                const randomAction = validActions[Math.floor(Math.random() * validActions.length)];
-                actionBundle.push(randomAction);
+            if (Math.random() < 0.5) { // 50% chance to act with this body part
+                let chosenAction;
+                // If player had a last action, try to reciprocate
+                if (playerLastActionTags.length > 0) {
+                    const reciprocatingActions = validActions.filter(action => 
+                        action.tags.some(tag => playerLastActionTags.includes(tag))
+                    );
+                    
+                    // 75% chance to pick a reciprocating action if available
+                    if (reciprocatingActions.length > 0 && Math.random() < 0.75) {
+                        chosenAction = reciprocatingActions[Math.floor(Math.random() * reciprocatingActions.length)];
+                    } else {
+                        chosenAction = validActions[Math.floor(Math.random() * validActions.length)];
+                    }
+                } else {
+                    // Default random selection
+                    chosenAction = validActions[Math.floor(Math.random() * validActions.length)];
+                }
+                actionBundle.push(chosenAction);
             }
         }
     }
