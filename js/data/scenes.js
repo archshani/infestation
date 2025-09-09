@@ -244,8 +244,7 @@ const scenes = {
         { text: 'Continue', action: "returnFromSexScene()" }
       ]
     }
-  }
-};
+  };
 
 // This line will be added in main.js to merge the scenes into the state
 // Object.assign(state.scenes, scenes);
