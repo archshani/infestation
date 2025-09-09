@@ -1119,6 +1119,139 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
   </div>
 </div>
 
+<!-- ==================== BODY ART STUDIO OVERLAY ==================== -->
+<div id="body-art-studio-overlay" class="overlay">
+    <div class="overlayHeader">Body Art Studio</div>
+    <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+    <div class="overlayBody" style="display: flex; flex-direction: column; gap: 1rem;">
+        <!-- Tabs -->
+        <div id="body-art-tabs" style="display: flex; border-bottom: 1px solid #444; padding-bottom: 0.5rem; gap: 0.5rem;">
+            <button class="overlayBtn" style="flex-grow: 1;" onclick="showBodyArtTab('tattoos')">Tattoos</button>
+            <button class="overlayBtn" style="flex-grow: 1;" onclick="showBodyArtTab('piercings')">Piercings</button>
+        </div>
+
+        <!-- Tattoo Tab (New Refactored Layout) -->
+        <div id="body-art-tab-tattoos" class="body-art-tab" style="display: none; flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Top Row: Selections -->
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div style="flex-basis: 33%;">
+                    <label for="tattoo-body-part-select">Body Part:</label>
+                    <select id="tattoo-body-part-select" style="width: 100%;" onchange="onTattooPartSelect()"></select>
+                </div>
+                <div style="flex-basis: 33%;">
+                    <label>Design:</label>
+                    <p id="tattoo-template-name" style="font-weight: bold; margin: 0;"></p>
+                </div>
+                <div style="flex-basis: 33%;">
+                    <label for="tattoo-name-input">Tattoo Name:</label>
+                    <input type="text" id="tattoo-name-input" style="width: 100%;">
+                </div>
+            </div>
+
+            <!-- Main Content Area: 3 Columns -->
+            <div style="display: flex; flex: 1; gap: 1rem; overflow: hidden; min-height: 0;">
+                <!-- Column 1: Customization Tags -->
+                <div id="tattoo-tags-sections-wrapper" style="flex: 1; display: none; flex-direction: column; gap: 1rem;">
+                    <!-- Style Tags, Feature Tags, Size Tags -->
+                    <div id="tattoo-style-section">
+                        <strong>Style:</strong>
+                        <div id="tattoo-style-tags-container" style="border: 1px solid #444; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;"></div>
+                    </div>
+                    <div id="tattoo-feature-section">
+                        <strong>Features:</strong>
+                        <div id="tattoo-feature-tags-container" style="border: 1px solid #444; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;"></div>
+                    </div>
+                    <div id="tattoo-size-section">
+                        <strong>Size:</strong>
+                        <div id="tattoo-size-tags-container" style="border: 1px solid #444; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;"></div>
+                    </div>
+                    <div id="tattoo-theme-section">
+                        <strong>Theme:</strong>
+                        <div id="tattoo-theme-tags-container" style="border: 1px solid #444; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Column 2: Preview & Removal -->
+                <div style="flex: 1; display: flex; flex-direction: column; min-height: 0; gap: 1rem;">
+                    <div style="flex-basis: 50%; display: flex; flex-direction: column;">
+                        <strong>Preview & Customization:</strong>
+                        <div id="tattoo-preview-container" style="flex: 1; border: 1px solid #444; padding: 0.5rem; margin-top: 0.5rem; background: #111;">
+                            <p><strong>Description:</strong> <span id="tattoo-preview-design"></span></p>
+                            <div id="tattoo-text-section" style="display: none; margin-top: 0.5rem;">
+                                <strong>Custom Text:</strong>
+                                <input type="text" id="tattoo-custom-text" style="width: 100%; margin-top: 0.25rem;" oninput="updateTattooPreview()">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="flex-basis: 50%; display: flex; flex-direction: column;">
+                        <h4>Remove a Tattoo (Cost: $5000)</h4>
+                        <div id="current-tattoos-container" style="flex-grow: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem; margin-top: 0.5rem;"></div>
+                    </div>
+                </div>
+
+                <!-- Column 3: Final Tags & Cost -->
+                <div style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                    <strong>Final Tags:</strong>
+                    <ul id="tattoo-final-tags-list" style="flex: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem; list-style-position: inside; margin-top: 0.5rem; margin-left:0; padding-left: 1.2rem;"></ul>
+                </div>
+            </div>
+
+            <!-- Bottom Button Bar -->
+            <div style="padding-top: 1rem; border-top: 1px solid #444; text-align: right;">
+                <button id="get-tattoo-btn" class="overlayBtn" onclick="getTattoo()">Get Tattoo</button>
+            </div>
+        </div>
+
+        <!-- Piercing Tab (New Crafting Layout) -->
+        <div id="body-art-tab-piercings" class="body-art-tab" style="display: none; flex-grow: 1; min-height: 0; display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Top Row: Selections -->
+            <div style="display: flex; gap: 2rem; align-items: center; margin-bottom: 1rem;">
+                <div style="flex-basis: 50%;">
+                    <label for="piercing-location-select">Location:</label>
+                    <select id="piercing-location-select" style="width: 100%;" onchange="updatePiercingPreview()"></select>
+                </div>
+                <div style="flex-basis: 50%;">
+                    <label for="piercing-material-select">Material:</label>
+                    <select id="piercing-material-select" style="width: 100%;" onchange="updatePiercingPreview()"></select>
+                </div>
+                <div style="flex-basis: 50%;">
+                    <label for="piercing-style-select">Style:</label>
+                    <select id="piercing-style-select" style="width: 100%;" onchange="updatePiercingPreview()"></select>
+                </div>
+            </div>
+
+            <!-- Preview & Cost -->
+            <div style="border: 1px solid #444; padding: 0.5rem; background: #111;">
+                <p><strong>Jewelry:</strong> <span id="piercing-preview-jewelry"></span></p>
+                <p><strong>Final Name:</strong> <span id="piercing-preview-name"></span></p>
+            </div>
+
+            <!-- Bottom Button Bar -->
+            <div style="padding-top: 1rem; border-top: 1px solid #444; text-align: right; margin-top: auto;">
+                <button id="get-piercing-btn" class="overlayBtn" onclick="getPiercing()">Get Piercing</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MANAGE PIERCINGS OVERLAY ==================== -->
+<div id="manage-piercings-overlay" class="overlay">
+    <div class="overlayHeader">Manage Piercings</div>
+    <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+    <div class="overlayBody" style="display: flex; gap: 1rem; min-height: 0;">
+        <!-- Left Column: Equipped -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <h4>Equipped</h4>
+            <div id="equipped-piercings-list" style="flex-grow: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem;"></div>
+        </div>
+        <!-- Right Column: Stored -->
+        <div style="flex: 1; display: flex; flex-direction: column;">
+            <h4>Stored</h4>
+            <div id="stored-piercings-list" style="flex-grow: 1; overflow-y: auto; border: 1px solid #444; padding: 0.5rem;"></div>
+        </div>
+    </div>
+</div>
+
 <!-- ==================== NOTIFICATION OVERLAY ==================== -->
 <div id="craft-notification-overlay"></div>
 <div id="error-notification-overlay"></div>
@@ -1153,7 +1286,8 @@ class BodyPart {
         this.descriptor = null; // e.g., 'small', 'large', 'toned'
         this.adjectives = adjectives; // e.g., ['strong', 'scarred']
         this.size = size;
-        // Tattoos, piercings, etc. can be added here later
+        this.tattoos = []; // Array of TattooItem objects
+        this.piercings = []; // Array of PiercingItem objects
     }
 }
 
@@ -1182,6 +1316,7 @@ class BackSlot {
     }
 }
 
+
 class ClothingItem {
     constructor({
         id,
@@ -1203,6 +1338,198 @@ class ClothingItem {
         this.bonusStats = bonusStats;
         this.durability = durability;
         this.tags = tags;
+    }
+}
+
+class TattooItem {
+    constructor({
+        id, // Unique instance ID
+        name, // Final name, e.g., "Large Color Rose Tattoo"
+        design, // Final description
+        tags = []
+    }) {
+        this.id = id;
+        this.name = name;
+        this.design = design;
+        this.tags = tags;
+    }
+}
+
+class PiercingItem {
+    constructor({
+        id, // Unique instance ID
+        name, // Final name, e.g., "Gold Stud"
+        bodyPartId, // The specific part it's on
+        jewelry, // Description of the jewelry
+        tags = []
+    }) {
+        this.id = id;
+        this.name = name;
+        this.bodyPartId = bodyPartId;
+        this.jewelry = jewelry;
+        this.tags = tags;
+    }
+}
+
+/* ==============================================================
+   PIERCING LOGIC (New Crafting System)
+   ============================================================== */
+function initPiercingTab() {
+    const template = piercingTemplates.standard_stud;
+    const locationSelect = document.getElementById('piercing-location-select');
+    const materialSelect = document.getElementById('piercing-material-select');
+    const styleSelect = document.getElementById('piercing-style-select');
+
+    // Filter allowed tags into locations, materials, and styles
+    const allLocationTags = template.allowedTags.filter(t => state.playerBody[t]);
+    const materialTags = template.allowedTags.filter(t => piercingMaterialTags.includes(t));
+    const styleTags = template.allowedTags.filter(t => piercingStyleTags.includes(t));
+
+    // Sort location tags according to the master body part order
+    const sortedLocationTags = bodyPartOrder.filter(p => allLocationTags.includes(p));
+
+    locationSelect.innerHTML = sortedLocationTags.map(partId => `<option value="${partId}">${state.playerBody[partId].name}</option>`).join('');
+    materialSelect.innerHTML = materialTags.map(mat => `<option value="${mat}">${mat}</option>`).join('');
+    styleSelect.innerHTML = styleTags.map(sty => `<option value="${sty}">${sty}</option>`).join('');
+
+    updatePiercingPreview();
+}
+
+function updatePiercingPreview() {
+    const template = piercingTemplates.standard_stud;
+    const location = document.getElementById('piercing-location-select').value;
+    const material = document.getElementById('piercing-material-select').value;
+    const style = document.getElementById('piercing-style-select').value;
+
+    const jewelryEl = document.getElementById('piercing-preview-jewelry');
+    const nameEl = document.getElementById('piercing-preview-name');
+    const costBtn = document.getElementById('get-piercing-btn');
+
+    let finalCost = template.baseCost;
+    if (material === 'silver') finalCost += 50;
+    if (material === 'gold') finalCost += 150;
+    if (material === 'titanium') finalCost += 75;
+    if (style === 'ring') finalCost += 20;
+    if (style === 'barbell') finalCost += 30;
+    if (style === 'horseshoe') finalCost += 40;
+
+    const finalJewelry = `a ${material} ${style}`;
+    const finalName = `${material.charAt(0).toUpperCase() + material.slice(1)} ${style.charAt(0).toUpperCase() + style.slice(1)}`;
+
+    jewelryEl.textContent = finalJewelry;
+    nameEl.textContent = finalName;
+    costBtn.textContent = `Get Piercing (${formatMoney(finalCost)})`;
+    costBtn.dataset.cost = finalCost;
+}
+
+function getPiercing() {
+    const location = document.getElementById('piercing-location-select').value;
+    const cost = parseFloat(document.getElementById('get-piercing-btn').dataset.cost);
+
+    if (state.money < cost) {
+        showErrorNotification("You don't have enough money.");
+        return;
+    }
+    // Check if body part already has a piercing
+    if (state.playerBody[location].piercings.length > 0) {
+        showErrorNotification("This body part is already pierced. Please remove the old piercing first.");
+        return;
+    }
+
+    state.money -= cost;
+    const name = document.getElementById('piercing-preview-name').textContent;
+    const jewelry = document.getElementById('piercing-preview-jewelry').textContent;
+    const material = document.getElementById('piercing-material-select').value;
+    const style = document.getElementById('piercing-style-select').value;
+
+    const newPiercing = new PiercingItem({
+        id: `piercing_${location}_${Date.now()}`,
+        name: name,
+        bodyPartId: location,
+        jewelry: jewelry,
+        tags: [location, material, style]
+    });
+
+    state.playerBody[location].piercings.push(newPiercing);
+    forceGlobalUIRefresh();
+    showCraftNotification(newPiercing.name, "Piercing");
+}
+
+function openManagePiercings() {
+    closeAllOverlays();
+    const overlay = document.getElementById('manage-piercings-overlay');
+    overlay.style.display = 'block';
+
+    const equippedList = document.getElementById('equipped-piercings-list');
+    const storedList = document.getElementById('stored-piercings-list');
+    equippedList.innerHTML = '';
+    storedList.innerHTML = '';
+
+    let hasEquipped = false;
+    for (const partId in state.playerBody) {
+        const part = state.playerBody[partId];
+        if (part.piercings && part.piercings.length > 0) {
+            hasEquipped = true;
+            part.piercings.forEach(p => {
+                const div = document.createElement('div');
+                div.innerHTML = `<span>${p.name} on your ${part.name}</span>`;
+                const btn = document.createElement('button');
+                btn.className = 'overlayBtn';
+                btn.textContent = 'Unequip';
+                btn.onclick = () => unequipPiercingToStorage(p.id, partId);
+                div.appendChild(btn);
+                equippedList.appendChild(div);
+            });
+        }
+    }
+    if (!hasEquipped) {
+        equippedList.innerHTML = '<p>No piercings equipped.</p>';
+    }
+
+    if (state.unequippedPiercings.length > 0) {
+        state.unequippedPiercings.forEach(p => {
+            const div = document.createElement('div');
+            const partName = state.playerBody[p.bodyPartId].name;
+            div.innerHTML = `<span>${p.name} (for ${partName})</span>`;
+            const btn = document.createElement('button');
+            btn.className = 'overlayBtn';
+            btn.textContent = 'Re-equip';
+            btn.onclick = () => equipPiercingFromStorage(p.id);
+            div.appendChild(btn);
+            storedList.appendChild(div);
+        });
+    } else {
+        storedList.innerHTML = '<p>No piercings in storage.</p>';
+    }
+}
+
+function unequipPiercingToStorage(piercingId, bodyPartId) {
+    const part = state.playerBody[bodyPartId];
+    const pIndex = part.piercings.findIndex(p => p.id === piercingId);
+    if (pIndex > -1) {
+        const [piercing] = part.piercings.splice(pIndex, 1);
+        state.unequippedPiercings.push(piercing);
+        forceGlobalUIRefresh();
+        openManagePiercings(); // Refresh the overlay
+    }
+}
+
+function equipPiercingFromStorage(piercingId) {
+    const pIndex = state.unequippedPiercings.findIndex(p => p.id === piercingId);
+    if (pIndex > -1) {
+        const [piercing] = state.unequippedPiercings.splice(pIndex, 1);
+        const bodyPartId = piercing.bodyPartId;
+
+        // Check if the slot is free before equipping
+        if (state.playerBody[bodyPartId].piercings.length > 0) {
+            showErrorNotification("That body part is already pierced. You must unequip the current piercing first.");
+            state.unequippedPiercings.push(piercing); // Put it back
+            return;
+        }
+
+        state.playerBody[bodyPartId].piercings.push(piercing);
+        forceGlobalUIRefresh();
+        openManagePiercings(); // Refresh the overlay
     }
 }
 
@@ -1350,6 +1677,7 @@ const state = {
     back: new BackSlot('Back')
   },
   inventory: [],
+  unequippedPiercings: [], // For the new management system
 
   /* -------------------- Stats -------------------- */
   stats: {
@@ -1425,6 +1753,7 @@ const state = {
         { text: 'Bathroom', action: "goToScene('bathroom', 30)" },
         { text: 'Private Room', action: "goToScene('private_room', 30)" },
         { text: 'Visit the Tailor', action: "goToTailorHub()" },
+        { text: 'Visit Body Art Studio', action: "openBodyArtStudio()" },
         {
           text: 'Check in with Leah',
           action: "goToScene('leah_love_event', 0)",
@@ -1465,6 +1794,7 @@ const state = {
       description: 'This is a small, quiet room off the main foyer. It seems to be unused, containing little more than a simple cot and a small desk. There is a strange, organic-looking structure in the corner.',
       nav: [
         { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
+        { text: 'Manage Piercings', action: "openManagePiercings()", condition: { type: 'has_piercings' } },
         {
           text: 'Approach the Nest',
           action: "goToScene('nest', 0)",
@@ -1654,6 +1984,89 @@ const state = {
     }
   }
 };
+
+/* ==============================================================
+   TATTOO & PIERCING TEMPLATES
+   ============================================================== */
+const tattooTemplates = {
+    // Head & Face
+    'face': { name: 'Face Tattoo', baseDesign: 'a small design on your face', baseCost: 400, allowedTags: ['tiny', 'small', 'lettering', 'linework', 'minimalist', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'forehead': { name: 'Forehead Tattoo', baseDesign: 'a design on your forehead', baseCost: 450, allowedTags: ['tiny', 'small', 'medium', 'geometric', 'lettering', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_ear': { name: 'Left Ear Tattoo', baseDesign: 'a delicate design on your left ear', baseCost: 200, allowedTags: ['tiny', 'linework', 'minimalist', 'geometric', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_ear': { name: 'Right Ear Tattoo', baseDesign: 'a delicate design on your right ear', baseCost: 200, allowedTags: ['tiny', 'linework', 'minimalist', 'geometric', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'nose': { name: 'Nose Tattoo', baseDesign: 'a subtle design on your nose', baseCost: 250, allowedTags: ['tiny', 'dotwork', 'minimalist', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'lips': { name: 'Lip Tattoo', baseDesign: 'a design on your inner lip', baseCost: 300, allowedTags: ['tiny', 'small', 'lettering', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'neck': { name: 'Neck Tattoo', baseDesign: 'a design on your neck', baseCost: 500, allowedTags: ['small', 'medium', 'tribal', 'geometric', 'lettering', 'neo traditional', 'blackwork', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    // Torso
+    'chest': { name: 'Chest Tattoo', baseDesign: 'a piece covering your chest', baseCost: 1200, allowedTags: ['medium', 'large', 'american traditional', 'neo traditional', 'japanese', 'realism', 'blackwork', 'color', 'shading', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'belly': { name: 'Belly Tattoo', baseDesign: 'a design centered on your belly', baseCost: 800, allowedTags: ['small', 'medium', 'large', 'lettering', 'neo traditional', 'watercolor', 'color', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'upper_back': { name: 'Upper Back Tattoo', baseDesign: 'a large piece across your upper back', baseCost: 1500, allowedTags: ['medium', 'large', 'full-back', 'tribal', 'japanese', 'realism', 'blackwork', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'lower_back': { name: 'Lower Back Tattoo', baseDesign: 'a design on your lower back', baseCost: 700, allowedTags: ['small', 'medium', 'large', 'tribal', 'lettering', 'neo traditional', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    // Groin & Butt
+    'groin': { name: 'Groin Tattoo', baseDesign: 'an intricate design above your groin', baseCost: 700, allowedTags: ['tiny', 'small', 'medium', 'tribal', 'geometric', 'minimalist', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'vagina': { name: 'Vagina Tattoo', baseDesign: 'a delicate design accenting your mound', baseCost: 900, allowedTags: ['tiny', 'small', 'watercolor', 'neo traditional', 'minimalist', 'color', 'linework', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_ass_cheek': { name: 'Left Ass Cheek Tattoo', baseDesign: 'a design on your left ass cheek', baseCost: 400, allowedTags: ['tiny', 'small', 'medium', 'lettering', 'american traditional', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_ass_cheek': { name: 'Right Ass Cheek Tattoo', baseDesign: 'a design on your right ass cheek', baseCost: 400, allowedTags: ['tiny', 'small', 'medium', 'lettering', 'american traditional', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'anus': { name: 'Anus Tattoo', baseDesign: 'a decorative pattern around your anus', baseCost: 1200, allowedTags: ['tiny', 'small', 'geometric', 'dotwork', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    // Limbs
+    'left_arm': { name: 'Left Arm Tattoo', baseDesign: 'a design on your left arm', baseCost: 900, allowedTags: ['small', 'medium', 'large', 'full-sleeve', 'american traditional', 'japanese', 'realism', 'blackwork', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_arm': { name: 'Right Arm Tattoo', baseDesign: 'a design on your right arm', baseCost: 900, allowedTags: ['small', 'medium', 'large', 'full-sleeve', 'american traditional', 'japanese', 'realism', 'blackwork', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_wrist': { name: 'Left Wrist Tattoo', baseDesign: 'a small design on your left wrist', baseCost: 250, allowedTags: ['tiny', 'small', 'lettering', 'minimalist', 'linework', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_wrist': { name: 'Right Wrist Tattoo', baseDesign: 'a small design on your right wrist', baseCost: 250, allowedTags: ['tiny', 'small', 'lettering', 'minimalist', 'linework', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_hand': { name: 'Left Hand Tattoo', baseDesign: 'a design on your left hand', baseCost: 350, allowedTags: ['tiny', 'small', 'geometric', 'dotwork', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_hand': { name: 'Right Hand Tattoo', baseDesign: 'a design on your right hand', baseCost: 350, allowedTags: ['tiny', 'small', 'geometric', 'dotwork', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_thigh': { name: 'Left Thigh Tattoo', baseDesign: 'a design on your left thigh', baseCost: 1000, allowedTags: ['medium', 'large', 'neo traditional', 'watercolor', 'realism', 'color', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_thigh': { name: 'Right Thigh Tattoo', baseDesign: 'a design on your right thigh', baseCost: 1000, allowedTags: ['medium', 'large', 'neo traditional', 'watercolor', 'realism', 'color', 'blackwork', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_calf': { name: 'Left Calf Tattoo', baseDesign: 'a design on your left calf', baseCost: 600, allowedTags: ['small', 'medium', 'large', 'american traditional', 'tribal', 'blackwork', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_calf': { name: 'Right Calf Tattoo', baseDesign: 'a design on your right calf', baseCost: 600, allowedTags: ['small', 'medium', 'large', 'american traditional', 'tribal', 'blackwork', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_ankle': { name: 'Left Ankle Tattoo', baseDesign: 'a small design on your left ankle', baseCost: 250, allowedTags: ['tiny', 'small', 'minimalist', 'linework', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_ankle': { name: 'Right Ankle Tattoo', baseDesign: 'a small design on your right ankle', baseCost: 250, allowedTags: ['tiny', 'small', 'minimalist', 'linework', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'left_foot': { name: 'Left Foot Tattoo', baseDesign: 'a design on your left foot', baseCost: 400, allowedTags: ['small', 'medium', 'geometric', 'watercolor', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] },
+    'right_foot': { name: 'Right Foot Tattoo', baseDesign: 'a design on your right foot', baseCost: 400, allowedTags: ['small', 'medium', 'geometric', 'watercolor', 'color', 'none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'] }
+};
+
+const piercingTemplates = {
+    standard_stud: {
+        name: 'Stud',
+        baseCost: 100,
+        baseJewelry: 'a simple stud',
+        allowedTags: [
+            // Location tags (these are the actual body part IDs)
+            'left_ear', 'right_ear', 'nose', 'lips', 'belly', 'left_nipple', 'right_nipple', 'vagina', 'tongue', 'face', 'anus',
+            // Material tags
+            'stainless steel', 'titanium', 'gold', 'silver', 'blackened steel',
+            // Style tags
+            'stud', 'ring', 'barbell', 'horseshoe'
+        ]
+    }
+};
+
+const tattooStyleTags = ['american traditional', 'neo traditional', 'tribal', 'watercolor', 'realism', 'japanese', 'geometric', 'lettering', 'minimalist', 'abstract'];
+const tattooFeatureTags = ['blackwork', 'color', 'linework', 'dotwork', 'shading', 'uv-ink'];
+const tattooSizeTags = ['tiny', 'small', 'medium', 'large', 'full-sleeve', 'full-back'];
+const piercingMaterialTags = ['stainless steel', 'titanium', 'gold', 'silver', 'blackened steel'];
+const piercingStyleTags = ['stud', 'ring', 'barbell', 'horseshoe'];
+const tattooThemeTags = ['none', 'promiscuous', 'prostitution', 'exhibitionism', 'deviancy', 'masochism', 'submission', 'pregnancy'];
+
+const bodyPartOrder = [
+    'face', 'forehead', 'left_ear', 'right_ear', 'nose', 'lips', 'tongue', 'neck',
+    'chest', 'belly', 'upper_back', 'lower_back',
+    'left_arm', 'right_arm', 'left_wrist', 'right_wrist', 'left_hand', 'right_hand',
+    'groin', 'vagina', 'anus', 'left_ass_cheek', 'right_ass_cheek',
+    'left_thigh', 'right_thigh', 'left_calf', 'right_calf', 'left_ankle', 'right_ankle', 'left_foot', 'right_foot'
+];
+
+const tattooTagPrices = {
+    // Styles
+    'american traditional': 300, 'neo traditional': 350, 'tribal': 250, 'watercolor': 400, 'realism': 500, 'japanese': 450, 'geometric': 280, 'lettering': 200, 'minimalist': 150, 'abstract': 320,
+    // Features
+    'blackwork': 100, 'color': 250, 'linework': 50, 'dotwork': 180, 'shading': 120, 'uv-ink': 400,
+    // Sizes
+    'tiny': 50, 'small': 150, 'medium': 300, 'large': 500, 'full-sleeve': 2000, 'full-back': 3500,
+    // Themes
+    'promiscuous': 200, 'prostitution': 500, 'exhibitionism': 250, 'deviancy': 300, 'masochism': 350, 'submission': 400, 'pregnancy': 450
+};
+
 
 /* ==============================================================
    CLOTHING TEMPLATES
@@ -2746,6 +3159,10 @@ function checkEventCondition(condition) {
                    state.pregnancy.days <= 35;
         case 'parasite_pregnancy':
             return state.parasite.eggs.length > 0;
+        case 'has_piercings':
+            const hasEquipped = Object.values(state.playerBody).some(p => p.piercings && p.piercings.length > 0);
+            const hasStored = state.unequippedPiercings.length > 0;
+            return hasEquipped || hasStored;
         // Future condition types can be added here
         default:
             return false;
@@ -3436,6 +3853,7 @@ function positionTooltip(tooltipEl, targetEl) {
     tooltipEl.style.left = `${left + window.scrollX}px`;
 }
 
+
 function openItemSelectionOverlay(event, slotId, subSlot = null) {
     event.stopPropagation();
     const subOverlay = document.getElementById('sub-overlay');
@@ -3904,8 +4322,53 @@ function updateCharStatusTab() {
     let html = '<h4>Appearance</h4>';
     html += generateCharacterDescription(state.appearance, state.playerBody);
     
-    // We can add other status info (mood, health, etc.) here later if needed
-    // For now, the appearance description is the main content.
+    html += '<h4 style="margin-top: 1.5rem;">Tattoos & Piercings</h4>';
+    const coverageMap = getCoverageInfo();
+    const bodyModsList = [];
+
+    Object.values(state.playerBody).forEach(part => {
+        // Tattoos
+        if (part.tattoos && part.tattoos.length > 0) {
+            part.tattoos.forEach(tattoo => {
+                const isVisible = !coverageMap.has(part.id);
+                const isSexual = tattoo.tags.some(t => tattooThemeTags.includes(t) && t !== 'none');
+                const exposureRed = '#ff4d4d';
+                const visibleBlue = '#ADD8E6';
+                const hiddenBlue = 'lightblue';
+
+                let nameHtml = isSexual 
+                    ? `<span style="color: ${exposureRed};">"${tattoo.name}"</span>` 
+                    : `<span style="color: ${hiddenBlue};">"${tattoo.name}"</span>`;
+                
+                let visibilityHtml = '';
+                if (isVisible) {
+                    const color = isSexual ? exposureRed : visibleBlue;
+                    visibilityHtml = `<span style="color: ${color};">It is currently visible.</span>`;
+                } else {
+                    visibilityHtml = `<span style="color: ${hiddenBlue};">It isn't currently visible.</span>`;
+                }
+                bodyModsList.push(`<li>${nameHtml} has been tattooed on your ${part.name.toLowerCase()}. ${visibilityHtml}</li>`);
+            });
+        }
+        // Piercings
+        if (part.piercings && part.piercings.length > 0) {
+            part.piercings.forEach(piercing => {
+                const isVisible = !coverageMap.has(part.id);
+                const visibleBlue = '#ADD8E6';
+                const hiddenBlue = 'lightblue';
+                let visibilityHtml = isVisible 
+                    ? `<span style="color: ${visibleBlue};">It is currently visible.</span>`
+                    : `<span style="color: ${hiddenBlue};">It isn't currently visible.</span>`;
+                bodyModsList.push(`<li>Your ${part.name.toLowerCase()} is pierced with a ${piercing.name}. ${visibilityHtml}</li>`);
+            });
+        }
+    });
+
+    if (bodyModsList.length > 0) {
+        html += '<ul>' + bodyModsList.join('') + '</ul>';
+    } else {
+        html += '<p>You have no body modifications.</p>';
+    }
 
     statusDiv.innerHTML = html;
 }
@@ -4339,6 +4802,261 @@ function backToTailorHub() {
     document.getElementById('tailor-crafting-overlay').style.display = 'none';
     goToTailorHub();
 }
+
+function openBodyArtStudio() {
+    closeAllOverlays();
+    const overlay = document.getElementById('body-art-studio-overlay');
+    overlay.style.display = 'block';
+
+    // Populate body part dropdown for tattoos, in the correct order
+    const tattooPartSelect = document.getElementById('tattoo-body-part-select');
+    const allTattooParts = bodyPartOrder.filter(p => tattooTemplates[p]);
+    tattooPartSelect.innerHTML = allTattooParts.map(partId => `<option value="${partId}">${state.playerBody[partId].name}</option>`).join('');
+
+    // Set default tab and populate its content
+    showBodyArtTab('tattoos');
+}
+
+function showBodyArtTab(tabName) {
+    document.querySelectorAll('.body-art-tab').forEach(tab => tab.style.display = 'none');
+    document.getElementById(`body-art-tab-${tabName}`).style.display = 'flex';
+
+    if (tabName === 'tattoos') {
+        onTattooPartSelect();
+        populateCurrentTattoos();
+    } else if (tabName === 'piercings') {
+        initPiercingTab();
+    }
+}
+
+function removeTattoo(tattooId, bodyPartId) {
+    const removalCost = 5000;
+    if (state.money < removalCost) {
+        showErrorNotification("You can't afford the removal fee.");
+        return;
+    }
+    const bodyPart = state.playerBody[bodyPartId];
+    if (!bodyPart) return;
+
+    const tattooIndex = bodyPart.tattoos.findIndex(t => t.id === tattooId);
+    if (tattooIndex > -1) {
+        state.money -= removalCost;
+        bodyPart.tattoos.splice(tattooIndex, 1);
+        forceGlobalUIRefresh();
+        populateCurrentTattoos(); // Refresh the removal list
+    }
+}
+
+function onTattooPartSelect() {
+    const partId = document.getElementById('tattoo-body-part-select').value;
+    const templateNameEl = document.getElementById('tattoo-template-name');
+    const tagsWrapper = document.getElementById('tattoo-tags-sections-wrapper');
+    const nameInput = document.getElementById('tattoo-name-input');
+
+    const template = tattooTemplates[partId] || tattooTemplates['custom_text']; // Fallback to custom text
+    
+    if (!template) {
+        // This should not happen if all body parts are covered
+        tagsWrapper.style.display = 'none';
+        templateNameEl.textContent = 'N/A';
+        updateTattooPreview();
+        return;
+    }
+
+    // Set the template name and show the tags
+    templateNameEl.textContent = template.name;
+    tagsWrapper.style.display = 'flex';
+    nameInput.value = ''; // Clear name input on part change
+
+    const createCheckboxes = (containerId, tags, category) => {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        if (!template.allowedTags) {
+            document.getElementById(containerId.replace('-tags-container', '-section')).style.display = 'none';
+            return;
+        }
+        const allowed = tags.filter(tag => template.allowedTags.includes(tag));
+        if (allowed.length === 0) {
+            document.getElementById(containerId.replace('-tags-container', '-section')).style.display = 'none';
+            return;
+        }
+        document.getElementById(containerId.replace('-tags-container', '-section')).style.display = 'block';
+
+        allowed.forEach(tag => {
+            const label = document.createElement('label');
+            const inputEl = document.createElement('input');
+            inputEl.type = (category === 'theme') ? 'radio' : 'checkbox';
+            inputEl.name = `tattoo-tag-${category}`;
+            inputEl.value = tag;
+            inputEl.onclick = () => updateTattooPreview();
+            if (template.forcedTags && template.forcedTags.includes(tag)) {
+                inputEl.checked = true;
+                inputEl.disabled = true;
+            }
+            label.appendChild(inputEl);
+            label.appendChild(document.createTextNode(` ${tag}`));
+            container.appendChild(label);
+        });
+    };
+
+    createCheckboxes('tattoo-style-tags-container', tattooStyleTags, 'style');
+    createCheckboxes('tattoo-feature-tags-container', tattooFeatureTags, 'feature');
+    createCheckboxes('tattoo-size-tags-container', tattooSizeTags, 'size');
+    createCheckboxes('tattoo-theme-tags-container', tattooThemeTags, 'theme');
+    
+    const textSection = document.getElementById('tattoo-text-section');
+    const isCustomText = template.baseDesign.includes('{text}');
+    textSection.style.display = isCustomText ? 'block' : 'none';
+    if (isCustomText) {
+        document.getElementById('tattoo-custom-text').value = '';
+    }
+
+    updateTattooPreview();
+}
+
+
+function updateTattooPreview() {
+    const partId = document.getElementById('tattoo-body-part-select').value;
+    const template = tattooTemplates[partId] || tattooTemplates['custom_text'];
+    
+    const designEl = document.getElementById('tattoo-preview-design');
+    const tagsEl = document.getElementById('tattoo-final-tags-list');
+    const costBtn = document.getElementById('get-tattoo-btn');
+    
+    designEl.textContent = '';
+    tagsEl.innerHTML = '';
+    costBtn.textContent = 'Get Tattoo';
+    costBtn.disabled = true;
+
+    if (!template) return;
+
+    const finalTags = new Set(template.forcedTags || []);
+    let finalCost = template.baseCost;
+
+    document.querySelectorAll('#tattoo-tags-sections-wrapper input:checked').forEach(cb => {
+        finalTags.add(cb.value);
+    });
+
+    let finalDesign = template.baseDesign;
+    if (finalDesign.includes('{text}')) {
+        const customText = document.getElementById('tattoo-custom-text').value;
+        if (customText) {
+            finalDesign = finalDesign.replace('{text}', `"${customText}"`);
+        } else {
+            finalDesign = finalDesign.replace('{text}', '..._');
+        }
+    }
+
+    finalTags.forEach(tag => {
+        if (tattooTagPrices[tag]) {
+            finalCost += tattooTagPrices[tag];
+        }
+    });
+
+    designEl.textContent = finalDesign;
+    const displayTags = Array.from(finalTags).filter(t => t !== 'none');
+    tagsEl.innerHTML = displayTags.sort().map(tag => `<li>${tag}</li>`).join('');
+    costBtn.textContent = `Get Tattoo (${formatMoney(finalCost)})`;
+    costBtn.disabled = false;
+    costBtn.dataset.cost = finalCost;
+}
+
+function getTattoo() {
+    const partId = document.getElementById('tattoo-body-part-select').value;
+    const name = document.getElementById('tattoo-name-input').value.trim();
+    const cost = parseFloat(document.getElementById('get-tattoo-btn').dataset.cost);
+    
+    if (!name) {
+        showErrorNotification("Please enter a name for your tattoo.");
+        return;
+    }
+
+    // Mandatory tag check
+    const selectedTagsSet = new Set(Array.from(document.querySelectorAll('#tattoo-tags-sections-wrapper input:checked')).map(cb => cb.value));
+    const checkCategory = (sectionId, tagArray, categoryName) => {
+        const section = document.getElementById(sectionId);
+        if (section.style.display !== 'none' && !tagArray.some(tag => selectedTagsSet.has(tag))) {
+            showErrorNotification(`Please select at least one ${categoryName} for your tattoo.`);
+            return false;
+        }
+        return true;
+    };
+
+    if (!checkCategory('tattoo-style-section', tattooStyleTags, 'Style')) return;
+    if (!checkCategory('tattoo-feature-section', tattooFeatureTags, 'Feature')) return;
+    if (!checkCategory('tattoo-size-section', tattooSizeTags, 'Size')) return;
+    if (!checkCategory('tattoo-theme-section', tattooThemeTags, 'Theme')) return;
+
+    if (!partId) {
+        showErrorNotification("Please select a body part.");
+        return;
+    }
+    if (state.money < cost) {
+        showErrorNotification("You don't have enough money.");
+        return;
+    }
+
+    // Check if body part already has a tattoo
+    if (state.playerBody[partId].tattoos.length > 0) {
+        showErrorNotification("This body part already has a tattoo. Please remove the existing one first.");
+        return;
+    }
+
+    const design = document.getElementById('tattoo-preview-design').textContent;
+    const tagsList = document.getElementById('tattoo-final-tags-list');
+    let tags = Array.from(tagsList.querySelectorAll('li')).map(li => li.textContent);
+
+    // Filter out the 'none' tag if it exists
+    if (tags.includes('none')) {
+        tags = tags.filter(t => t !== 'none');
+    }
+
+    state.money -= cost;
+    const newTattoo = new TattooItem({
+        id: `tattoo_${Date.now()}`,
+        name: name,
+        design: design,
+        tags: tags
+    });
+    
+    state.playerBody[partId].tattoos.push(newTattoo);
+    
+    forceGlobalUIRefresh();
+    populateCurrentTattoos();
+}
+
+function populateCurrentTattoos() {
+    const container = document.getElementById('current-tattoos-container');
+    container.innerHTML = '';
+    let hasTattoos = false;
+
+    for (const partId in state.playerBody) {
+        const part = state.playerBody[partId];
+        if (part.tattoos && part.tattoos.length > 0) {
+            hasTattoos = true;
+            part.tattoos.forEach(tattoo => {
+                const div = document.createElement('div');
+                div.style.display = 'flex';
+                div.style.justifyContent = 'space-between';
+                div.style.marginBottom = '0.5rem';
+                div.innerHTML = `<span>${tattoo.name} on your ${part.name}</span>`;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'overlayBtn';
+                removeBtn.textContent = 'Remove';
+                removeBtn.onclick = () => removeTattoo(tattoo.id, partId);
+                
+                div.appendChild(removeBtn);
+                container.appendChild(div);
+            });
+        }
+    }
+
+    if (!hasTattoos) {
+        container.innerHTML = '<p>You have no tattoos.</p>';
+    }
+}
+
 
 const availableTags = ['athletic', 'bag', 'belly hiding', 'belly showing', 'business', 'casual', 'cool', 'costume', 'cotton', 'denim', 'fetish-wear', 'fishnet', 'formal', 'goth', 'high heeled', 'lace', 'latex', 'leather', 'metal', 'nylon', 'plastic', 'polyester', 'satin', 'sexy', 'silk', 'spandex', 'swimming', 'transparent', 'underwear', 'vinyl', 'wool'];
 
@@ -5225,7 +5943,43 @@ function generateCharacterDescription(appearance, body) {
     if (limbsParts.length > 0) para2 += ` ${limbsParts.join(', ').replace(/, her/g, ' her').replace(/, with/g, ' with').replace(/, and/g, ' and')}.`;
     para2 += `</p>`;
 
-    return para1 + para2;
+    // --- Build Paragraph 3 (Tattoos & Piercings) ---
+    const coverageMap = getCoverageInfo();
+    const visibleTattoos = [];
+    const visiblePiercings = [];
+
+    for (const partId in body) {
+        const part = body[partId];
+        // A part is visible if it's NOT in the coverage map
+        if (!coverageMap.has(partId)) {
+            if (part.tattoos && part.tattoos.length > 0) {
+                part.tattoos.forEach(tattoo => {
+                    visibleTattoos.push(`on her ${part.name.toLowerCase()} is ${tattoo.design}`);
+                });
+            }
+            if (part.piercings && part.piercings.length > 0) {
+                part.piercings.forEach(piercing => {
+                    visiblePiercings.push(`her ${part.name.toLowerCase()} is pierced with ${piercing.jewelry}`);
+                });
+            }
+        }
+    }
+
+    let para3 = '';
+    if (visibleTattoos.length > 0) {
+        para3 += `<p>Visible tattoos include: ${visibleTattoos.join(', ')}.</p>`;
+    }
+    if (visiblePiercings.length > 0) {
+        // If there's no tattoo paragraph, start a new one. Otherwise, add to the existing one.
+        if (para3 === '') {
+            para3 += `<p>She has several piercings: ${visiblePiercings.join(', ')}.</p>`;
+        } else {
+            para3 = para3.slice(0, -4); // remove last </p>
+            para3 += ` She also has several piercings: ${visiblePiercings.join(', ')}.</p>`;
+        }
+    }
+
+    return para1 + para2 + para3;
 }
 
 function applyBodyDescriptorsFromUI(bodyObject) {
