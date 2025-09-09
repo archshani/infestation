@@ -21,10 +21,16 @@ body{
    START SCREEN
 ------------------------------------------------------------- */
 #startScreen{
+  position: relative;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   background:linear-gradient(135deg,#220022,#001122);
+}
+#quickStartBtn {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
 }
 #startScreen h1{font-size:3rem;margin-bottom:.5rem;}
 #startScreen p{font-size:1.2rem;max-width:31.25rem;text-align:center;}
@@ -731,6 +737,7 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
       <button id="startBtn">Begin</button>
       <button id="loadBtn">Load Game</button>
   </div>
+  <button id="quickStartBtn" class="overlayBtn">Quick Start (Debug)</button>
 </section>
 
 <!-- ==================== LOAD OVERLAY (from Start Screen) ==================== -->
@@ -825,7 +832,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 <!-- regular needs -->
 <div class="need" id="need-tiredness"
      data-name="Fatigue"
-     data-labels="Exhausted|Very Tired|Tired|Alert|Energized">
+     data-labels="Exhausted|Very Tired|Tired|Alert|Energized"
+     data-label-ranges="10,30,60,90,100">
   <div class="needHeader">
     <span class="needLine"><!-- filled by JS --> </span>
   </div>
@@ -835,7 +843,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need" id="need-stress"
      data-name="Stress"
-     data-labels="Relaxed|Calm|Stressed|Very Stressed|Panicked">
+     data-labels="Relaxed|Calm|Stressed|Very Stressed|Panicked"
+     data-label-ranges="10,40,70,90,100">
   <div class="needHeader">
     <span class="needLine"></span>
   </div>
@@ -845,7 +854,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need" id="need-trauma"
      data-name="Trauma"
-     data-labels="Secure|Stable|Traumatized|Severely Traumatized|Shattered">
+     data-labels="Secure|Stable|Traumatized|Severely Traumatized|Shattered"
+     data-label-ranges="10,30,60,90,100">
   <div class="needHeader">
     <span class="needLine"></span>
   </div>
@@ -855,7 +865,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need" id="need-happiness"
      data-name="Happiness"
-     data-labels="Depressed|Very Unhappy|Unhappy|Content|Joyful">
+     data-labels="Depressed|Very Unhappy|Unhappy|Content|Joyful"
+     data-label-ranges="10,30,70,90,100">
   <div class="needHeader">
     <span class="needLine"></span>
   </div>
@@ -865,7 +876,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need" id="need-arousal"
      data-name="Arousal"
-     data-labels="Numb|Very Low|Low|Normal|High">
+     data-labels="Numb|Very Low|Low|Normal|High"
+     data-label-ranges="5,20,50,80,100">
   <div class="needHeader">
     <span class="needLine"></span>
   </div>
@@ -876,7 +888,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 <!-- hidden / “bad” needs – keep hidden until shown -->
 <div class="need hiddenBar noName" id="need-corruption"
      data-name="Corruption"
-     data-labels="None|Trace|Low|Medium|High">
+     data-labels="None|Trace|Low|Medium|High"
+     data-label-ranges="1,20,50,80,100">
   <div class="needHeader"><span class="needLine"></span></div>
   <div class="bar"><span class="fill"></span></div>
   <div class="tooltip"></div>
@@ -884,7 +897,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need hiddenBar noName" id="need-alcohol"
      data-name="Alcohol"
-     data-labels="Sober|Buzzed|Tipsy|Drunk|Wasted">
+     data-labels="Sober|Buzzed|Tipsy|Drunk|Wasted"
+     data-label-ranges="1,20,50,80,100">
   <div class="needHeader"><span class="needLine"></span></div>
   <div class="bar"><span class="fill"></span></div>
   <div class="tooltip"></div>
@@ -892,7 +906,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 
 <div class="need hiddenBar noName" id="need-drugs"
      data-name="Drugs"
-     data-labels="Clean|Mild|Moderate|Heavy|Overdose">
+     data-labels="Clean|Mild|Moderate|Heavy|Overdose"
+     data-label-ranges="1,20,50,80,100">
   <div class="needHeader"><span class="needLine"></span></div>
   <div class="bar"><span class="fill"></span></div>
   <div class="tooltip"></div>
@@ -1430,11 +1445,6 @@ function getPiercing() {
         showErrorNotification("You don't have enough money.");
         return;
     }
-    // Check if body part already has a piercing
-    if (state.playerBody[location].piercings.length > 0) {
-        showErrorNotification("This body part is already pierced. Please remove the old piercing first.");
-        return;
-    }
 
     state.money -= cost;
     const name = document.getElementById('piercing-preview-name').textContent;
@@ -1450,9 +1460,18 @@ function getPiercing() {
         tags: [location, material, style]
     });
 
-    state.playerBody[location].piercings.push(newPiercing);
+    // Check if body part already has a piercing
+    if (state.playerBody[location].piercings.length > 0) {
+        // If occupied, add the new piercing to unequipped storage
+        state.unequippedPiercings.push(newPiercing);
+        showCraftNotification(newPiercing.name, "sent to storage");
+    } else {
+        // If free, equip it directly
+        state.playerBody[location].piercings.push(newPiercing);
+        showCraftNotification(newPiercing.name, "Piercing");
+    }
+
     forceGlobalUIRefresh();
-    showCraftNotification(newPiercing.name, "Piercing");
 }
 
 function openManagePiercings() {
@@ -1493,7 +1512,7 @@ function openManagePiercings() {
             div.innerHTML = `<span>${p.name} (for ${partName})</span>`;
             const btn = document.createElement('button');
             btn.className = 'overlayBtn';
-            btn.textContent = 'Re-equip';
+            btn.textContent = 'Equip';
             btn.onclick = () => equipPiercingFromStorage(p.id);
             div.appendChild(btn);
             storedList.appendChild(div);
@@ -1657,6 +1676,7 @@ const state = {
   sex: 'female',
   playerBody: {}, // Will be populated by factory
   appearance: {
+      birthDate: '1989-02-12',
       hairLength: 10, // Default value, maybe cm
       height: 170, // Default value, cm
       skinColor: { name: 'Pale', hex: '#F0D4C2' },
@@ -1723,9 +1743,13 @@ const state = {
   journal: {
     quests: [
       { title: "Uncover the Truth", description: "Find out more about the alien parasite and its origins.", complete: false },
-      { title: "Get some rest", description: "You were feeling exhausted, but you took a nap.", complete: true }
+      { title: "Get some rest", description: "You were feeling exhausted, but you took a nap.", complete: true },
+      { title: "A Hidden Quest", description: "This quest is hidden until its conditions are met.", complete: false, hidden: true }
     ],
     reminders: [{ date: '2007-08-07', text: 'Appointment with Dr. Amir at 2pm' }],
+    recurringReminders: [
+        { month: 2, day: 5, text: "It's my birthday next week!" }
+    ],
     notes: "I can write my own notes here."
   },
 
@@ -2970,6 +2994,28 @@ function advanceDay() {
         }
     }
 
+    // Check for recurring reminders
+    const today = state.currentTime;
+    const currentMonth = today.getMonth() + 1; // getMonth() is 0-indexed
+    const currentDay = today.getDate();
+
+    if (state.journal.recurringReminders) {
+        state.journal.recurringReminders.forEach(reminder => {
+            if (reminder.month === currentMonth && reminder.day === currentDay) {
+                // To prevent duplicates, create a unique reminder text for the current year
+                const reminderTextForYear = `${reminder.text} (${today.getFullYear()})`;
+                const alreadyExists = state.journal.reminders.some(r => r.text === reminderTextForYear);
+
+                if (!alreadyExists) {
+                    state.journal.reminders.push({
+                        date: today.toISOString().split('T')[0], // 'YYYY-MM-DD'
+                        text: reminderTextForYear
+                    });
+                }
+            }
+        });
+    }
+
     calculateConception();
 }
 
@@ -3244,9 +3290,9 @@ function buildJournalOverlay() {
     const body = document.querySelector('#btnJournal-overlay .overlayBody');
     if (!body) return;
 
-    // --- Active Quests ---
+    // --- Active Quests (now filters hidden quests) ---
     let activeQuestsHtml = '<ul>';
-    const activeQuests = state.journal.quests.filter(q => !q.complete);
+    const activeQuests = state.journal.quests.filter(q => !q.complete && !q.hidden);
     if (activeQuests.length > 0) {
         activeQuests.forEach(q => {
             activeQuestsHtml += `<li><strong>${q.title}:</strong> ${q.description}</li>`;
@@ -3256,27 +3302,29 @@ function buildJournalOverlay() {
     }
     activeQuestsHtml += '</ul>';
 
-    // --- Completed Quests ---
-    let completedQuestsHtml = '<ul>';
+    // --- Completed Quests (now collapsible with count) ---
     const completedQuests = state.journal.quests.filter(q => q.complete);
-    if (completedQuests.length > 0) {
+    const completedCount = completedQuests.length;
+    const completedQuestsHeaderHtml = `<h4 id="completed-quests-header" style="cursor: pointer;">Completed Quests (${completedCount})</h4>`;
+
+    let completedQuestsListHtml = '<ul style="display: none;">'; // Start hidden
+    if (completedCount > 0) {
         completedQuests.forEach(q => {
-            completedQuestsHtml += `<li><s><strong>${q.title}:</strong> ${q.description}</s></li>`;
+            completedQuestsListHtml += `<li><s><strong>${q.title}:</strong> ${q.description}</s></li>`;
         });
     } else {
-        completedQuestsHtml += '<li>No completed quests yet.</li>';
+        completedQuestsListHtml += '<li>No completed quests yet.</li>';
     }
-    completedQuestsHtml += '</ul>';
+    completedQuestsListHtml += '</ul>';
 
     // --- Reminders ---
     let remindersHtml = '<ul>';
     if (state.journal.reminders.length > 0) {
         state.journal.reminders.forEach(r => {
-            // Handle both old string-based reminders and new object-based ones for compatibility
             if (typeof r === 'string') {
                 remindersHtml += `<li>${r}</li>`;
             } else if (r && r.text && r.date) {
-                const reminderDate = new Date(r.date + 'T00:00:00'); // Use T00:00:00 to avoid timezone issues
+                const reminderDate = new Date(r.date + 'T00:00:00');
                 remindersHtml += `<li>${r.text} (on ${reminderDate.toLocaleDateString()})</li>`;
             }
         });
@@ -3292,8 +3340,10 @@ function buildJournalOverlay() {
                 ${activeQuestsHtml}
             </div>
             <div style="margin-top: 1rem;">
-                <h4>Completed Quests</h4>
-                ${completedQuestsHtml}
+                ${completedQuestsHeaderHtml}
+                <div id="completed-quests-list-container">
+                    ${completedQuestsListHtml}
+                </div>
             </div>
             <div style="margin-top: 1rem;">
                 <h4>Reminders</h4>
@@ -3305,6 +3355,18 @@ function buildJournalOverlay() {
             </div>
         </div>
     `;
+
+    // Add click listener for collapsible section
+    const completedHeader = document.getElementById('completed-quests-header');
+    if (completedHeader) {
+        completedHeader.onclick = () => {
+            const list = document.querySelector('#completed-quests-list-container ul');
+            if (list) {
+                const isHidden = list.style.display === 'none';
+                list.style.display = isHidden ? 'block' : 'none';
+            }
+        };
+    }
 
     const notepad = document.getElementById('journal-notepad');
     notepad.value = state.journal.notes;
@@ -3487,6 +3549,42 @@ function buildCalendar(year, month) { // month is 0-indexed
 
     daysEl.appendChild(dayCell);
   }
+}
+
+function getSaveStateObject() {
+    // 1. Define keys for properties that represent player state and should be saved.
+    const stateToSave = [
+        'currentTime', 'money', 'eventIndex', 'needs', 'skills', 'sex', 'playerBody',
+        'appearance', 'equipment', 'inventory', 'unequippedPiercings', 'stats', 'womb',
+        'menstrualCycle', 'pregnancy', 'parasite', 'npcs', 'settings', 'ui',
+        'currentLocation', 'locationBeforeEvent'
+    ];
+
+    const savedState = {};
+
+    // 2. Selectively copy the state properties into the new object.
+    for (const key of stateToSave) {
+        if (state.hasOwnProperty(key)) {
+            savedState[key] = state[key];
+        }
+    }
+
+    // 3. Handle the journal separately for forward compatibility.
+    savedState.journal = {
+        notes: state.journal.notes,
+        reminders: state.journal.reminders,
+        recurringReminders: state.journal.recurringReminders,
+        quests: {} // Save quest *progress* only, not definitions.
+    };
+
+    state.journal.quests.forEach(q => {
+        savedState.journal.quests[q.title] = {
+            complete: q.complete,
+            hidden: q.hidden
+        };
+    });
+
+    return savedState;
 }
 
 function saveGame(slotId) {
@@ -4320,14 +4418,30 @@ function updateCharStatusTab() {
     if (!statusDiv) return;
 
     let html = '<h4>Appearance</h4>';
-    html += generateCharacterDescription(state.appearance, state.playerBody);
+    html += generateCharacterDescription(state.appearance, state.playerBody, false);
     
     html += '<h4 style="margin-top: 1.5rem;">Tattoos & Piercings</h4>';
     const coverageMap = getCoverageInfo();
-    const bodyModsList = [];
+    const piercingDescriptions = [];
+    const tattooDescriptions = [];
 
+    // Iterate through all body parts to gather piercings.
     Object.values(state.playerBody).forEach(part => {
-        // Tattoos
+        if (part.piercings && part.piercings.length > 0) {
+            part.piercings.forEach(piercing => {
+                const isVisible = !coverageMap.has(part.id);
+                const visibleBlue = '#ADD8E6';
+                const hiddenBlue = 'lightblue';
+                let visibilityHtml = isVisible
+                    ? `<span style="color: ${visibleBlue};">It is currently visible.</span>`
+                    : `<span style="color: ${hiddenBlue};">It isn't currently visible.</span>`;
+                piercingDescriptions.push(`<li>Your ${part.name.toLowerCase()} is pierced with a ${piercing.name}. ${visibilityHtml}</li>`);
+            });
+        }
+    });
+
+    // Iterate through all body parts again to gather tattoos.
+    Object.values(state.playerBody).forEach(part => {
         if (part.tattoos && part.tattoos.length > 0) {
             part.tattoos.forEach(tattoo => {
                 const isVisible = !coverageMap.has(part.id);
@@ -4347,25 +4461,15 @@ function updateCharStatusTab() {
                 } else {
                     visibilityHtml = `<span style="color: ${hiddenBlue};">It isn't currently visible.</span>`;
                 }
-                bodyModsList.push(`<li>${nameHtml} has been tattooed on your ${part.name.toLowerCase()}. ${visibilityHtml}</li>`);
-            });
-        }
-        // Piercings
-        if (part.piercings && part.piercings.length > 0) {
-            part.piercings.forEach(piercing => {
-                const isVisible = !coverageMap.has(part.id);
-                const visibleBlue = '#ADD8E6';
-                const hiddenBlue = 'lightblue';
-                let visibilityHtml = isVisible 
-                    ? `<span style="color: ${visibleBlue};">It is currently visible.</span>`
-                    : `<span style="color: ${hiddenBlue};">It isn't currently visible.</span>`;
-                bodyModsList.push(`<li>Your ${part.name.toLowerCase()} is pierced with a ${piercing.name}. ${visibilityHtml}</li>`);
+                tattooDescriptions.push(`<li>${nameHtml} has been tattooed on your ${part.name.toLowerCase()}. ${visibilityHtml}</li>`);
             });
         }
     });
 
-    if (bodyModsList.length > 0) {
-        html += '<ul>' + bodyModsList.join('') + '</ul>';
+    const allModsHtml = piercingDescriptions.join('') + tattooDescriptions.join('');
+
+    if (allModsHtml.length > 0) {
+        html += '<ul>' + allModsHtml + '</ul>';
     } else {
         html += '<p>You have no body modifications.</p>';
     }
@@ -4530,8 +4634,31 @@ const barColor =
 
     /* ---------- stage label ---------- */
     const labels = el.getAttribute('data-labels').split('|');
-    const idx = Math.min(labels.length-1, Math.floor(pct/20)); // 0‑4
-    const stage = labels[idx];
+    const labelRangesAttr = el.getAttribute('data-label-ranges');
+    let stage;
+
+    if (labelRangesAttr) {
+        // New system with custom, expandable ranges
+        const ranges = labelRangesAttr.split(',').map(Number);
+        let labelIndex = -1;
+
+        for (let i = 0; i < ranges.length; i++) {
+            if (pct <= ranges[i]) {
+                labelIndex = i;
+                break;
+            }
+        }
+
+        if (labelIndex === -1) {
+            labelIndex = labels.length - 1;
+        }
+
+        stage = labels[labelIndex];
+    } else {
+        // Original system for backward compatibility
+        const idx = Math.min(labels.length-1, Math.floor(pct/20)); // 0‑4
+        stage = labels[idx];
+    }
 
     /* ---------- compose “Name: Stage” line ----------
        – for normal needs we show the name, for hidden ones we hide it
@@ -5868,9 +5995,38 @@ const descriptorGroupMap = {
     'thigh': { display: 'thighs' }, 'calf': { display: 'calves' }, 'foot': { display: 'feet' }
 };
 
-function generateCharacterDescription(appearance, body) {
+function randomizeBodyDescriptors(bodyObject) {
+    for (const groupName of bodyPartDisplayOrder) {
+        const isFemaleOnly = femaleOnlyDescriptors.includes(groupName);
+        const isMaleOnly = maleOnlyDescriptors.includes(groupName);
+        if (state.sex === 'female' && isMaleOnly) continue;
+        if (state.sex === 'male' && isFemaleOnly) continue;
+        if (!bodyPartDescriptors[groupName]) continue;
+
+        const descriptors = bodyPartDescriptors[groupName];
+        const randomDescriptor = descriptors[Math.floor(Math.random() * descriptors.length)];
+
+        for (const partId in bodyObject) {
+            const basePartName = partId.replace(/left_|right_/, '');
+            const groupInfo = descriptorGroupMap[basePartName];
+            if (groupInfo && groupInfo.display === groupName) {
+                bodyObject[partId].descriptor = randomDescriptor;
+            }
+        }
+    }
+}
+
+function generateCharacterDescription(appearance, body, includeMods = false) {
     const name = "Maya";
-    const age = 18;
+    let age = 18; // Default age
+    if (appearance.birthDate) {
+        const birth = new Date(appearance.birthDate);
+        age = state.currentTime.getFullYear() - birth.getFullYear();
+        const m = state.currentTime.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && state.currentTime.getDate() < birth.getDate())) {
+            age--;
+        }
+    }
 
     // Helper to get a descriptor for a given group from the provided body object.
     const getDescriptor = (group, bodyObject) => {
@@ -5944,38 +6100,40 @@ function generateCharacterDescription(appearance, body) {
     para2 += `</p>`;
 
     // --- Build Paragraph 3 (Tattoos & Piercings) ---
-    const coverageMap = getCoverageInfo();
-    const visibleTattoos = [];
-    const visiblePiercings = [];
+    let para3 = '';
+    if (includeMods) {
+        const coverageMap = getCoverageInfo();
+        const visibleTattoos = [];
+        const visiblePiercings = [];
 
-    for (const partId in body) {
-        const part = body[partId];
-        // A part is visible if it's NOT in the coverage map
-        if (!coverageMap.has(partId)) {
-            if (part.tattoos && part.tattoos.length > 0) {
-                part.tattoos.forEach(tattoo => {
-                    visibleTattoos.push(`on her ${part.name.toLowerCase()} is ${tattoo.design}`);
-                });
-            }
-            if (part.piercings && part.piercings.length > 0) {
-                part.piercings.forEach(piercing => {
-                    visiblePiercings.push(`her ${part.name.toLowerCase()} is pierced with ${piercing.jewelry}`);
-                });
+        for (const partId in body) {
+            const part = body[partId];
+            // A part is visible if it's NOT in the coverage map
+            if (!coverageMap.has(partId)) {
+                if (part.tattoos && part.tattoos.length > 0) {
+                    part.tattoos.forEach(tattoo => {
+                        visibleTattoos.push(`on her ${part.name.toLowerCase()} is ${tattoo.design}`);
+                    });
+                }
+                if (part.piercings && part.piercings.length > 0) {
+                    part.piercings.forEach(piercing => {
+                        visiblePiercings.push(`her ${part.name.toLowerCase()} is pierced with ${piercing.jewelry}`);
+                    });
+                }
             }
         }
-    }
 
-    let para3 = '';
-    if (visibleTattoos.length > 0) {
-        para3 += `<p>Visible tattoos include: ${visibleTattoos.join(', ')}.</p>`;
-    }
-    if (visiblePiercings.length > 0) {
-        // If there's no tattoo paragraph, start a new one. Otherwise, add to the existing one.
-        if (para3 === '') {
-            para3 += `<p>She has several piercings: ${visiblePiercings.join(', ')}.</p>`;
-        } else {
-            para3 = para3.slice(0, -4); // remove last </p>
-            para3 += ` She also has several piercings: ${visiblePiercings.join(', ')}.</p>`;
+        if (visibleTattoos.length > 0) {
+            para3 += `<p>Visible tattoos include: ${visibleTattoos.join(', ')}.</p>`;
+        }
+        if (visiblePiercings.length > 0) {
+            // If there's no tattoo paragraph, start a new one. Otherwise, add to the existing one.
+            if (para3 === '') {
+                para3 += `<p>She has several piercings: ${visiblePiercings.join(', ')}.</p>`;
+            } else {
+                para3 = para3.slice(0, -4); // remove last </p>
+                para3 += ` She also has several piercings: ${visiblePiercings.join(', ')}.</p>`;
+            }
         }
     }
 
@@ -6004,6 +6162,7 @@ function updateCreationPreview() {
 
     // Build a temporary appearance object from the current UI values for the preview
     const tempAppearance = {
+        birthDate: state.appearance.birthDate,
         height: parseInt(document.getElementById('heightSlider').value, 10),
         hairLength: parseInt(document.getElementById('hairLengthSlider').value, 10),
         skinColor: { name: document.querySelector('#skin-color-picker .color-swatch.selected')?.dataset.colorName || state.appearance.skinColor.name, hex: document.querySelector('#skin-color-picker .color-swatch.selected')?.dataset.colorHex || state.appearance.skinColor.hex },
@@ -6015,7 +6174,7 @@ function updateCreationPreview() {
     const tempBody = createPlayerBody(state.sex);
     applyBodyDescriptorsFromUI(tempBody);
 
-    previewContainer.innerHTML = `<h4>Preview</h4>` + generateCharacterDescription(tempAppearance, tempBody);
+    previewContainer.innerHTML = `<h4>Preview</h4>` + generateCharacterDescription(tempAppearance, tempBody, true);
 }
 
 function populateSkinPicker(containerId, paletteName, targetProperty) {
@@ -6313,64 +6472,90 @@ function initCreationScreen() {
     updateCreationPreview();
 }
 
-function startGame() {
-    // Set story flag to protect intro
-    state.storyEventActive = true;
+function finalizeCharacterFromUI() {
+    // --- Step 1: Gather all UI data and update appearance state ---
+    const heightSlider = document.getElementById('heightSlider');
+    const hairLengthSlider = document.getElementById('hairLengthSlider');
+    const selectedSkinSwatch = document.querySelector('#skin-color-picker .color-swatch.selected');
 
-    // Initialise physical body - THIS IS NOW DONE IN THE FINALIZE BUTTON
-    // state.playerBody = createPlayerBody(state.sex);
+    state.appearance.height = parseInt(heightSlider.value, 10);
+    state.appearance.hairLength = parseInt(hairLengthSlider.value, 10);
+    if (selectedSkinSwatch) {
+        state.appearance.skinColor = {
+            name: selectedSkinSwatch.dataset.colorName,
+            hex: selectedSkinSwatch.dataset.colorHex
+        };
+    }
+    // Note: hair/eye color are already handled by their own event listeners and set in state directly.
+
+    // --- Step 2: Create the base player body object ---
+    state.playerBody = createPlayerBody(state.sex);
+
+    // --- Step 3: Apply the body descriptors to the newly created body ---
+    applyBodyDescriptorsFromUI(state.playerBody);
+}
+
+function quickStartDebug() {
+    initCreationScreen(); // This randomizes the UI
+    finalizeCharacterFromUI(); // This reads the randomized UI into the state
+    startGame({ initialMoney: 250000, skipIntro: true });
+}
+
+function startGame(options = {}) {
+    const { initialMoney = 0.00, skipIntro = false } = options;
+
     initMenstrualCycle();
-
-    // Switch to the main game screen
     switchScreen('gameScreen');
 
-    // Initialise dynamic values
-    state.money = 0.00;
-    updateHeader();          // date | time | money row
-    updateNeedsUI();         // draw need bars (all green at start)
+    state.money = initialMoney;
+    if (skipIntro) {
+        for (const npcName in state.npcs) {
+            state.npcs[npcName].hidden = false;
+        }
+    }
 
-    // Build UI pieces that depend on JS
-    initBottomButtons();    // hook up the bottom‑button bar
-    initCalendar();         // hook up the calendar overlay
-    buildCheatOverlay();    // populate the Cheats overlay
-    applySettings();        // apply default/loaded settings
-    applyCheatsUI();        // apply default/loaded cheat settings
+    // UI updates
+    updateHeader();
+    updateNeedsUI();
+    initBottomButtons();
+    initCalendar();
+    buildCheatOverlay();
+    applySettings();
+    applyCheatsUI();
 
-    // Create and equip starting gear
+    // Equip starting gear
     const startingGear = [
         'upper_bra', 'lower_panties', 'upper_tshirt', 'lower_jeans', 'feet_sneakers'
     ];
-    
     state.inventory = startingGear.map(templateId => {
         const template = clothingTemplates[templateId];
         return new ClothingItem({
             ...template,
-            templateId: template.id, // Keep track of the original template
-            name: `Plain ${template.name}`, // Prepend "Plain" to the name
-            id: `${template.id}_${Date.now()}_${Math.random()}` // Ensure unique ID
+            templateId: template.id,
+            name: `Plain ${template.name}`,
+            id: `${template.id}_${Date.now()}_${Math.random()}`
         });
     });
-
-    // Equip the default outfit by finding the unique ID of each item in the inventory
     const bra = state.inventory.find(i => i.name === 'Plain Bra');
     if (bra) equipItem(bra.id, 'skin');
-
     const panties = state.inventory.find(i => i.name === 'Plain Panties');
     if (panties) equipItem(panties.id, 'skin');
-
     const tshirt = state.inventory.find(i => i.name === 'Plain T-shirt');
     if (tshirt) equipItem(tshirt.id, 'middle');
-
     const jeans = state.inventory.find(i => i.name === 'Plain Jeans');
     if (jeans) equipItem(jeans.id, 'middle');
-
     const sneakers = state.inventory.find(i => i.name === 'Plain Sneakers');
     if (sneakers) equipItem(sneakers.id, 'outer');
     
     updateCharDesc();
 
-    // Show the first intro event
-    showCurrentEvent();
+    if (skipIntro) {
+        state.storyEventActive = false;
+        goToScene('foyer', 30);
+    } else {
+        state.storyEventActive = true;
+        showCurrentEvent();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -6389,31 +6574,15 @@ document.addEventListener('DOMContentLoaded', () => {
         loadBtn.addEventListener('click', () => openOverlay('loadBtn'));
     }
 
+    const quickStartBtn = document.getElementById('quickStartBtn');
+    if (quickStartBtn) {
+        quickStartBtn.addEventListener('click', quickStartDebug);
+    }
+
     const finalizeBtn = document.getElementById('finalizeBtn');
     if(finalizeBtn) {
         finalizeBtn.addEventListener('click', () => {
-            // --- Step 1: Gather all UI data and update appearance state ---
-            const heightSlider = document.getElementById('heightSlider');
-            const hairLengthSlider = document.getElementById('hairLengthSlider');
-            const selectedSkinSwatch = document.querySelector('#skin-color-picker .hex-swatch.selected');
-
-            state.appearance.height = parseInt(heightSlider.value, 10);
-            state.appearance.hairLength = parseInt(hairLengthSlider.value, 10);
-            if (selectedSkinSwatch) {
-                state.appearance.skinColor = {
-                    name: selectedSkinSwatch.dataset.colorName,
-                    hex: selectedSkinSwatch.dataset.colorHex
-                };
-            }
-            // Note: Name and hair/eye color are already handled by their own event listeners or are set in state directly.
-
-            // --- Step 2: Create the base player body object ---
-            state.playerBody = createPlayerBody(state.sex);
-
-            // --- Step 3: Apply the body descriptors to the newly created body ---
-            applyBodyDescriptorsFromUI(state.playerBody);
-            
-            // --- Step 4: Start the game with the fully customized state ---
+            finalizeCharacterFromUI();
             startGame();
         });
     }
