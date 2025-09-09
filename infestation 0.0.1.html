@@ -1610,6 +1610,73 @@ function createPlayerBody(sex = 'female') {
     return body;
 }
 
+const sexActions = {
+    // Player-only actions
+    player: {
+        vagina: [
+            { name: 'Contract vaginal muscles', requiredState: 'vaginal_sex', arousalGiver: 10, arousalReceiver: 5, tags: ['vaginal'] }
+        ],
+        anus: [
+            { name: 'Contract anal muscles', requiredState: 'anal_sex', arousalGiver: 10, arousalReceiver: 5, tags: ['anal'] }
+        ],
+        breasts: [
+            { name: 'Press breasts against them', requiredState: 'foreplay', arousalGiver: 10, arousalReceiver: 10, tags: ['foreplay'] }
+        ]
+    },
+    // Universal actions that can be performed by anyone
+    universal: {
+        left_hand: [
+            { name: 'Undress Top', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'top'] },
+            { name: 'Undress Bottom', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'bottom'] },
+            { name: 'Undress Underwear', requiredState: 'foreplay', arousalGiver: 3, arousalReceiver: 7, tags: ['undress', 'underwear'] },
+            { name: 'Hold Hands', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 5, tags: ['foreplay', 'affectionate'] },
+            { name: 'Caress Cheek', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 7, tags: ['foreplay', 'affectionate'] },
+            { name: 'Caress Breasts', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 15, tags: ['manual', 'foreplay'], requires_no_clothing_on_target: 'chest' },
+            { name: 'Caress Vagina', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 20, tags: ['manual', 'foreplay', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
+            { name: 'Slip hand under panties', requiredState: 'foreplay', nextState: 'hand_in_panties', arousalGiver: 7, arousalReceiver: 15, tags: ['manual', 'foreplay', 'tease'], requires_clothing: 'underwear' },
+            { name: 'Finger Vagina', requiredState: 'hand_in_panties', arousalGiver: 10, arousalReceiver: 25, tags: ['manual', 'insertion', 'foreplay', 'vaginal'] }
+        ],
+        right_hand: [
+            // Mirrored actions for the other hand
+            { name: 'Undress Top', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'top'] },
+            { name: 'Undress Bottom', requiredState: 'foreplay', arousalGiver: 2, arousalReceiver: 5, tags: ['undress', 'bottom'] },
+            { name: 'Undress Underwear', requiredState: 'foreplay', arousalGiver: 3, arousalReceiver: 7, tags: ['undress', 'underwear'] },
+            { name: 'Hold Hands', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 5, tags: ['foreplay', 'affectionate'] },
+            { name: 'Caress Cheek', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 7, tags: ['foreplay', 'affectionate'] },
+            { name: 'Caress Breasts', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 15, tags: ['manual', 'foreplay'], requires_no_clothing_on_target: 'chest' },
+            { name: 'Caress Vagina', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 20, tags: ['manual', 'foreplay', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
+            { name: 'Slip hand under panties', requiredState: 'foreplay', nextState: 'hand_in_panties', arousalGiver: 7, arousalReceiver: 15, tags: ['manual', 'foreplay', 'tease'], requires_clothing: 'underwear' },
+            { name: 'Finger Vagina', requiredState: 'hand_in_panties', arousalGiver: 10, arousalReceiver: 25, tags: ['manual', 'insertion', 'foreplay', 'vaginal'] }
+        ],
+        mouth: [
+            { name: 'Kiss Passionately', requiredState: 'foreplay', arousalGiver: 10, arousalReceiver: 10, tags: ['oral', 'foreplay', 'affectionate'] },
+            { name: 'Kiss Neck', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 12, tags: ['oral', 'foreplay'] },
+            { name: 'Lick Nipples', requiredState: 'foreplay', arousalGiver: 12, arousalReceiver: 20, tags: ['oral', 'foreplay'], requires_no_clothing_on_target: 'left_nipple' },
+            { name: 'Perform Oral on Vagina', requiredState: 'foreplay', arousalGiver: 15, arousalReceiver: 30, tags: ['oral', 'foreplay', 'vaginal'], requires_no_clothing_on_target: 'vagina' }
+        ],
+        penis: [
+            // This is an NPC-only action group for now
+            { name: 'Vaginal Penetration', requiredState: 'foreplay', nextState: 'vaginal_sex', arousalGiver: 20, arousalReceiver: 20, tags: ['insertion', 'penetration', 'vaginal'], requires_no_clothing_on_target: 'vagina' },
+            { name: 'Anal Penetration', requiredState: 'foreplay', nextState: 'anal_sex', arousalGiver: 15, arousalReceiver: 30, tags: ['insertion', 'penetration', 'anal'], requires_no_clothing_on_target: 'anus' }
+        ],
+        vagina: [
+             { name: 'Thrust gently', requiredState: 'vaginal_sex', arousalGiver: 10, arousalReceiver: 15, tags: ['vaginal', 'penetration'] },
+             { name: 'Thrust hard', requiredState: 'vaginal_sex', arousalGiver: 15, arousalReceiver: 20, tags: ['vaginal', 'penetration'] },
+             { name: 'Edge partner', requiredState: 'vaginal_sex', arousalGiver: 5, arousalReceiver: -10, tags: ['vaginal', 'penetration', 'edging'] },
+             { name: 'Pull out', requiredState: 'vaginal_sex', nextState: 'foreplay', arousalGiver: 2, arousalReceiver: -5, tags: ['vaginal'] }
+        ],
+        anus: [
+             { name: 'Thrust gently', requiredState: 'anal_sex', arousalGiver: 10, arousalReceiver: 15, tags: ['anal', 'penetration'] },
+             { name: 'Thrust hard', requiredState: 'anal_sex', arousalGiver: 15, arousalReceiver: 25, tags: ['anal', 'penetration'] },
+             { name: 'Pull out', requiredState: 'anal_sex', nextState: 'foreplay', arousalGiver: 2, arousalReceiver: -5, tags: ['anal'] }
+        ],
+        legs: [
+            { name: 'Wrap legs around them', requiredState: 'foreplay', arousalGiver: 5, arousalReceiver: 10, tags: ['legs', 'tease'] },
+            { name: 'Rub legs against them', requiredState: 'foreplay', arousalGiver: 7, arousalReceiver: 12, tags: ['legs', 'tease'] }
+        ]
+    }
+};
+
 /* ==============================================================
    GLOBAL STATE
    ============================================================== */
@@ -1706,12 +1773,29 @@ const state = {
     itemsCrafted: 0,
     distanceWalked: 0,
     timesCollapsedFromStress: 0,
-    timesClimaxed: 0
+    timesClimaxed: 0,
+    // New Sex Stats
+    vaginalSexCount: 0,
+    analSexCount: 0,
+    oralSexGivenCount: 0,
+    oralSexReceivedCount: 0,
+    vaginalCreampiesReceived: 0,
+    analCreampiesReceived: 0,
+    oralCreampiesReceived: 0,
+    timesSwallowedSemen: 0,
+    totalGirlCumExpelled: 0,
+    uniqueSexualPartners: 0
   },
 
   /* -------------------- Reproductive System -------------------- */
+  bodyFluids: {
+    vagina: { semen: [] }, // Each entry: { fatherId: '...', volume: X }
+    anus: { semen: [] },
+    mouth: { semen: [] },
+    body: { semen: [] } // For external coverage
+  },
   womb: {
-    semenVolume: 0 // in ml
+    semenVolume: 0 // in ml, to be deprecated but kept for save compatibility
   },
   menstrualCycle: {
     cycleLength: 28,
@@ -1734,9 +1818,9 @@ const state = {
 
   /* -------------------- NPCs --------------------- */
   npcs: {
-    "Leah": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true },
-    "Amir": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true },
-    "Toby": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true }
+    "Leah": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true, semenId: "leah_semen_id", cumProduction: 5 },
+    "Amir": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true, semenId: "amir_semen_id", cumProduction: 7 },
+    "Toby": { relationship: 0, trust: 0, fear: 0, attraction: 0, hidden: true, semenId: "toby_semen_id", cumProduction: 10 }
   },
 
   /* -------------------- Journal ------------------ */
@@ -1761,6 +1845,16 @@ const state = {
   ui: {
     lastCharTab: 'status',
     lastCheatTab: 'general'
+  },
+
+  /* -------------------- Sex Scene State ------------------ */
+  sexScene: {
+      isActive: false,
+      actors: [], // { id, arousal, maxArousal, hasClimaxed, clothing, initialClothing }
+      turn: '',
+      log: [],
+      currentState: 'foreplay',
+      initialPlayerClothing: null
   },
 
   /* -------------------- Game Location ------------------ */
@@ -1852,8 +1946,7 @@ const state = {
         { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
         { text: 'Relax', action: "goToScene('relaxing', 0)" },
         { text: 'Rest for the day', action: "passDayInLounge()" },
-        { text: 'Test Sex with Toby', action: "addSemen(5); goToScene('lounge', 600);" },
-        { text: 'Test Sex with Amir', action: "addSemen(5); goToScene('lounge', 600);" }
+        { text: 'Test Sex Scene with Toby', action: "startSexScene(['player', 'Toby'])" }
       ],
       randomEvents: [
         { chance: 0.2, scene: 'random_lounge_1' }
@@ -2004,6 +2097,13 @@ const state = {
       description: 'A sharp, agonizing pain rips through your abdomen. It feels like something tearing its way out from the inside. The sensation is brief but terrifying, leaving you weak, trembling, and with the sickening knowledge that something has just hatched inside you.',
       nav: [
         { text: 'Oh god, what was that...', action: "handleEggHatching()" }
+      ]
+    },
+    'sex_cleanup': {
+      title: 'Gathering Yourself',
+      description: 'You take a moment to fix your clothes and compose yourself before continuing.',
+      nav: [
+        { text: 'Continue', action: "returnFromSexScene()" }
       ]
     }
   }
@@ -2750,6 +2850,52 @@ function updateCharDesc() {
         finalDesc += ` <span style="color: ${red};">${exposureParts.join(' ')}</span>`;
     }
 
+    // --- Part 4: Add Semen Descriptions ---
+    if (state.bodyFluids) {
+        const semenDescParts = [];
+        const bodySemen = state.bodyFluids.body.semen.reduce((acc, s) => acc + s.volume, 0);
+        const vaginaSemen = state.bodyFluids.vagina.semen.reduce((acc, s) => acc + s.volume, 0);
+    const anusSemen = state.bodyFluids.anus.semen.reduce((acc, s) => acc + s.volume, 0);
+    const mouthSemen = state.bodyFluids.mouth.semen.reduce((acc, s) => acc + s.volume, 0);
+
+    if (bodySemen > 50) {
+        semenDescParts.push("You are drenched in cum.");
+    } else if (bodySemen > 20) {
+        semenDescParts.push("You are covered in cum.");
+    } else if (bodySemen > 0) {
+        semenDescParts.push("You have some cum on you.");
+    }
+
+    if (vaginaSemen > 30) {
+        semenDescParts.push("Your womb is bloated with semen.");
+    } else if (vaginaSemen > 10) {
+        semenDescParts.push("Semen is dripping from your vagina.");
+    } else if (vaginaSemen > 0) {
+        semenDescParts.push("You are wet with semen inside.");
+    }
+
+    if (anusSemen > 30) {
+        semenDescParts.push("Your bowels are overflowing with semen.");
+    } else if (anusSemen > 10) {
+        semenDescParts.push("Semen is dripping from your anus.");
+    } else if (anusSemen > 0) {
+        semenDescParts.push("Your anus is filled with semen.");
+    }
+
+    if (mouthSemen > 15) {
+        semenDescParts.push("You keep coughing up semen.");
+    } else if (mouthSemen > 5) {
+        semenDescParts.push("Your mouth is full of semen.");
+    } else if (mouthSemen > 0) {
+        semenDescParts.push("You have semen in your mouth.");
+    }
+
+    if (semenDescParts.length > 0) {
+        finalDesc += ` <span style="color: #ff99ff;">${semenDescParts.join(' ')}</span>`;
+    }
+    }
+
+
     descEl.innerHTML = finalDesc;
 }
 
@@ -2870,8 +3016,19 @@ function initMenstrualCycle() {
     state.menstrualCycle.currentDayInCycle = Math.floor(Math.random() * state.menstrualCycle.cycleLength) + 1;
 }
 
-function addSemen(volume) {
-    state.womb.semenVolume += volume;
+function addSemen(location, volume, fatherId = 'unknown') {
+    if (!state.bodyFluids[location]) {
+        console.error(`Invalid semen location: ${location}`);
+        return;
+    }
+
+    // For now, we'll just add it. Later we can consolidate entries from the same father.
+    state.bodyFluids[location].semen.push({ fatherId, volume });
+
+    // For backward compatibility with older save logic and simple checks
+    if (location === 'vagina') {
+        state.womb.semenVolume += volume;
+    }
 }
 
 function isFertile() {
@@ -3108,6 +3265,436 @@ function deliverWorms() {
 function finishBirthing() {
     state.storyEventActive = false;
     goToScene('private_room', 0);
+}
+
+/* ==============================================================
+   SEX SCENE LOGIC
+   ============================================================== */
+function startSexScene(participantIds) {
+    // Store initial clothing state to restore later
+    state.sexScene.initialPlayerClothing = JSON.parse(JSON.stringify(state.equipment));
+
+    state.sexScene.isActive = true;
+    state.sexScene.actors = participantIds.map(id => {
+        const actor = {
+            id: id,
+            hasClimaxed: false,
+            // NOTE: This clothing tracking is simplified. A real implementation would need to
+            // differentiate between player and NPC clothing. For now, we assume all undress
+            // actions target the player.
+            clothing: Object.values(state.equipment)
+                           .flatMap(slot => Object.values(slot))
+                           .filter(item => item !== null && typeof item === 'object')
+        };
+        if (id !== 'player') {
+            actor.arousal = 0;
+            actor.maxArousal = 100; // Can be customized later
+        }
+        return actor;
+    });
+
+    state.sexScene.turn = participantIds[0]; // Player always starts
+    state.sexScene.currentState = 'foreplay';
+    state.sexScene.log = ['The scene begins. You are both fully clothed.'];
+    
+    state.storyEventActive = true;
+    
+    renderSexScene();
+}
+
+function processSexAction(actorId, actionBundle, targetId) {
+    if (!state.sexScene.isActive || state.sexScene.turn !== actorId) {
+        return; // Not your turn
+    }
+
+    const giver = state.sexScene.actors.find(a => a.id === actorId);
+    const receiver = state.sexScene.actors.find(a => a.id === targetId);
+
+    actionBundle.forEach(action => {
+        // State machine check
+        if (action.requiredState !== state.sexScene.currentState) {
+            state.sexScene.log.push(`<i>You can't do that right now (${action.name}).</i>`);
+            return; // 'continue' in a forEach loop
+        }
+
+        // Hard block for physical actions on clothed parts
+        if (action.requires_no_clothing_on_target && isBodyPartBlocked(action.requires_no_clothing_on_target)) {
+            state.sexScene.log.push(`<i>${actorId} tries to ${action.name}, but clothing is in the way.</i>`);
+            return;
+        }
+        
+        // Hard block for insertion actions (double check)
+        if (action.tags.includes('insertion') && action.target && isBodyPartBlocked(action.target)) {
+            state.sexScene.log.push(`<i>${actorId} tries to ${action.name}, but clothing is in the way.</i>`);
+            return;
+        }
+
+        // Undress logic
+        if (action.tags.includes('undress')) {
+            let itemRemoved = null;
+            let slotId, layer;
+
+            if (action.tags.includes('top')) {
+                if (state.equipment.upper.outer) { itemRemoved = state.equipment.upper.outer; slotId = 'upper'; layer = 'outer'; } 
+                else if (state.equipment.upper.middle) { itemRemoved = state.equipment.upper.middle; slotId = 'upper'; layer = 'middle'; }
+            } else if (action.tags.includes('bottom')) {
+                if (state.equipment.lower.middle) { itemRemoved = state.equipment.lower.middle; slotId = 'lower'; layer = 'middle'; }
+            } else if (action.tags.includes('underwear')) {
+                if (state.equipment.lower.skin) { itemRemoved = state.equipment.lower.skin; slotId = 'lower'; layer = 'skin'; } 
+                else if (state.equipment.upper.skin) { itemRemoved = state.equipment.upper.skin; slotId = 'upper'; layer = 'skin'; }
+            }
+
+            if (itemRemoved) {
+                state.sexScene.log.push(`<b>${actorId} removes ${targetId}'s ${itemRemoved.name}.</b>`);
+                unequipItem(slotId, layer);
+            } else {
+                state.sexScene.log.push(`<i>${actorId} tries to remove clothing, but there's nothing there.</i>`);
+            }
+        }
+
+        // Arousal logic
+        if (giver.id === 'player') {
+            state.needs.arousal = Math.min(state.ranges.arousal, state.needs.arousal + action.arousalGiver);
+        } else {
+            giver.arousal = Math.min(giver.maxArousal, giver.arousal + action.arousalGiver);
+        }
+        if (receiver.id === 'player') {
+            state.needs.arousal = Math.min(state.ranges.arousal, state.needs.arousal + action.arousalReceiver);
+        } else {
+            receiver.arousal = Math.min(receiver.maxArousal, receiver.arousal + action.arousalReceiver);
+        }
+        
+        // Log generation
+        state.sexScene.log.push(`${actorId} uses ${action.name} on ${targetId}.`);
+
+        // Stat tracking
+        if (actorId === 'player') {
+            if (action.tags.includes('vaginal') && action.tags.includes('penetration')) state.stats.vaginalSexCount++;
+            if (action.tags.includes('anal') && action.tags.includes('penetration')) state.stats.analSexCount++;
+            if (action.tags.includes('oral')) state.stats.oralSexGivenCount++;
+        } else {
+            if (action.tags.includes('oral')) state.stats.oralSexReceivedCount++;
+        }
+
+        // State transition
+        if (action.nextState) {
+            state.sexScene.currentState = action.nextState;
+            state.sexScene.log.push(`<b>The scene is now in state: ${action.nextState}</b>`);
+        }
+
+        checkForClimax(giver.id, action);
+        checkForClimax(receiver.id, action);
+    });
+
+    // Advance turn (happens after all actions in bundle are processed)
+    const currentIndex = state.sexScene.actors.findIndex(a => a.id === actorId);
+    const nextIndex = (currentIndex + 1) % state.sexScene.actors.length;
+    state.sexScene.turn = state.sexScene.actors[nextIndex].id;
+}
+
+function checkForClimax(actorId, action) {
+    const actor = state.sexScene.actors.find(a => a.id === actorId);
+    if (!actor || actor.hasClimaxed) return;
+
+    let currentArousal, maxArousal;
+    if (actorId === 'player') {
+        currentArousal = state.needs.arousal;
+        maxArousal = state.ranges.arousal;
+    } else {
+        currentArousal = actor.arousal;
+        maxArousal = actor.maxArousal;
+    }
+
+    if (currentArousal >= maxArousal) {
+        actor.hasClimaxed = true;
+        state.sexScene.log.push(`<b>${actor.id} has climaxed!</b>`);
+        
+        if (actor.id === 'player') {
+            state.stats.timesClimaxed++;
+            state.needs.arousal = 0; // Reset player's global arousal
+            state.stats.totalGirlCumExpelled += 10; // Arbitrary value for now
+        } else {
+            // This is an NPC climax
+            const npc = state.npcs[actor.id];
+            if (npc) {
+                if (action.tags.includes('vaginal')) {
+                    addSemen('vagina', npc.cumProduction, npc.semenId);
+                    state.stats.vaginalCreampiesReceived++;
+                } else if (action.tags.includes('anal')) {
+                    addSemen('anus', npc.cumProduction, npc.semenId);
+                    state.stats.analCreampiesReceived++;
+                } else if (action.tags.includes('oral')) {
+                    addSemen('mouth', npc.cumProduction, npc.semenId);
+                    state.stats.oralCreampiesReceived++;
+                } else {
+                    addSemen('body', npc.cumProduction, npc.semenId);
+                }
+            }
+            actor.arousal = 0; // Reset NPC's temporary arousal
+        }
+    }
+}
+
+function rehydrateEquipment(equipmentData) {
+    const hydratedEquipment = {};
+    for (const slotId in equipmentData) {
+        const loadedSlot = equipmentData[slotId];
+        if (!loadedSlot) continue;
+
+        if (loadedSlot.hasOwnProperty('skin')) { // EquipmentSlot
+            const newSlot = new EquipmentSlot(loadedSlot.id, loadedSlot.name);
+            ['skin', 'middle', 'outer'].forEach(layer => {
+                if (loadedSlot[layer]) {
+                    newSlot[layer] = new ClothingItem(loadedSlot[layer]);
+                }
+            });
+            hydratedEquipment[slotId] = newSlot;
+        } else if (loadedSlot.hasOwnProperty('left')) { // HandHeldSlot
+            const newSlot = new HandHeldSlot(loadedSlot.name);
+            if (loadedSlot.left) newSlot.left = new ClothingItem(loadedSlot.left);
+            if (loadedSlot.right) newSlot.right = new ClothingItem(loadedSlot.right);
+            hydratedEquipment[slotId] = newSlot;
+        } else if (loadedSlot.hasOwnProperty('item')) { // BackSlot
+            const newSlot = new BackSlot(loadedSlot.name);
+            if (loadedSlot.item) newSlot.item = new ClothingItem(loadedSlot.item);
+            hydratedEquipment[slotId] = newSlot;
+        }
+    }
+    return hydratedEquipment;
+}
+
+function endSexScene() {
+    // Restore player's clothing and UI
+    if (state.sexScene.initialPlayerClothing) {
+        state.equipment = rehydrateEquipment(state.sexScene.initialPlayerClothing);
+        updateCharDesc(); // Update the sidebar description
+    }
+    
+    // Reset the scene state
+    state.sexScene.isActive = false;
+    state.sexScene.actors = [];
+    state.sexScene.turn = '';
+    state.sexScene.log = [];
+    state.sexScene.currentState = 'foreplay';
+    // We keep initialPlayerClothing until after the cleanup scene
+    
+    state.storyEventActive = false;
+    
+    // Go to the cleanup scene
+    goToScene('sex_cleanup', 0);
+}
+
+function returnFromSexScene() {
+    // Now we can clear the initial clothing backup
+    state.sexScene.initialPlayerClothing = null;
+    // Go back to the previous location after a short time penalty
+    goToScene(state.locationBeforeEvent || 'foyer', 600);
+}
+
+function isBodyPartCovered(partId) {
+    const coverageMap = getCoverageInfo();
+    if (!coverageMap.has(partId)) {
+        return false;
+    }
+    const coveringItem = coverageMap.get(partId);
+    // Transparent items don't count as "covering" for visibility.
+    if (coveringItem.tags.includes('transparent')) {
+        return false;
+    }
+    return true;
+}
+
+function isBodyPartBlocked(partId) {
+    const coverageMap = getCoverageInfo();
+    if (!coverageMap.has(partId)) {
+        return false; // Not covered, so not blocked
+    }
+    const coveringItem = coverageMap.get(partId);
+    if (coveringItem.tags.includes('fetish-wear')) {
+        return false; // Fetish-wear never blocks
+    }
+    // Any other item, including transparent, blocks.
+    return true;
+}
+
+function getArousalLabel(arousal, maxArousal) {
+    const percentage = (arousal / maxArousal) * 100;
+    if (percentage < 10) return { text: "Unstimulated", color: "#add8e6" }; // Light Blue
+    if (percentage < 30) return { text: "Slightly Aroused", color: "#87ceeb" }; // Sky Blue
+    if (percentage < 50) return { text: "Aroused", color: "#ffc0cb" }; // Pink
+    if (percentage < 70) return { text: "Visibly Excited", color: "#ffb6c1" }; // Light Pink
+    if (percentage < 90) return { text: "Highly Aroused", color: "#ff69b4" }; // Hot Pink
+    return { text: "Ready to Burst", color: "#ff1493" }; // Deep Pink
+}
+
+function renderSexScene() {
+    if (!state.sexScene.isActive) {
+        goToScene(state.locationBeforeEvent || 'foyer', 0);
+        return;
+    }
+
+    const c = document.getElementById('mainArea');
+    c.innerHTML = ''; // Clear the area first
+
+    const mainContainer = document.createElement('div');
+    mainContainer.style.margin = 'auto';
+    mainContainer.style.maxWidth = '900px';
+    mainContainer.style.textAlign = 'center';
+
+    mainContainer.innerHTML += '<h2 class="eventTitle">Sex Scene</h2>';
+    const lastLog = state.sexScene.log[state.sexScene.log.length - 1];
+    mainContainer.innerHTML += `<p><em>${lastLog || 'The scene begins...'}</em></p>`;
+
+    const columnsContainer = document.createElement('div');
+    columnsContainer.style.display = 'flex';
+    columnsContainer.style.textAlign = 'left';
+    columnsContainer.style.marginTop = '1.5rem';
+
+    const leftColumn = document.createElement('div');
+    leftColumn.style.flex = '1';
+    leftColumn.style.paddingRight = '1.5rem';
+    
+    const npc = state.sexScene.actors.find(a => a.id !== 'player');
+    if (npc) {
+        const arousal = getArousalLabel(npc.arousal, npc.maxArousal);
+        leftColumn.innerHTML = `<h4>${npc.id}'s State</h4><span style="color: ${arousal.color}; font-weight: bold;">${arousal.text}</span>`;
+    }
+    columnsContainer.appendChild(leftColumn);
+
+    const rightColumn = document.createElement('div');
+    rightColumn.style.flex = '3';
+
+    if (state.sexScene.turn === 'player') {
+        rightColumn.innerHTML += '<h4>Your Action</h4>';
+        const actionContainer = document.createElement('div');
+
+        const createActionRow = (partsInRow) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.style.display = 'flex';
+            rowDiv.style.justifyContent = 'space-around';
+            rowDiv.style.marginBottom = '1rem';
+            
+            partsInRow.forEach(partName => {
+                const groupContainer = document.createElement('div');
+                groupContainer.style.flex = '1';
+                groupContainer.style.padding = '0 0.5rem';
+
+                const actionCategories = { ...sexActions.player, ...sexActions.universal };
+                const actions = actionCategories[partName] ? actionCategories[partName].filter(a => a.requiredState === state.sexScene.currentState) : [];
+                
+                if (actions.length > 0) {
+                    let groupHtml = `<strong>${partName.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>`;
+                    actions.forEach((action, index) => {
+                        let canPerform = true;
+                        if (action.requires_clothing && !((state.equipment.lower.skin && state.equipment.lower.skin.tags.includes(action.requires_clothing)) || (state.equipment.upper.skin && state.equipment.upper.skin.tags.includes(action.requires_clothing)))) {
+                            canPerform = false;
+                        }
+                        if (action.requires_no_clothing_on_target && isBodyPartCovered(action.requires_no_clothing_on_target)) {
+                            canPerform = false;
+                        }
+
+                        if (canPerform) {
+                            const group = sexActions.player[partName] ? 'player' : 'universal';
+                            const radioId = `action-${group}-${partName}-${index}`;
+                            groupHtml += `<br><label for="${radioId}"><input type="radio" id="${radioId}" name="sex-action-${partName}" value="${group}|${partName}|${index}"> ${action.name}</label>`;
+                        }
+                    });
+                    groupContainer.innerHTML = groupHtml;
+                }
+                rowDiv.appendChild(groupContainer);
+            });
+            actionContainer.appendChild(rowDiv);
+        };
+
+        createActionRow(['left_hand', 'right_hand']);
+        createActionRow(['breasts', 'legs', 'mouth']);
+        createActionRow(['vagina', 'anus']);
+        
+        rightColumn.appendChild(actionContainer);
+        rightColumn.innerHTML += '<button id="submit-sex-action" class="overlayBtn" style="margin-top: 1rem;">Perform Action</button>';
+    } else {
+        rightColumn.innerHTML += `<h4>Waiting for ${state.sexScene.turn}...</h4>`;
+    }
+    columnsContainer.appendChild(rightColumn);
+    mainContainer.appendChild(columnsContainer);
+
+    const endBtn = document.createElement('button');
+    endBtn.id = 'end-sex-scene';
+    endBtn.className = 'overlayBtn';
+    endBtn.style.marginTop = '1.5rem';
+    endBtn.textContent = 'End Scene';
+    mainContainer.appendChild(endBtn);
+    
+    c.appendChild(mainContainer);
+
+    if (state.sexScene.turn === 'player') {
+        document.getElementById('submit-sex-action').onclick = handlePlayerAction;
+    }
+    document.getElementById('end-sex-scene').onclick = endSexScene;
+}
+
+function handlePlayerAction() {
+    const selectedRadios = document.querySelectorAll('input[type="radio"][name^="sex-action-"]:checked');
+    if (selectedRadios.length === 0) {
+        alert("Please select at least one action.");
+        return;
+    }
+
+    const actionBundle = [];
+    selectedRadios.forEach(radio => {
+        const [group, bodyPart, actionIndex] = radio.value.split('|');
+        const action = sexActions[group][bodyPart][actionIndex];
+        actionBundle.push(action);
+    });
+    
+    const targetId = state.sexScene.actors.find(a => a.id !== 'player').id;
+    
+    processSexAction('player', actionBundle, targetId);
+    
+    renderSexScene();
+    updateNeedsUI();
+    
+    if (state.sexScene.isActive && state.sexScene.turn !== 'player') {
+        setTimeout(handleNpcTurn, 1500);
+    }
+}
+
+function handleNpcTurn() {
+    if (!state.sexScene.isActive) return;
+
+    const npcId = state.sexScene.turn;
+    const currentState = state.sexScene.currentState;
+    const actionBundle = [];
+
+    // For each body part, find valid actions and randomly choose one
+    for (const bodyPart in sexActions.universal) {
+        const validActions = sexActions.universal[bodyPart].filter(action => 
+            action.requiredState === currentState && !action.tags.includes('player-only')
+        );
+
+        if (validActions.length > 0) {
+            // NPC has a 50% chance to perform an action with this body part
+            if (Math.random() < 0.5) {
+                const randomAction = validActions[Math.floor(Math.random() * validActions.length)];
+                actionBundle.push(randomAction);
+            }
+        }
+    }
+
+    // If no actions were chosen, just skip the turn for now.
+    if (actionBundle.length === 0) {
+        state.sexScene.log.push(`<i>${npcId} considers their next move...</i>`);
+        const currentIndex = state.sexScene.actors.findIndex(a => a.id === npcId);
+        const nextIndex = (currentIndex + 1) % state.sexScene.actors.length;
+        state.sexScene.turn = state.sexScene.actors[nextIndex].id;
+        renderSexScene();
+        return;
+    }
+
+    processSexAction(npcId, actionBundle, 'player');
+    
+    renderSexScene();
+    updateNeedsUI();
 }
 
 /* ==============================================================
@@ -4503,13 +5090,38 @@ function updateCharSkillsTab() {
 function updateCharStatsTab() {
     const statsDiv = document.getElementById('char-stats');
     if (!statsDiv) return;
-    let html = '<ul style="list-style-position: inside;">';
-    for (const statName in state.stats) {
-        const statValue = state.stats[statName];
-        const formattedName = statName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-        html += `<li>${formattedName}: ${statValue}</li>`;
-    }
+
+    const generalStats = [
+        'timesSlept', 'questsCompleted', 'itemsCrafted', 'distanceWalked',
+        'timesCollapsedFromStress', 'timesClimaxed'
+    ];
+
+    const sexualStats = [
+        'vaginalSexCount', 'analSexCount', 'oralSexGivenCount', 'oralSexReceivedCount',
+        'vaginalCreampiesReceived', 'analCreampiesReceived', 'oralCreampiesReceived',
+        'timesSwallowedSemen', 'totalGirlCumExpelled', 'uniqueSexualPartners'
+    ];
+
+    const formatStatName = (statName) => {
+        return statName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+    };
+
+    let html = '<h4>General</h4><ul style="list-style-position: inside; margin-top: 0.5rem;">';
+    generalStats.forEach(statName => {
+        if (state.stats.hasOwnProperty(statName)) {
+            html += `<li>${formatStatName(statName)}: ${state.stats[statName]}</li>`;
+        }
+    });
     html += '</ul>';
+
+    html += '<h4 style="margin-top: 1.5rem;">Sexual</h4><ul style="list-style-position: inside; margin-top: 0.5rem;">';
+    sexualStats.forEach(statName => {
+        if (state.stats.hasOwnProperty(statName)) {
+            html += `<li>${formatStatName(statName)}: ${state.stats[statName]}</li>`;
+        }
+    });
+    html += '</ul>';
+
     statsDiv.innerHTML = html;
 }
 
@@ -5745,12 +6357,14 @@ function buildDebugCheatTab() {
     const debugTab = document.getElementById('cheat-tab-debug');
     if (!debugTab) return;
 
-    const createSection = (title, dataObject) => {
+    // Helper to format a single data object (like state.pregnancy)
+    const createSectionFromObject = (title, dataObject, keysToOmit = []) => {
         let content = `<h4 style="color: #00ff00; border-bottom: 1px solid #444; padding-bottom: 0.3rem; margin-top: 1rem;">${title}</h4>`;
         content += '<div style="font-family: monospace; font-size: 0.9em; white-space: pre; background: #111; padding: 0.5rem; border-radius: 4px;">';
         for (const key in dataObject) {
+            if (keysToOmit.includes(key)) continue;
+
             const value = dataObject[key];
-            // Format boolean values for better readability
             let displayValue = value;
             if (typeof value === 'boolean') {
                 displayValue = value ? '<span style="color: lightgreen;">true</span>' : '<span style="color: salmon;">false</span>';
@@ -5763,14 +6377,30 @@ function buildDebugCheatTab() {
         return content;
     };
 
+    // Helper to format the bodyFluids object specifically
+    const createBodyFluidsSection = (title, fluidsObject) => {
+        let content = `<h4 style="color: #00ff00; border-bottom: 1px solid #444; padding-bottom: 0.3rem; margin-top: 1rem;">${title}</h4>`;
+        content += '<div style="font-family: monospace; font-size: 0.9em; white-space: pre; background: #111; padding: 0.5rem; border-radius: 4px;">';
+        for (const location in fluidsObject) {
+            if (location === 'vagina' || location === 'anus' || location === 'mouth' || location === 'body') {
+                const totalVolume = fluidsObject[location].semen.reduce((acc, s) => acc + s.volume, 0);
+                const fathers = [...new Set(fluidsObject[location].semen.map(s => s.fatherId))].join(', ') || 'none';
+                content += `${location.padEnd(20)}: Total Volume: ${totalVolume.toFixed(2)}ml, Fathers: [${fathers}]\n`;
+            }
+        }
+        content += '</div>';
+        return content;
+    };
+
     let html = '<div style="padding: 0 1rem;">';
-    html += createSection('Womb', state.womb);
-    html += createSection('Menstrual Cycle', state.menstrualCycle);
-    html += createSection('Human Pregnancy', state.pregnancy); // Renamed for clarity
-    html += createSection('Parasite', state.parasite);
+    if (state.bodyFluids) {
+        html += createBodyFluidsSection('Body Fluids', state.bodyFluids);
+    }
+    html += createSectionFromObject('Menstrual Cycle', state.menstrualCycle);
+    html += createSectionFromObject('Human Pregnancy', state.pregnancy, ['eggCount']); // Omit eggCount
+    html += createSectionFromObject('Parasite', state.parasite);
     html += `
         <div style="text-align: center; padding: 1rem; border-top: 1px solid #444; margin-top: 1rem;">
-            <!-- Removed testGenerateNpc button as it was out of scope -->
         </div>
     `;
     html += '</div>';
