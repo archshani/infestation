@@ -16,25 +16,30 @@ class CombatManager {
     createCombatActor(id) {
         const actor = {
             id: id,
-            bodyParts: {
-                leftArm: { state: 'free', target: null },
-                rightArm: { state: 'free', target: null },
-                mouth: { state: 'free', target: null },
-                feet: { state: 'free', target: null },
-                legs: { state: 'free', target: null },
-                chest: { state: 'free', target: null },
-                thighs: { state: 'free', target: null },
-                penis: { state: 'free', target: null, target_part: null },
-                vagina: { state: 'free', penetratedBy: [] },
-                anus: { state: 'free', penetratedBy: [] },
-            },
+            bodyParts: {},
             skills: {},
             stats: {},
             clothing: {}
         };
 
         if (id === 'player') {
-            actor.bodyParts = state.playerBody; // Use the pre-generated player body
+            if (Object.keys(state.playerBody).length > 0) {
+                actor.bodyParts = state.playerBody;
+            } else {
+                console.warn("Player body not found, using default combat body. This may indicate an issue with character creation or game loading.");
+                actor.bodyParts = {
+                    leftArm: { state: 'free', target: null },
+                    rightArm: { state: 'free', target: null },
+                    mouth: { state: 'free', target: null },
+                    feet: { state: 'free', target: null },
+                    legs: { state: 'free', target: null },
+                    chest: { state: 'free', target: null },
+                    thighs: { state: 'free', target: null },
+                    penis: { state: 'free', target: null, target_part: null },
+                    vagina: { state: 'free', penetratedBy: [] },
+                    anus: { state: 'free', penetratedBy: [] },
+                };
+            }
             Object.assign(actor.skills, state.skills);
             Object.assign(actor.stats, state.stats);
             actor.clothing = JSON.parse(JSON.stringify(state.equipment));
