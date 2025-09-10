@@ -6,8 +6,8 @@ class ActionGenerator {
         if (!actor) return {};
 
         const actions = {};
-        if (actor.bodyParts.leftArm) actions.leftArm = this.getLeftArmActions(actor);
-        if (actor.bodyParts.rightArm) actions.rightArm = this.getRightArmActions(actor);
+        if (actor.bodyParts.left_arm) actions.leftArm = this.getLeftArmActions(actor);
+        if (actor.bodyParts.right_arm) actions.rightArm = this.getRightArmActions(actor);
         if (actor.bodyParts.mouth) actions.mouth = this.getMouthActions(actor);
         if (actor.bodyParts.penis) actions.penis = this.getPenisActions(actor);
         if (actor.bodyParts.vagina) actions.vagina = this.getVaginaActions(actor);
@@ -22,7 +22,7 @@ class ActionGenerator {
 
     getLeftArmActions(player) {
         const actions = {};
-        const part = player.bodyParts.leftArm;
+        const part = player.bodyParts.left_arm;
         const target = state.combat.actors.find(a => a.id === part.target);
         const add = (name, id, cat) => Object.assign(actions, this._createAction(name, id, cat));
 
@@ -58,7 +58,7 @@ class ActionGenerator {
 
     getRightArmActions(player) {
         const actions = {};
-        const part = player.bodyParts.rightArm;
+        const part = player.bodyParts.right_arm;
         const target = state.combat.actors.find(a => a.id === part.target);
         const add = (name, id, cat) => Object.assign(actions, this._createAction(name, id, cat));
 
