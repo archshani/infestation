@@ -170,7 +170,7 @@ function saveGame(slotId) {
         const saveData = {
             name: newSaveName,
             date: new Date().toISOString(),
-            state: state
+            state: getSaveStateObject()
         };
 
         try {
