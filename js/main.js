@@ -1,3 +1,5 @@
+Object.assign(state.scenes, scenes);
+
 function quickStartDebug() {
     initCreationScreen(); // This randomizes the UI
     finalizeCharacterFromUI(); // This reads the randomized UI into the state
