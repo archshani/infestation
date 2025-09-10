@@ -5,14 +5,15 @@ class ActionGenerator {
         const actor = state.combat.actors.find(a => a.id === actorId);
         if (!actor) return {};
 
-        return {
-            leftArm: this.getLeftArmActions(actor),
-            rightArm: this.getRightArmActions(actor),
-            mouth: this.getMouthActions(actor),
-            penis: this.getPenisActions(actor),
-            vagina: this.getVaginaActions(actor),
-            anus: this.getAnusActions(actor),
-        };
+        const actions = {};
+        if (actor.bodyParts.leftArm) actions.leftArm = this.getLeftArmActions(actor);
+        if (actor.bodyParts.rightArm) actions.rightArm = this.getRightArmActions(actor);
+        if (actor.bodyParts.mouth) actions.mouth = this.getMouthActions(actor);
+        if (actor.bodyParts.penis) actions.penis = this.getPenisActions(actor);
+        if (actor.bodyParts.vagina) actions.vagina = this.getVaginaActions(actor);
+        if (actor.bodyParts.anus) actions.anus = this.getAnusActions(actor);
+
+        return actions;
     }
 
     _createAction(name, id, category = 'neutral') {
