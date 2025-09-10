@@ -34,10 +34,12 @@ class CombatManager {
         };
 
         if (id === 'player') {
+            actor.bodyParts = state.playerBody; // Use the pre-generated player body
             Object.assign(actor.skills, state.skills);
             Object.assign(actor.stats, state.stats);
             actor.clothing = JSON.parse(JSON.stringify(state.equipment));
         } else if (state.npcs[id]) {
+            actor.bodyParts = createNpcBody(id); // Generate body parts based on sex
             const npcData = state.npcs[id];
             Object.assign(actor.stats, {
                 trust: npcData.trust || 0,
