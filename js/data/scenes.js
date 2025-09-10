@@ -83,8 +83,8 @@ const scenes = {
         { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
         { text: 'Relax', action: "goToScene('relaxing', 0)" },
         { text: 'Rest for the day', action: "passDayInLounge()" },
-        { text: 'Test Sex Scene with Toby', action: "startSexScene(['player', 'Toby'])" },
-        { text: 'Test Sex Scene with Leah', action: "startSexScene(['player', 'Leah'])" }
+        { text: 'Test New Combat Scene with Toby', action: "startCombat(['player', 'Toby'])" },
+        { text: 'Test New Combat Scene with Leah', action: "startCombat(['player', 'Leah'])" }
       ],
       randomEvents: [
         { chance: 0.2, scene: 'random_lounge_1' }
