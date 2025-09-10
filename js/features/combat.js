@@ -5,7 +5,7 @@ class CombatManager {
     }
 
     startCombat(participantIds) {
-        const combat = window.state.combat;
+        const combat = state.combat;
         combat.isActive = true;
         combat.log = ['A new encounter begins.'];
         combat.actors = participantIds.map(id => this.createCombatActor(id));
@@ -34,11 +34,11 @@ class CombatManager {
         };
 
         if (id === 'player') {
-            Object.assign(actor.skills, window.state.skills);
-            Object.assign(actor.stats, window.state.stats);
-            actor.clothing = JSON.parse(JSON.stringify(window.state.equipment));
-        } else if (window.state.npcs[id]) {
-            const npcData = window.state.npcs[id];
+            Object.assign(actor.skills, state.skills);
+            Object.assign(actor.stats, state.stats);
+            actor.clothing = JSON.parse(JSON.stringify(state.equipment));
+        } else if (state.npcs[id]) {
+            const npcData = state.npcs[id];
             Object.assign(actor.stats, {
                 trust: npcData.trust || 0,
                 dominance: npcData.dominance || 0,
@@ -49,7 +49,7 @@ class CombatManager {
     }
 
     renderScene() {
-        const combat = window.state.combat;
+        const combat = state.combat;
         if (!combat.isActive) return;
 
         const mainArea = document.getElementById('mainArea');
@@ -101,26 +101,55 @@ class CombatManager {
     }
 
     processPlayerAction(actionId) {
-        if (window.state.combat.turn !== 'player') return;
-        const targetId = window.state.combat.actors.find(a => a.id !== 'player')?.id;
+        if (state.combat.turn !== 'player') return;
+        const targetId = state.combat.actors.find(a => a.id !== 'player')?.id;
         this.effects.execute(actionId, 'player', targetId);
-        window.state.combat.turn = targetId;
+        state.combat.turn = targetId;
         this.renderScene();
     }
 
     npcTurn() {
-        const combat = window.state.combat;
+        const combat = state.combat;
         if (combat.turn === 'player' || !combat.isActive) return;
 
         const npcId = combat.turn;
-        this.effects.execute('rest_left_arm', npcId, 'player'); // Simple placeholder action
+        const player = combat.actors.find(a => a.id === 'player');
+        const availableActions = this.generator.getAvailableActions(npcId);
+
+        const categorizedActions = { grapple: [], sexual: [], defensive: [], neutral: [] };
+        for (const bodyPart in availableActions) {
+            for (const actionName in availableActions[bodyPart]) {
+                const action = availableActions[bodyPart][actionName];
+                categorizedActions[action.category].push(action.id);
+            }
+        }
+
+        let chosenActionId = null;
+        const isPlayerGrappled = Object.values(player.bodyParts).some(part => part.state === 'grappled' || part.state === 'bound');
+
+        if (isPlayerGrappled && categorizedActions.sexual.length > 0) {
+            chosenActionId = categorizedActions.sexual[Math.floor(Math.random() * categorizedActions.sexual.length)];
+        } else if (!isPlayerGrappled && categorizedActions.grapple.length > 0) {
+            chosenActionId = categorizedActions.grapple[Math.floor(Math.random() * categorizedActions.grapple.length)];
+        } else {
+            const allActions = [].concat(...Object.values(categorizedActions));
+            if (allActions.length > 0) {
+                chosenActionId = allActions[Math.floor(Math.random() * allActions.length)];
+            }
+        }
+
+        if (chosenActionId) {
+            this.effects.execute(chosenActionId, npcId, 'player');
+        } else {
+            combat.log.push(`${npcId} doesn't know what to do.`);
+        }
 
         combat.turn = 'player';
         this.renderScene();
     }
 
     endCombat() {
-        window.state.combat.isActive = false;
+        state.combat.isActive = false;
         console.log("Combat has ended.");
     }
 }

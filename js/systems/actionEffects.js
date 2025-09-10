@@ -2,7 +2,7 @@ class ActionEffects {
     constructor() {}
 
     execute(actionId, actorId, targetId) {
-        const combat = window.state.combat;
+        const combat = state.combat;
         const actor = combat.actors.find(a => a.id === actorId);
         const target = targetId ? combat.actors.find(a => a.id === targetId) : null;
         const methodName = `_${actionId}`;
@@ -18,110 +18,109 @@ class ActionEffects {
     _modifyArousal(target, amount) {
         if (!target) return;
 
-        // This is a temporary solution for the arousal of combat-only actors
         if (target.id === 'player') {
-            window.state.needs.arousal = Math.min(window.state.needs.arousal + amount, window.state.ranges.arousal);
-        } else if (window.state.npcs[target.id]) {
-            const npc = window.state.npcs[target.id];
+            state.needs.arousal = Math.min(state.needs.arousal + amount, state.ranges.arousal);
+        } else if (state.npcs[target.id]) {
+            const npc = state.npcs[target.id];
             npc.arousal = Math.min((npc.arousal || 0) + amount, (npc.maxArousal || 100));
         }
     }
 
     // --- Left Arm ---
-    _rest_left_arm(actor, target) { window.state.combat.log.push(`${actor.id} rests their left arm.`); }
+    _rest_left_arm(actor, target) { state.combat.log.push(`${actor.id} rests their left arm.`); }
     _grab_left_arm(actor, target) {
         if (target) {
             actor.bodyParts.leftArm.state = 'holding_penis';
             actor.bodyParts.leftArm.target = target.id;
-            window.state.combat.log.push(`${actor.id} grabs ${target.id}'s groin with their left hand.`);
-        } else { window.state.combat.log.push(`${actor.id} grabs at nothing.`); }
+            state.combat.log.push(`${actor.id} grabs ${target.id}'s groin with their left hand.`);
+        } else { state.combat.log.push(`${actor.id} grabs at nothing.`); }
     }
     _tease_left_arm(actor, target) {
         if (target) {
             this._modifyArousal(target, 10);
-            window.state.combat.log.push(`${actor.id} teases ${target.id} with their left hand.`);
+            state.combat.log.push(`${actor.id} teases ${target.id} with their left hand.`);
         }
     }
     _struggle_left_arm(actor, target) {
-        window.state.combat.log.push(`${actor.id} struggles with their left arm!`);
+        state.combat.log.push(`${actor.id} struggles with their left arm!`);
         if (Math.random() > 0.5) {
             actor.bodyParts.leftArm.state = 'free';
-            window.state.combat.log.push(`${actor.id} breaks free!`);
-        } else { window.state.combat.log.push(`${actor.id} fails to break free.`); }
+            state.combat.log.push(`${actor.id} breaks free!`);
+        } else { state.combat.log.push(`${actor.id} fails to break free.`); }
     }
     _work_shaft_left(actor, target) {
         if (target) {
             this._modifyArousal(target, 15);
-            window.state.combat.log.push(`${actor.id} works ${target.id}'s shaft.`);
+            state.combat.log.push(`${actor.id} works ${target.id}'s shaft.`);
         }
     }
     _rub_clit_left(actor, target) {
         if (target) {
             this._modifyArousal(target, 15);
-            window.state.combat.log.push(`${actor.id} rubs ${target.id}'s clit.`);
+            state.combat.log.push(`${actor.id} rubs ${target.id}'s clit.`);
         }
     }
     _stop_left_arm(actor, target) {
         actor.bodyParts.leftArm.state = 'free';
         actor.bodyParts.leftArm.target = null;
-        window.state.combat.log.push(`${actor.id} stops using their left arm.`);
+        state.combat.log.push(`${actor.id} stops using their left arm.`);
     }
 
     // --- Right Arm ---
-    _rest_right_arm(actor, target) { window.state.combat.log.push(`${actor.id} rests their right arm.`); }
+    _rest_right_arm(actor, target) { state.combat.log.push(`${actor.id} rests their right arm.`); }
     _grab_right_arm(actor, target) {
         if (target) {
             actor.bodyParts.rightArm.state = 'holding_vagina';
             actor.bodyParts.rightArm.target = target.id;
-            window.state.combat.log.push(`${actor.id} grabs ${target.id}'s groin with their right hand.`);
-        } else { window.state.combat.log.push(`${actor.id} grabs at nothing.`); }
+            state.combat.log.push(`${actor.id} grabs ${target.id}'s groin with their right hand.`);
+        } else { state.combat.log.push(`${actor.id} grabs at nothing.`); }
     }
     _tease_right_arm(actor, target) {
         if (target) {
             this._modifyArousal(target, 10);
-            window.state.combat.log.push(`${actor.id} teases ${target.id} with their right hand.`);
+            state.combat.log.push(`${actor.id} teases ${target.id} with their right hand.`);
         }
     }
     _struggle_right_arm(actor, target) {
-        window.state.combat.log.push(`${actor.id} struggles with their right arm!`);
+        state.combat.log.push(`${actor.id} struggles with their right arm!`);
         if (Math.random() > 0.5) {
             actor.bodyParts.rightArm.state = 'free';
-            window.state.combat.log.push(`${actor.id} breaks free!`);
-        } else { window.state.combat.log.push(`${actor.id} fails to break free.`); }
+            state.combat.log.push(`${actor.id} breaks free!`);
+        } else { state.combat.log.push(`${actor.id} fails to break free.`); }
     }
     _work_shaft_right(actor, target) {
         if (target) {
             this._modifyArousal(target, 15);
-            window.state.combat.log.push(`${actor.id} works ${target.id}'s shaft.`);
+            state.combat.log.push(`${actor.id} works ${target.id}'s shaft.`);
         }
     }
     _rub_clit_right(actor, target) {
         if (target) {
             this._modifyArousal(target, 15);
-            window.state.combat.log.push(`${actor.id} rubs ${target.id}'s clit.`);
+            state.combat.log.push(`${actor.id} rubs ${target.id}'s clit.`);
         }
     }
     _stop_right_arm(actor, target) {
         actor.bodyParts.rightArm.state = 'free';
         actor.bodyParts.rightArm.target = null;
-        window.state.combat.log.push(`${actor.id} stops using their right arm.`);
+        state.combat.log.push(`${actor.id} stops using their right arm.`);
     }
 
     // --- Mouth ---
-    _rest_mouth(actor, target) { window.state.combat.log.push(`${actor.id} rests their mouth.`); }
+    _rest_mouth(actor, target) { state.combat.log.push(`${actor.id} rests their mouth.`); }
     _kiss_mouth(actor, target) {
         if (target) {
             actor.bodyParts.mouth.state = 'kissing';
             actor.bodyParts.mouth.target = target.id;
             target.bodyParts.mouth.state = 'kissing';
             target.bodyParts.mouth.target = actor.id;
-            window.state.combat.log.push(`${actor.id} kisses ${target.id}.`);
+            state.combat.log.push(`${actor.id} kisses ${target.id}.`);
         }
     }
     _suck_penis_mouth(actor, target) {
         if (target) {
             this._modifyArousal(target, 20);
-            window.state.combat.log.push(`${actor.id} sucks ${target.id}'s penis.`);
+            state.combat.log.push(`${actor.id} sucks ${target.id}'s penis.`);
         }
     }
 
@@ -132,7 +131,7 @@ class ActionEffects {
             actor.bodyParts.penis.state = 'penetrating';
             target.bodyParts[targetPart].state = 'penetrated';
             target.bodyParts[targetPart].penetratedBy.push(actor.id);
-            window.state.combat.log.push(`${actor.id}'s penis penetrates ${target.id}'s ${targetPart}.`);
+            state.combat.log.push(`${actor.id}'s penis penetrates ${target.id}'s ${targetPart}.`);
             this._modifyArousal(actor, 10);
             this._modifyArousal(target, 20);
         }
@@ -140,7 +139,7 @@ class ActionEffects {
     _thrust_penis(actor, target) {
         if (target) {
             const targetPart = actor.bodyParts.penis.target_part;
-            window.state.combat.log.push(`${actor.id} thrusts into ${target.id}'s ${targetPart}.`);
+            state.combat.log.push(`${actor.id} thrusts into ${target.id}'s ${targetPart}.`);
             this._modifyArousal(actor, 15);
             this._modifyArousal(target, 15);
         }
@@ -153,7 +152,7 @@ class ActionEffects {
             actor.bodyParts.penis.target_part = null;
             target.bodyParts[targetPart].state = 'free';
             target.bodyParts[targetPart].penetratedBy = target.bodyParts[targetPart].penetratedBy.filter(id => id !== actor.id);
-            window.state.combat.log.push(`${actor.id} pulls out of ${target.id}.`);
+            state.combat.log.push(`${actor.id} pulls out of ${target.id}.`);
         }
     }
 
@@ -163,7 +162,7 @@ class ActionEffects {
             target.bodyParts.penis.state = 'penetrating';
             actor.bodyParts.vagina.state = 'penetrated';
             actor.bodyParts.vagina.penetratedBy.push(target.id);
-            window.state.combat.log.push(`${actor.id} accepts ${target.id}'s penis.`);
+            state.combat.log.push(`${actor.id} accepts ${target.id}'s penis.`);
             this._modifyArousal(actor, 20);
             this._modifyArousal(target, 10);
         }
@@ -171,14 +170,14 @@ class ActionEffects {
     _reject_penetration_vagina(actor, target) {
         if (target) {
             target.bodyParts.penis.state = 'free';
-            window.state.combat.log.push(`${actor.id} rejects ${target.id}'s advance.`);
+            state.combat.log.push(`${actor.id} rejects ${target.id}'s advance.`);
         }
     }
     _ride_vagina(actor, target) {
         const penetratorId = actor.bodyParts.vagina.penetratedBy[0];
         if (penetratorId) {
-            const penetrator = window.state.combat.actors.find(a => a.id === penetratorId);
-            window.state.combat.log.push(`${actor.id} rides ${penetrator.id}'s penis.`);
+            const penetrator = state.combat.actors.find(a => a.id === penetratorId);
+            state.combat.log.push(`${actor.id} rides ${penetrator.id}'s penis.`);
             this._modifyArousal(actor, 15);
             this._modifyArousal(penetrator, 15);
         }
@@ -186,8 +185,8 @@ class ActionEffects {
     _clench_vagina(actor, target) {
         const penetratorId = actor.bodyParts.vagina.penetratedBy[0];
         if (penetratorId) {
-            const penetrator = window.state.combat.actors.find(a => a.id === penetratorId);
-            window.state.combat.log.push(`${actor.id} clenches around ${penetrator.id}'s penis.`);
+            const penetrator = state.combat.actors.find(a => a.id === penetratorId);
+            state.combat.log.push(`${actor.id} clenches around ${penetrator.id}'s penis.`);
             this._modifyArousal(penetrator, 20);
         }
     }

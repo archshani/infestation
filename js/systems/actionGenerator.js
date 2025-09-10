@@ -2,7 +2,7 @@ class ActionGenerator {
     constructor() {}
 
     getAvailableActions(actorId) {
-        const actor = window.state.combat.actors.find(a => a.id === actorId);
+        const actor = state.combat.actors.find(a => a.id === actorId);
         if (!actor) return {};
 
         return {
@@ -22,7 +22,7 @@ class ActionGenerator {
     getLeftArmActions(player) {
         const actions = {};
         const part = player.bodyParts.leftArm;
-        const target = window.state.combat.actors.find(a => a.id === part.target);
+        const target = state.combat.actors.find(a => a.id === part.target);
         const add = (name, id, cat) => Object.assign(actions, this._createAction(name, id, cat));
 
         switch (part.state) {
@@ -52,7 +52,7 @@ class ActionGenerator {
     getRightArmActions(player) {
         const actions = {};
         const part = player.bodyParts.rightArm;
-        const target = window.state.combat.actors.find(a => a.id === part.target);
+        const target = state.combat.actors.find(a => a.id === part.target);
         const add = (name, id, cat) => Object.assign(actions, this._createAction(name, id, cat));
 
         switch (part.state) {
@@ -82,7 +82,7 @@ class ActionGenerator {
     getMouthActions(player) {
         const actions = {};
         const part = player.bodyParts.mouth;
-        const target = window.state.combat.actors.find(a => a.id === part.target);
+        const target = state.combat.actors.find(a => a.id === part.target);
         const add = (name, id, cat) => Object.assign(actions, this._createAction(name, id, cat));
 
         switch(part.state) {
@@ -131,7 +131,7 @@ class ActionGenerator {
     getPenisActions(player) {
         const actions = {};
         const part = player.bodyParts.penis;
-        const target = window.state.combat.actors.find(a => a.id === part.target);
+        const target = state.combat.actors.find(a => a.id === part.target);
         const targetPart = part.target_part;
         const add = (name, id, cat) => Object.assign(actions, this._createAction(name, id, cat));
 
