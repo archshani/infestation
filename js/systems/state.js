@@ -175,6 +175,15 @@ const state = {
       initialPlayerClothing: null
   },
 
+  /* -------------------- New Combat State ------------------ */
+  combat: {
+      isActive: false,
+      actors: [], // { id, bodyParts: {...}, skills: {...}, etc. }
+      turn: '',
+      log: [],
+      positions: {}
+  },
+
   /* -------------------- Game Location ------------------ */
   currentLocation: 'event_intro',
   locationBeforeEvent: '',
