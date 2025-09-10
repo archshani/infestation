@@ -53,6 +53,15 @@ function createPlayerBody(sex = 'female') {
     return body;
 }
 
+function createNpcBody(npcId) {
+    const npcData = state.npcs[npcId];
+    if (!npcData || !npcData.sex) {
+        console.warn(`NPC ${npcId} does not have a sex defined. Defaulting to female.`);
+        return createPlayerBody('female');
+    }
+    return createPlayerBody(npcData.sex);
+}
+
 function createEmptyEquipment() {
     return {
         head: new EquipmentSlot('head', 'Head'),

@@ -28,12 +28,28 @@ class ActionEffects {
 
     // --- Left Arm ---
     _rest_left_arm(actor, target) { state.combat.log.push(`${actor.id} rests their left arm.`); }
-    _grab_left_arm(actor, target) {
+    _grab_arms_left(actor, target) {
         if (target) {
-            actor.bodyParts.leftArm.state = 'holding_penis';
+            actor.bodyParts.leftArm.state = 'grappling';
             actor.bodyParts.leftArm.target = target.id;
-            state.combat.log.push(`${actor.id} grabs ${target.id}'s groin with their left hand.`);
+            target.bodyParts.leftArm.state = 'grappled';
+            target.bodyParts.rightArm.state = 'grappled';
+            state.combat.log.push(`${actor.id} grabs ${target.id}'s arms with their left hand.`);
         } else { state.combat.log.push(`${actor.id} grabs at nothing.`); }
+    }
+    _hold_on_left(actor, target) {
+        if (target) {
+            state.combat.log.push(`${actor.id} holds on tightly to ${target.id}'s arms.`);
+        }
+    }
+    _let_go_left(actor, target) {
+        if (target) {
+            actor.bodyParts.leftArm.state = 'free';
+            actor.bodyParts.leftArm.target = null;
+            target.bodyParts.leftArm.state = 'free';
+            target.bodyParts.rightArm.state = 'free';
+            state.combat.log.push(`${actor.id} lets go of ${target.id}.`);
+        }
     }
     _tease_left_arm(actor, target) {
         if (target) {

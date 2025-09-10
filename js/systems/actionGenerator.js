@@ -28,12 +28,18 @@ class ActionGenerator {
         switch (part.state) {
             case 'free':
                 add('Rest', 'rest_left_arm', 'defensive');
-                add('Grab', 'grab_left_arm', 'grapple');
+                if (target) {
+                    add(`Grab ${target.id}'s arms`, 'grab_arms_left', 'grapple');
+                }
                 add('Tease', 'tease_left_arm', 'sexual');
                 break;
-            case 'grappled':
+            case 'grappling': // New state for when the player is the one grappling
+                if (target) add(`Hold on to ${target.id}'s arms`, 'hold_on_left', 'grapple');
+                add('Let go', 'let_go_left', 'defensive');
+                break;
+            case 'grappled': // State for when the player is being grappled
                 add('Rest', 'rest_left_arm', 'defensive');
-                add('Struggle', 'struggle_left_arm', 'defensive');
+                add('Struggle to break free', 'struggle_left_arm', 'defensive');
                 break;
             case 'holding_penis':
                 if (target) add(`Work ${target.id}'s shaft`, 'work_shaft_left', 'sexual');

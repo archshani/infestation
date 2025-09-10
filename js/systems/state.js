@@ -136,9 +136,9 @@ const state = {
 
   /* -------------------- NPCs --------------------- */
   npcs: {
-    "Leah": { relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "leah_semen_id", cumProduction: 5 },
-    "Amir": { relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "amir_semen_id", cumProduction: 7 },
-    "Toby": { relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "toby_semen_id", cumProduction: 10 }
+    "Leah": { sex: 'female', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "leah_semen_id", cumProduction: 5 },
+    "Amir": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "amir_semen_id", cumProduction: 7 },
+    "Toby": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "toby_semen_id", cumProduction: 10 }
   },
 
   /* -------------------- Journal ------------------ */
