@@ -1,6 +1,6 @@
 const state = {
   /* -------------------- Time -------------------- */
-  currentTime: new Date('2007-08-01T09:00:00'),   // start time (unchanged)
+  currentTime: new Date('2007-07-01T09:00:00'),   // start time (unchanged)
   calendarDate: null,
 
   /* -------------------- Money ------------------- */
@@ -9,10 +9,19 @@ const state = {
   /* -------------------- Intro events ------------ */
   eventIndex: 0,
   events: [
-    {title:"Meet Maya",text:"Maya Alvarez, a marine biologist, woke up feeling a strange pressure in her abdomen. An alien worm‑like parasite has taken residence inside her, feeding off her nervous system."},
-    {title:"Friend – Leah",text:"Leah Patel, Maya’s longtime friend, calls to check in. She senses something is off but Maya brushes it aside.", reveals: "Leah"},
-    {title:"Friend – Amir",text:"Dr. Amir Khan, a neuro‑biology researcher, offers to run scans. He warns Maya about the risks of unknown pathogens.", reveals: "Amir"},
-    {title:"Friend – Toby",text:"Toby, the lab’s tech specialist, jokes about “alien pets.” He hands Maya a bottle of energy drink.", reveals: "Toby"}
+    {title:"Hello World!",text:"Hi I'm _shani and I made this game!"},
+    {title:"You wake up...",text:"DESCRIPTION"},
+    {title:"Ordinary day...",text:"mourning routine"},
+    {title:"lastDayAtSchool",text:"walk to school or something"},
+    {title:"revealFriends",text:"DESCRIPTION", reveals: ["Leah", "Toby", "Amir"]},
+    {title:"goToFamily",text:"DESCRIPTION"},
+    {title:"familyTime",text:"DESCRIPTION"},
+    {title:"fewNormalDays",text:"DESCRIPTION"},
+    {title:"gottaLeaveMakeMoney",text:"DESCRIPTION"},
+    {title:"whatWasThat",text:"DESCRIPTION"},
+    {title:"thisIsWeird",text:"DESCRIPTION"},
+    {title:"Right time, wrong place",text:"this will describe the worm parisite taking residence in her body"},
+    {title:"Was it a dream?",text:"You wake up thinking \"<span style=\"color:#a5ff7f;\">What a weird dream.</span>\" but then you feel movement <i>inside</i> your womb, that wasn't a <b><i><span style=\"color:#ff4d4d;\">dream</span></b></i> it is real, that <i>thing</i> did really crawl inside you. <br>You feel something strange between your legs, you reach your hand down to your slit and feel up some strange liquid between your folds. <br>It is much far more viscous than normal, this isn't your juice, it's something else. You sit up to investigate; it doesn't look any different from your normal juice, you sniff it, it has a sickly sweet smell. <br>You dare not taste it. Altought you can't help to wonder how it tastes... \"<span style=\"color:#a5ff7f;\">What am I supposed to do now?</span>\" you tell yourself. <br><br>You prepare breakfast, trying to keep your mind from the <i>worm</i>. then it stirs, reminding you of its presence. \"<span style=\"color:#a5ff7f;\">I should go see the doctor, maybe they can help me at the clinic?</span>\""}
   ],
 
   /* -------------------- Needs ------------------- */
@@ -62,8 +71,8 @@ const state = {
   playerBody: {}, // Will be populated by factory
   appearance: {
       birthDate: '1989-02-12',
-      hairLength: 10, // Default value, maybe cm
-      height: 170, // Default value, cm
+      hairLength: 48, // Default value in cm
+      height: 157, // Default value in cm
       skinColor: { name: 'Pale', hex: '#F0D4C2' },
       hairColor: { name: 'Brown', hex: '#5C4033' },
       eyeColor: { name: 'Brown', hex: '#5C4033' }
@@ -136,9 +145,25 @@ const state = {
 
   /* -------------------- NPCs --------------------- */
   npcs: {
-    "Leah": { sex: 'female', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "leah_semen_id", cumProduction: 5 },
+    "Leah": { sex: 'female', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "female_semen_id", cumProduction: 5 },
     "Amir": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "amir_semen_id", cumProduction: 7 },
-    "Toby": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "toby_semen_id", cumProduction: 10 }
+    "Toby": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "toby_semen_id", cumProduction: 10 },
+    "Domi": { sex: 'female', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "female_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
   },
 
   /* -------------------- Journal ------------------ */
@@ -148,11 +173,11 @@ const state = {
       { title: "Get some rest", description: "You were feeling exhausted, but you took a nap.", complete: true },
       { title: "A Hidden Quest", description: "This quest is hidden until its conditions are met.", complete: false, hidden: true }
     ],
-    reminders: [{ date: '2007-08-07', text: 'Appointment with Dr. Amir at 2pm' }],
+    reminders: [{ date: '2007-07-06', text: 'Appointment with Dr. Amir at 2pm' }],
     recurringReminders: [
         { month: 2, day: 5, text: "It's my birthday next week!" }
     ],
-    notes: "I can write my own notes here."
+    notes: "My notepad."
   },
 
   settings: {
