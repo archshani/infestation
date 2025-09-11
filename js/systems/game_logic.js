@@ -167,7 +167,7 @@ function showCurrentEvent(){
 
   const link = document.createElement('span');
   link.className = 'link';
-  link.textContent = (state.eventIndex < state.events.length-1) ? 'Continue →' : 'Enter the Lab →';
+  link.textContent = (state.eventIndex < state.events.length-1) ? 'Continue...' : 'Time to get out there and figure out this \'guest\'...';
   link.onclick = () => {
     if(state.eventIndex < state.events.length-1){
       state.eventIndex++;
