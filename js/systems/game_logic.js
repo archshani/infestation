@@ -141,8 +141,18 @@ function showCurrentEvent(){
 
   const ev = state.events[state.eventIndex];
 
-  if (ev.reveals && state.npcs[ev.reveals]) {
-    state.npcs[ev.reveals].hidden = false;
+  if (ev.reveals) {
+    if (Array.isArray(ev.reveals)) {
+      // Handle array of NPCs
+      ev.reveals.forEach(npcName => {
+        if (state.npcs[npcName]) {
+          state.npcs[npcName].hidden = false;
+        }
+      });
+    } else if (typeof ev.reveals === 'string' && state.npcs[ev.reveals]) {
+      // Handle single NPC string for backward compatibility
+      state.npcs[ev.reveals].hidden = false;
+    }
   }
 
   const title = document.createElement('h2');
@@ -152,7 +162,7 @@ function showCurrentEvent(){
 
   const txt = document.createElement('p');
   txt.className = 'eventText';
-  txt.textContent = ev.text;
+  txt.innerHTML = ev.text;
   c.appendChild(txt);
 
   const link = document.createElement('span');
@@ -263,6 +273,92 @@ function initBottomButtons(){
 
   // Cheats button – appears only after the checkbox is ticked
   document.getElementById('cheatsBtn'  ).onclick = () => openOverlay('cheatsBtn');
+}
+
+function getDaysBetween(date1, date2) {
+    const oneDay = 24 * 60 * 60 * 1000;
+    // Discard time and timezone info for consistent day difference calculation
+    const d1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return Math.floor((d1 - d2) / oneDay);
+}
+
+function buildCalendar(year, month) { // month is 0-indexed
+  const monthYearEl = document.getElementById('calendar-month-year');
+  const daysEl = document.getElementById('calendar-days');
+
+  daysEl.innerHTML = ''; // Clear previous days
+
+  const date = new Date(year, month, 1);
+  const monthName = date.toLocaleString('default', { month: 'long' });
+  monthYearEl.textContent = `${monthName} ${year}`;
+
+  const firstDay = date.getDay(); // 0 for Sunday, 1 for Monday, etc.
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Get reminders for the current month for efficiency
+  const remindersForMonth = state.journal.reminders.filter(r => {
+    const reminderDate = new Date(r.date + 'T00:00:00');
+    return reminderDate.getFullYear() === year && reminderDate.getMonth() === month;
+  });
+
+  // Create blank cells for the days before the first day of the month
+  for (let i = 0; i < firstDay; i++) {
+    const dayCell = document.createElement('div');
+    dayCell.classList.add('calendar-day', 'other-month');
+    daysEl.appendChild(dayCell);
+  }
+
+  // Create cells for each day of the month
+  for (let i = 1; i <= daysInMonth; i++) {
+    const dayCell = document.createElement('div');
+    dayCell.classList.add('calendar-day');
+
+    const daySpan = document.createElement('span');
+    daySpan.textContent = i;
+    dayCell.appendChild(daySpan);
+
+    const fullDate = new Date(year, month, i);
+    const currentDate = state.currentTime;
+
+    // Check if it's the current day
+    if (fullDate.getFullYear() === currentDate.getFullYear() &&
+        fullDate.getMonth() === currentDate.getMonth() &&
+        fullDate.getDate() === currentDate.getDate()) {
+      dayCell.classList.add('current-day');
+    }
+
+    // Check for reminders
+    const reminder = remindersForMonth.find(r => {
+        const reminderDate = new Date(r.date + 'T00:00:00');
+        return reminderDate.getDate() === i;
+    });
+
+    if (reminder) {
+      dayCell.classList.add('has-reminder');
+      dayCell.onclick = () => {
+        closeAllOverlays();
+        openOverlay('btnJournal');
+      };
+    }
+
+    // Check for period days
+    if (!state.parasite.canImpregnate) { // Only show for normal cycles
+        const dayDiff = getDaysBetween(fullDate, state.currentTime);
+        const cycleDayForCell = state.menstrualCycle.currentDayInCycle + dayDiff;
+        const cycleLength = state.menstrualCycle.cycleLength;
+        const periodLength = state.menstrualCycle.periodLength;
+
+        // Normalize the cycle day to be within 1 and cycleLength
+        const normalizedCycleDay = ((cycleDayForCell - 1) % cycleLength + cycleLength) % cycleLength + 1;
+
+        if (normalizedCycleDay <= periodLength) {
+            dayCell.classList.add('period-day');
+        }
+    }
+
+    daysEl.appendChild(dayCell);
+  }
 }
 
 function positionCalendar() {
