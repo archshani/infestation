@@ -21,9 +21,16 @@ const state = {
     {title:"whatWasThat",text:"DESCRIPTION"},
     {title:"thisIsWeird",text:"DESCRIPTION"},
     {title:"Right time, wrong place",text:"this will describe the worm parisite taking residence in her body"},
-    {title:"Was it a dream?",text:"You wake up thinking \"<span style=\"color:#a5ff7f;\">What a weird dream.</span>\" but then you feel movement <i>inside</i> your womb, that wasn't a <b><i><span style=\"color:#ff4d4d;\">dream</span></b></i> it is real, that <i>thing</i> did really crawl inside you. <br>You feel something strange between your legs, you reach your hand down to your slit and feel up some strange liquid between your folds. <br>It is much far more viscous than normal, this isn't your juice, it's something else. You sit up to investigate; it doesn't look any different from your normal juice, you sniff it, it has a sickly sweet smell. <br>You dare not taste it. Altought you can't help to wonder how it tastes... \"<span style=\"color:#a5ff7f;\">What am I supposed to do now?</span>\" you tell yourself. <br><br>You prepare breakfast, trying to keep your mind from the <i>worm</i>. then it stirs, reminding you of its presence. \"<span style=\"color:#a5ff7f;\">I should go see the doctor, maybe they can help me at the clinic?</span>\""}
+    {title:"That had to be a dream? Right?",text:"You wake up thinking \"<span style=\"color:#a5ff7f;\">What a weird dream.</span>\" you try to get up but a jolt of pain flies through your spine \"<span style=\"color:#a5ff7f;\">What the hell?!</span>\" you say out loud then you feel it stir inside of you, <span style=\"color:#a5ff7f;\">\"That <i>thing</i> did really crawl inside me didn't it? This is a </span><span style=\"color:#ff4d4d;\">nightmare</span><span style=\"color:#a5ff7f;\">...</span>\"<br>As you rub your eyes you can feel some wetness on the sheets, you slowly sit up and notice the lack of clothing on your bottom, you reach down with your hand to your slit and run your fingers thought, it is slick, but the liquid is very thick. As you touch yourself you can feel how sore you are from last night, but it doesn't hurt, it seems like the liquid, whatever it is, might have some calming effects, against your better judgement you move the sticky fingers to your face and give them a curious sniff. It has a sickly sweet smell. \"<span style=\"color:#a5ff7f;\">I better not taste it.</span>\" you think. Altought you can't help but wonder how it may taste... \"<span style=\"color:#a5ff7f;\">What am I supposed to do now?</span>\" you tell yourself. You grab fresh clothes and go take a <i>long hot shower</i>, now clean and fully clothed you head to the kitchen.<br><br>You nonchalantly prepare breakfast, trying to foget anything happened and keeping your mind from the <i>worm</i>. then it stirs, reminding you of its presence. <br>\"<span style=\"color:#a5ff7f;\">I should go see the doctor, maybe they can help me at the clinic?</span>\" you decide to call them and make an appointment."}
   ],
-
+//<span style=\"color:#;\"> </span>
+//ff4d4d  red
+//a5ff7f  maya
+//        leah
+//        Toby
+//        Amir
+//ff0000  Domi
+//
   /* -------------------- Needs ------------------- */
   needs: {
     tiredness: 10000,
@@ -149,7 +156,7 @@ const state = {
     "Amir": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "amir_semen_id", cumProduction: 7 },
     "Toby": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "toby_semen_id", cumProduction: 10 },
     "Domi": { sex: 'female', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "female_semen_id", cumProduction: 7 },
-    "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
+    "Evelyn": { sex: 'female', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
     "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
     "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
     "Something": { sex: 'male', relationship: 0, trust: 0, fear: 0, attraction: 0, anger: 0, hidden: true, semenId: "_semen_id", cumProduction: 7 },
