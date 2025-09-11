@@ -59,6 +59,20 @@ function startGame(options = {}) {
         goToScene('foyer', 30);
     } else {
         state.storyEventActive = true;
+        // --- HIDE SIDEBAR ELEMENTS DURING INTRO ---
+        const sidebar = document.getElementById('sidebar');
+        Array.from(sidebar.children).forEach(child => {
+            if (child.id !== 'bottomButtons') {
+                child.style.display = 'none';
+            }
+        });
+        const bottomButtons = document.getElementById('bottomButtons');
+        Array.from(bottomButtons.children).forEach(child => {
+            if (child.id !== 'btnSettings' && child.id !== 'btnSaves') {
+                child.style.display = 'none';
+            }
+        });
+
         showCurrentEvent();
     }
 }
@@ -126,3 +140,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function recoverFromArousalMax() {
+    state.needs.arousal = 0;
+    forceGlobalUIRefresh();
+    goToScene('foyer', 60);
+}
+
+function recoverFromStressCollapse() {
+    state.needs.stress = 350;
+    forceGlobalUIRefresh();
+    goToScene('foyer', 3600);
+}

@@ -174,6 +174,15 @@ function showCurrentEvent(){
       showCurrentEvent();          // **no** advanceTime here
     }else{
       state.storyEventActive = false; // Intro is over
+      // --- RESTORE SIDEBAR ELEMENTS AFTER INTRO ---
+      const sidebar = document.getElementById('sidebar');
+      Array.from(sidebar.children).forEach(child => {
+          child.style.display = ''; // Reset to default
+      });
+      const bottomButtons = document.getElementById('bottomButtons');
+        Array.from(bottomButtons.children).forEach(child => {
+            child.style.display = ''; // Reset to default
+        });
       goToScene('foyer', 30);      // entering the lab starts the map
     }
   };
