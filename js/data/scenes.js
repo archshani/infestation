@@ -19,6 +19,38 @@ const scenes = {
         { text: 'Recover...', action: "recoverFromArousalMax()" }
       ]
     },
+    'showering': {
+      title: 'Showering',
+      description: 'You strip and take a shower.',
+      nav: [
+        { text: 'Finish', action: "finishShower()" }
+      ]
+    },
+    'relaxing': {
+      title: 'Relaxing',
+      description: 'You sit back and relax for a while.',
+      nav: [
+        { text: 'Finish', action: "finishRelaxing()" }
+      ]
+    },
+    'sleeping': {
+      title: 'Sleeping',
+      description: 'You go to sleep for a while.',
+      nav: [
+        { text: 'Sleep for 2 hours', action: "sleepFor(2)" },
+        { text: 'Sleep for 3 hours', action: "sleepFor(3)" },
+        { text: 'Sleep for 4 hours', action: "sleepFor(4)" },
+        { text: 'Sleep for 5 hours', action: "sleepFor(5)" },
+        { text: 'Sleep for 6 hours', action: "sleepFor(6)" },
+        { text: 'Sleep for 7 hours', action: "sleepFor(7)" },
+        { text: 'Sleep for 8 hours', action: "sleepFor(8)" },
+        { text: 'Sleep for 9 hours', action: "sleepFor(9)" },
+        { text: 'Sleep for 10 hours', action: "sleepFor(10)" },
+        { text: 'Sleep for 11 hours', action: "sleepFor(11)" },
+        { text: 'Sleep for 12 hours', action: "sleepFor(12)" }
+      ]
+    },
+
     // Maya's Home scenes
     'home': {
       title: 'Main hall',
@@ -29,36 +61,31 @@ const scenes = {
         { text: 'Bathroom', action: "goToScene('bathroom', 30)" },
         { text: 'Living Room', action: "goToScene('livingRoom', 30)" },
         { text: 'Go outside', action: "goToScene('outsideHome', 180)" },
-        { text: 'nestTest', action: "goToScene('nestHome', 0)" }
+        { text: 'nestTest', action: "goToScene('nestHome', 0)", condition: { type: 'parasite_impregnate_enabled' } }
       ]
     },
     'kitchen': {
-      title: 'kitchen',
-      description: '...',
+      title: 'Your kitchen',
+      description: 'This is your kitchen, it looks clean, pretty much what you\'d expect from a kitchen.',
       nav: [
         { text: 'back', action: "goToScene('home', 30)" }
       ]
     },
     'bedroom': {
-      title: 'bedroom',
-      description: '...',
+      title: 'Your bedroom',
+      description: 'This is your bedroom This is where you sleep .',
       nav: [
-        { text: 'back', action: "goToScene('home', 30)" },
-        { text: 'passTime', action: "goToScene('relaxBedroom', 0)" },
-        { text: 'Sleep for a Day', action: "passDayInLounge()" }
-      ]
-    },
-    'relaxBedroom': {
-      title: 'Relaxing',
-      description: 'You sit back and relax for a while.',
-      nav: [
-        { text: 'Finish', action: "finishRelaxing()" }
+        { text: 'Go Sleep', action: "startSleeping()" },
+        { text: 'Wardrobe', action: "openWardrobe()" },
+        { text: 'Manage Piercings', action: "openManagePiercings()", condition: { type: 'has_piercings' } },
+        { text: 'back', action: "goToScene('home', 30)" }
       ]
     },
     'bathroom': {
       title: 'bathroom',
       description: '...',
       nav: [
+        { text: 'Take a shower', action: "startShowering()" },
         { text: 'back', action: "goToScene('home', 30)" }
       ]
     },
@@ -66,6 +93,7 @@ const scenes = {
       title: 'Living Room',
       description: '...',
       nav: [
+        { text: 'Relax for a bit...', action: "startRelaxing()" },
         { text: 'back', action: "goToScene('home', 30)" }
       ]
     },
@@ -167,8 +195,8 @@ const scenes = {
       description: '...',
       nav: [
         { text: 'back', action: "goToScene('foyer', 30)" },
-        { text: 'passTime', action: "goToScene('relaxingDev', 0)" },
-        { text: 'passDay', action: "passDayInLounge()" },
+        { text: 'passTime', action: "startRelaxing()" },
+        { text: 'passDay', action: "passDay()" },
         { text: 'combatTestToby', action: "startCombat(['Maya', 'Toby'])" },
         { text: 'combatTestLeah', action: "startCombat(['Maya', 'Leah'])" }
       ],
@@ -181,7 +209,7 @@ const scenes = {
       description: '...',
       nav: [
         { text: 'back', action: "goToScene('foyer', 30)" },
-        { text: 'showerTest', action: "finishShower()" }
+        { text: 'showerTest', action: "startShowering()" }
       ],
       randomEvents: [
         { chance: 0.02, scene: 'random_bathroom_1' },
@@ -190,20 +218,6 @@ const scenes = {
           scene: 'morning_sickness_event',
           condition: { type: 'human_pregnancy_early' }
         }
-      ]
-    },
-    'showeringDev': {
-      title: 'Shower',
-      description: 'You strip and take a shower.',
-      nav: [
-        { text: 'Finish', action: "goToscene('bathroomDev', 600)" }
-      ]
-    },
-    'relaxingDev': {
-      title: 'Relaxing',
-      description: 'You sit back and relax for a while.',
-      nav: [
-        { text: 'Finish', action: "finishRelaxing()" }
       ]
     },
     'random_foyer_1': {

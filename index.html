@@ -225,7 +225,6 @@
     <div id="char-buttons" style="display: flex; justify-content: space-between; gap: 0.5rem;">
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('status')">Status</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('skills')">Skills</button>
-        <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('equipment')">Equipment</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('inventory')">Inventory</button>
         <button class="overlayBtn" style="flex-grow: 1;" onclick="showCharTab('stats')">Stats</button>
     </div>
@@ -233,10 +232,18 @@
         <div id="char-status" class="char-tab"></div>
         <div id="char-skills" class="char-tab" style="display: none;"></div>
         <div id="char-stats" class="char-tab" style="display: none;"></div>
-        <div id="char-equipment" class="char-tab" style="display: none;"></div>
         <div id="char-inventory" class="char-tab" style="display: none;"></div>
     </div>
   </div>
+</div>
+
+<!-- WARDROBE overlay -->
+<div id="wardrobe-overlay" class="overlay">
+    <div class="overlayHeader">Wardrobe</div>
+    <div class="overlayClose" onclick="closeAllOverlays()">✖</div>
+    <div class="overlayBody">
+        <div id="char-equipment" class="char-tab"></div>
+    </div>
 </div>
 
 
@@ -604,6 +611,7 @@
 <!-- Features -->
 <script src="js/features/characterCreation.js"></script>
 <script src="js/features/characterSheet.js"></script>
+<script src="js/features/wardrobe.js"></script>
 <script src="js/features/crafting.js"></script>
 <script src="js/features/bodyArt.js"></script>
 <script src="js/features/journal.js"></script>

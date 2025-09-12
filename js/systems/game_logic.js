@@ -124,6 +124,21 @@ const barColor =
   }
 }
 
+function startRelaxing() {
+  state.locationBeforeEvent = state.currentLocation;
+  goToScene('relaxing', 0);
+}
+
+function startShowering() {
+  state.locationBeforeEvent = state.currentLocation;
+  goToScene('showering', 0);
+}
+
+function startSleeping() {
+  state.locationBeforeEvent = state.currentLocation;
+  goToScene('sleeping', 0);
+}
+
 function finishShower() {
   advanceTime(600); // 10 minutes
   goToScene(state.locationBeforeEvent, 0);
@@ -137,7 +152,7 @@ function finishRelaxing() {
   }
   state.needs.happiness = newHappiness;
 
-  let newTiredness = state.needs.tiredness + 250;
+  let newTiredness = state.needs.tiredness + 1000;
   if (newTiredness > state.ranges.tiredness) {
     newTiredness = state.ranges.tiredness;
   }
@@ -146,6 +161,26 @@ function finishRelaxing() {
   checkStatTriggers();
   goToScene(state.locationBeforeEvent, 0);
 
+}
+
+function sleepFor(hours) {
+    const seconds = hours * 3600;
+    const tirednessRestored = 16 * seconds * (10000 / 86400);
+    let newTiredness = state.needs.tiredness + tirednessRestored;
+    if (newTiredness > state.ranges.tiredness) {
+        newTiredness = state.ranges.tiredness;
+    }
+    state.needs.tiredness = newTiredness;
+
+    advanceTime(seconds, false);
+    forceGlobalUIRefresh();
+    checkStatTriggers();
+    goToScene(state.locationBeforeEvent, 0);
+}
+
+
+function passDay() {
+    advanceTime(86400);
 }
 /* ==============================================================
    SCREEN SWITCHING
@@ -206,6 +241,7 @@ function showCurrentEvent(){
         Array.from(bottomButtons.children).forEach(child => {
             child.style.display = ''; // Reset to default
         });
+      applyCheatsUI();
       goToScene('home', 30);      // entering the lab starts the map
     }
   };
@@ -459,6 +495,8 @@ function openOverlay(btnId){
         buildLoadScreen();
     } else if (btnId === 'cheatsBtn') {
         buildCheatOverlay();
+    } else if (btnId === 'wardrobe') {
+        buildWardrobe();
     }
   }
 }
@@ -467,6 +505,23 @@ function openOverlay(btnId){
 function closeAllOverlays(){
   document.querySelectorAll('.overlay').forEach(o=>o.style.display='none');
 }
+
+function openWardrobe() {
+    openOverlay('wardrobe');
+}
+
+/*
+// Example of how to add a wardrobe link to a scene
+// in scenes.js
+'bedroom': {
+    title: 'Bedroom',
+    description: 'Your personal space.',
+    nav: [
+        { text: 'back', action: "goToScene('home', 30)" },
+        { text: 'Open Wardrobe', action: "openWardrobe()" }
+    ]
+},
+*/
 
 /* --------------------------------------------------------------
    SETTINGS → CHEATS CHECKBOX

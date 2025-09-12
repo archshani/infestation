@@ -174,6 +174,7 @@ function buildCheatOverlay() {
     });
     rightCol += `<div style="text-align: center; padding: 1rem;"><label><input type="checkbox" onchange="toggleCorruptionDisplay(this)" ${state.showCorruption?'checked':''}> Show Corruption Bar</label></div>`;
     rightCol += `<div style="text-align: center; padding: 0.5rem;"><button class="overlayBtn" onclick="toggleParasitePregnancyCheat()">Parasite Pregnancy: ${state.parasite.canImpregnate ? '<span style=\\"color: red\\">Enabled</span>' : 'Disabled'}</button></div>`;
+    rightCol += `<div style="text-align: center; padding: 0.5rem;"><button class="overlayBtn" onclick="openWardrobe()">Open Wardrobe</button></div>`;
     rightCol += '</div>';
     generalContent += leftCol + rightCol + '</div>';
     generalTab.innerHTML = generalContent;

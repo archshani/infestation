@@ -218,10 +218,14 @@ function equipItem(itemId, subSlot) { // subSlot can be layer, hand, or null for
 
 function unequipItem(slotId, subSlot) { // subSlot is layer, hand, or null
     const slot = state.equipment[slotId];
-    if (!slot) { console.error(`Slot "${slotId}" not found.`); return; }
+    if (!slot) {
+        console.error(`Slot "${slotId}" not found.`);
+        return;
+    }
 
     let itemToUnequip = null;
 
+    // The subSlot for BackSlot is 'item' as defined in wardrobe.js
     if (slot instanceof BackSlot) {
         itemToUnequip = slot.item;
         slot.item = null;
@@ -238,12 +242,9 @@ function unequipItem(slotId, subSlot) { // subSlot is layer, hand, or null
         // Sort inventory alphabetically for consistency
         state.inventory.sort((a, b) => a.name.localeCompare(b.name));
     } else {
-        console.log(`Nothing to unequip from ${slotId} -> ${subSlot}`);
+        // This log can be noisy if a slot type isn't handled above, so let's be specific.
+        // console.log(`Nothing to unequip from ${slotId} -> ${subSlot}`);
     }
-
-    // Refresh UI
-    buildEquipmentTab();
-    updateCharDesc();
 }
 
 function getCoverageInfo() {
