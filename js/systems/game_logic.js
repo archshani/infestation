@@ -510,19 +510,6 @@ function openWardrobe() {
     openOverlay('wardrobe');
 }
 
-/*
-// Example of how to add a wardrobe link to a scene
-// in scenes.js
-'bedroom': {
-    title: 'Bedroom',
-    description: 'Your personal space.',
-    nav: [
-        { text: 'back', action: "goToScene('home', 30)" },
-        { text: 'Open Wardrobe', action: "openWardrobe()" }
-    ]
-},
-*/
-
 /* --------------------------------------------------------------
    SETTINGS → CHEATS CHECKBOX
    -------------------------------------------------------------- */

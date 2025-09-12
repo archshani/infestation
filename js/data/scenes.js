@@ -68,7 +68,9 @@ const scenes = {
       title: 'Your kitchen',
       description: 'This is your kitchen, it looks clean, pretty much what you\'d expect from a kitchen.',
       nav: [
-        { text: 'back', action: "goToScene('home', 30)" }
+        { text: 'Make Food', action: "goToScene('kitchen', 0)" },
+        { text: 'Grab Beer', action: "goToScene('kitchen', 0)" },
+        { text: 'Go back.', action: "goToScene('home', 30)" }
       ]
     },
     'bedroom': {
@@ -78,7 +80,7 @@ const scenes = {
         { text: 'Go Sleep', action: "startSleeping()" },
         { text: 'Wardrobe', action: "openWardrobe()" },
         { text: 'Manage Piercings', action: "openManagePiercings()", condition: { type: 'has_piercings' } },
-        { text: 'back', action: "goToScene('home', 30)" }
+        { text: 'Go back.', action: "goToScene('home', 30)" }
       ]
     },
     'bathroom': {
@@ -86,7 +88,8 @@ const scenes = {
       description: '...',
       nav: [
         { text: 'Take a shower', action: "startShowering()" },
-        { text: 'back', action: "goToScene('home', 30)" }
+        { text: 'Mirror', action: "goToScene('bathroom', 0)" },
+        { text: 'Go back.', action: "goToScene('home', 30)" }
       ]
     },
     'livingRoom': {
@@ -94,21 +97,21 @@ const scenes = {
       description: '...',
       nav: [
         { text: 'Relax for a bit...', action: "startRelaxing()" },
-        { text: 'back', action: "goToScene('home', 30)" }
+        { text: 'Go back.', action: "goToScene('home', 30)" }
       ]
     },
     'outsideHome': {
       title: 'You are outside...',
       description: '...',
       nav: [
-        { text: 'back', action: "goToScene('home', 180)" }
+        { text: 'Go Home.', action: "goToScene('home', 180)" }
       ]
     },
     'nestHome': {
       title: '<span style=\"color:#ff4d4d;\">The Nest</span>',
       description: '...',
       nav: [
-        { text: 'Go back', action: "goToScene('home', 0)" },
+        { text: 'Go back.', action: "goToScene('home', 0)" },
         {
           text: '<span style=\"color:#ff4d4d;\">Attempt to birth worms...</span>',
           action: "deliverWorms()",
