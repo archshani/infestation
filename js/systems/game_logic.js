@@ -124,6 +124,29 @@ const barColor =
   }
 }
 
+function finishShower() {
+  advanceTime(600); // 10 minutes
+  goToScene(state.locationBeforeEvent, 0);
+}
+
+function finishRelaxing() {
+  advanceTime(1800, false);
+  let newHappiness = state.needs.happiness + 50;
+  if (newHappiness > state.ranges.happiness) {
+    newHappiness = state.ranges.happiness;
+  }
+  state.needs.happiness = newHappiness;
+
+  let newTiredness = state.needs.tiredness + 250;
+  if (newTiredness > state.ranges.tiredness) {
+    newTiredness = state.ranges.tiredness;
+  }
+  state.needs.tiredness = newTiredness;
+  forceGlobalUIRefresh();
+  checkStatTriggers();
+  goToScene(state.locationBeforeEvent, 0);
+
+}
 /* ==============================================================
    SCREEN SWITCHING
    ============================================================== */
@@ -183,7 +206,7 @@ function showCurrentEvent(){
         Array.from(bottomButtons.children).forEach(child => {
             child.style.display = ''; // Reset to default
         });
-      goToScene('foyer', 30);      // entering the lab starts the map
+      goToScene('home', 30);      // entering the lab starts the map
     }
   };
   c.appendChild(link);

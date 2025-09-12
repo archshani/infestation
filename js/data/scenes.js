@@ -1,104 +1,190 @@
 const scenes = {
-    'foyer': {
-      title: 'Laboratory Foyer',
-      description: 'The foyer is dimly lit, metal doors line the walls, and a low hum of equipment reverberates through the concrete floor. A faint smell of antiseptic hangs in the air.',
+
+    'tailor_hub': {
+      title: 'The Tailor',
+      description: 'The tailor is a mysterious figure who can create any clothing you desire, for a price. What would you like to create?',
+      nav: [] // This will be populated dynamically
+    },
+    'stress_collapse_event': {
+      title: 'Overwhelmed',
+      description: 'The weight of everything becomes too much. The world spins and fades to black as you collapse from the stress.',
+      nav: [
+        { text: 'Wake up later...', action: "recoverFromStressCollapse()" }
+      ]
+    },
+    'arousal_max_event': {
+      title: 'Overcome',
+      description: 'A wave of intense pleasure washes over you, so powerful it leaves you breathless and trembling on the floor.',
+      nav: [
+        { text: 'Recover...', action: "recoverFromArousalMax()" }
+      ]
+    },
+    // Maya's Home scenes
+    'home': {
+      title: 'Main hall',
+      description: 'This is your home, you are in the main hall of the apartment, not much to see here, just some shoes and coats around.',
       nav: [
         { text: 'Kitchen', action: "goToScene('kitchen', 30)" },
-        { text: 'Lounge', action: "goToScene('lounge', 30)" },
+        { text: 'Bedroom', action: "goToScene('bedroom', 30)" },
         { text: 'Bathroom', action: "goToScene('bathroom', 30)" },
-        { text: 'Private Room', action: "goToScene('private_room', 30)" },
-        { text: 'Visit the Tailor', action: "goToTailorHub()" },
-        { text: 'Visit Body Art Studio', action: "openBodyArtStudio()" },
+        { text: 'Living Room', action: "goToScene('livingRoom', 30)" },
+        { text: 'Go outside', action: "goToScene('outsideHome', 180)" },
+        { text: 'nestTest', action: "goToScene('nestHome', 0)" }
+      ]
+    },
+    'kitchen': {
+      title: 'kitchen',
+      description: '...',
+      nav: [
+        { text: 'back', action: "goToScene('home', 30)" }
+      ]
+    },
+    'bedroom': {
+      title: 'bedroom',
+      description: '...',
+      nav: [
+        { text: 'back', action: "goToScene('home', 30)" },
+        { text: 'passTime', action: "goToScene('relaxBedroom', 0)" },
+        { text: 'Sleep for a Day', action: "passDayInLounge()" }
+      ]
+    },
+    'relaxBedroom': {
+      title: 'Relaxing',
+      description: 'You sit back and relax for a while.',
+      nav: [
+        { text: 'Finish', action: "finishRelaxing()" }
+      ]
+    },
+    'bathroom': {
+      title: 'bathroom',
+      description: '...',
+      nav: [
+        { text: 'back', action: "goToScene('home', 30)" }
+      ]
+    },
+    'livingRoom': {
+      title: 'Living Room',
+      description: '...',
+      nav: [
+        { text: 'back', action: "goToScene('home', 30)" }
+      ]
+    },
+    'outsideHome': {
+      title: 'You are outside...',
+      description: '...',
+      nav: [
+        { text: 'back', action: "goToScene('home', 180)" }
+      ]
+    },
+    'nestHome': {
+      title: '<span style=\"color:#ff4d4d;\">The Nest</span>',
+      description: '...',
+      nav: [
+        { text: 'Go back', action: "goToScene('home', 0)" },
         {
-          text: 'Check in with Leah',
+          text: '<span style=\"color:#ff4d4d;\">Attempt to birth worms...</span>',
+          action: "deliverWorms()",
+          condition: { type: 'worms_ready_to_birth' }
+        }
+      ]
+    },
+
+//    DEV ROOMS BELLOW
+    'foyer': {
+      title: 'devRoom',
+      description: 'This is the dev room, what are you doing here?',
+      nav: [
+        { text: 'kitchen', action: "goToScene('kitchenDev', 30)" },
+        { text: 'lounge', action: "goToScene('loungeDev', 30)" },
+        { text: 'bathroom', action: "goToScene('bathroomDev', 30)" },
+        { text: 'privateRoom', action: "goToScene('private_roomDev', 30)" },
+        { text: 'tailorHub', action: "goToTailorHub()" },
+        { text: 'bodyArtStudio', action: "openBodyArtStudio()" },
+        {
+          text: 'leahTestEvent',
           action: "goToScene('leah_love_event', 0)",
           condition: { type: 'npc_relationship', npc: 'Leah', operator: '>=', value: 50 }
         },
         {
-          text: 'Check in with Amir',
+          text: 'amirTestEvent',
           action: "goToScene('amir_love_event', 0)",
           condition: { type: 'npc_relationship', npc: 'Amir', operator: '>=', value: 50 }
         },
         {
-          text: 'Check in with Toby',
+          text: 'TobyTestEvent',
           action: "goToScene('toby_love_event', 0)",
           condition: { type: 'npc_relationship', npc: 'Toby', operator: '>=', value: 50 }
         }
       ],
       randomEvents: [
-        { chance: 0.2, scene: 'random_foyer_1' }
+        { chance: 0.02, scene: 'random_foyer_1' }
       ]
     },
-    'kitchen': {
-      title: 'Kitchen',
-      description: 'Stainless steel counters glint under harsh fluorescent lights. A coffee maker gurgles, and a half-eaten sandwich rests on a plate. The scent of stale coffee lingers. The fridge hums softly, casting a faint blue glow across the tiled floor.',
+    'kitchenDev': {
+      title: 'kitchen',
+      description: '...',
       nav: [
-        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" }
+        { text: 'back', action: "goToScene('foyer', 30)" }
       ],
       randomEvents: [
-        { chance: 0.2, scene: 'random_kitchen_1' },
-        {
-          chance: 0.3, // 30% chance when conditions are met
-          scene: 'parasite_craving_event',
-          condition: { type: 'parasite_pregnancy' }
-        }
+        { chance: 0.02, scene: 'random_kitchen_1' }
       ]
     },
-    'private_room': {
-      title: 'Private Room',
-      description: 'This is a small, quiet room off the main foyer. It seems to be unused, containing little more than a simple cot and a small desk. There is a strange, organic-looking structure in the corner.',
+    'private_roomDev': {
+      title: 'privateRoom',
+      description: '...',
       nav: [
-        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
-        { text: 'Manage Piercings', action: "openManagePiercings()", condition: { type: 'has_piercings' } },
+        { text: 'back', action: "goToScene('foyer', 30)" },
+        { text: 'managePiercings', action: "openManagePiercings()", condition: { type: 'has_piercings' } },
         {
-          text: 'Approach the Nest',
-          action: "goToScene('nest', 0)",
+          text: 'nestBirthingPlace',
+          action: "goToScene('nestDev', 0)",
           condition: { type: 'parasite_impregnate_enabled' }
         }
       ]
     },
-    'nest': {
-      title: 'The Nest',
-      description: 'The structure is a grotesque, pulsating mass of organic tissue, clearly of alien origin. It seems to be... waiting. You feel a strange pull towards it, a primal urge to settle within its strange embrace.',
+    'nestDev': {
+      title: 'nest',
+      description: '...',
       nav: [
-        { text: 'Leave the nest', action: "goToScene('private_room', 0)" },
+        { text: 'back', action: "goToScene('private_roomDev', 0)" },
         {
-          text: 'Deliver the alien worms',
+          text: 'birthWorms',
           action: "deliverWorms()",
           condition: { type: 'worms_ready_to_birth' }
         }
       ]
     },
     'birth_results': {
-        title: 'Delivery',
-        description: 'After a grueling and bizarre ordeal, you have delivered the alien worms into the nest. You feel a sense of relief, but also a deep violation. The nest pulses gently, seeming to nurture its new inhabitants.',
+        title: 'birth',
+        description: '...',
         nav: [
-            { text: 'Leave the area', action: "finishBirthing()" }
+            { text: 'back', action: "finishBirthing()" }
         ]
     },
-    'lounge': {
-      title: 'Lounge',
-      description: 'Plush chairs face a wall-mounted screen playing calming nature footage. Shelves hold scientific journals and a few well-worn novels. Soft ambient music drifts.',
+    'loungeDev': {
+      title: 'lounge',
+      description: '...',
       nav: [
-        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
-        { text: 'Relax', action: "goToScene('relaxing', 0)" },
-        { text: 'Rest for the day', action: "passDayInLounge()" },
-        { text: 'Test New Combat Scene with Toby', action: "startCombat(['player', 'Toby'])" },
-        { text: 'Test New Combat Scene with Leah', action: "startCombat(['player', 'Leah'])" }
+        { text: 'back', action: "goToScene('foyer', 30)" },
+        { text: 'passTime', action: "goToScene('relaxingDev', 0)" },
+        { text: 'passDay', action: "passDayInLounge()" },
+        { text: 'combatTestToby', action: "startCombat(['Maya', 'Toby'])" },
+        { text: 'combatTestLeah', action: "startCombat(['Maya', 'Leah'])" }
       ],
       randomEvents: [
-        { chance: 0.2, scene: 'random_lounge_1' }
+        { chance: 0.02, scene: 'random_lounge_1' }
       ]
     },
-    'bathroom': {
-      title: 'Bathroom',
-      description: 'White tiles line the walls, a single sink flickers with a weak bulb. The mirror fogs slightly as warm air circulates. A small cabinet holds basic toiletries.',
+    'bathroomDev': {
+      title: 'bathroom',
+      description: '...',
       nav: [
-        { text: 'Back to Foyer', action: "goToScene('foyer', 30)" },
-        { text: 'Take a shower', action: "goToScene('showering', 0)" }
+        { text: 'back', action: "goToScene('foyer', 30)" },
+        { text: 'showerTest', action: "finishShower()" }
       ],
       randomEvents: [
-        { chance: 0.2, scene: 'random_bathroom_1' },
+        { chance: 0.02, scene: 'random_bathroom_1' },
         {
           chance: 0.4, // 40% chance when conditions are met
           scene: 'morning_sickness_event',
@@ -106,14 +192,14 @@ const scenes = {
         }
       ]
     },
-    'showering': {
+    'showeringDev': {
       title: 'Shower',
-      description: 'You undress and take a shower.',
+      description: 'You strip and take a shower.',
       nav: [
-        { text: 'Finish', action: "finishShower()" }
+        { text: 'Finish', action: "goToscene('bathroomDev', 600)" }
       ]
     },
-    'relaxing': {
+    'relaxingDev': {
       title: 'Relaxing',
       description: 'You sit back and relax for a while.',
       nav: [
@@ -131,21 +217,21 @@ const scenes = {
       title: 'A Strange Smell',
       description: 'A strange, sickly sweet smell emanates from the drain. You make a mental note to get it checked out.',
       nav: [
-        { text: 'Continue', action: "goToScene('kitchen', 0)" }
+        { text: 'Continue', action: "goToScene('kitchenDev', 0)" }
       ]
     },
     'random_lounge_1': {
       title: 'A Flicker on the Screen',
       description: 'For a brief moment, the calming nature footage on the screen is replaced by a flash of static and what looks like alien text.',
       nav: [
-        { text: 'Continue', action: "goToScene('lounge', 0)" }
+        { text: 'Continue', action: "goToScene('loungeDev', 0)" }
       ]
     },
     'random_bathroom_1': {
       title: 'A Puddle',
       description: 'You notice a small, iridescent puddle forming under the sink, but it evaporates before you can get a closer look.',
       nav: [
-        { text: 'Continue', action: "goToScene('bathroom', 0)" }
+        { text: 'Continue', action: "goToScene('bathroomDev', 0)" }
       ]
     },
     'leah_love_event': {
@@ -155,11 +241,6 @@ const scenes = {
         { text: 'Return to Foyer', action: "goToScene('foyer', 0)" }
       ]
     },
-'tailor_hub': {
-    title: 'The Tailor',
-    description: 'The tailor is a mysterious figure who can create any clothing you desire, for a price. What would you like to create?',
-    nav: [] // This will be populated dynamically
-},
     'amir_love_event': {
       title: 'A Moment with Amir',
       description: 'Placeholder text for a special moment with Amir.',
@@ -174,32 +255,11 @@ const scenes = {
         { text: 'Return to Foyer', action: "goToScene('foyer', 0)" }
       ]
     },
-    'stress_collapse_event': {
-      title: 'Overwhelmed',
-      description: 'The weight of everything becomes too much. The world spins and fades to black as you collapse from the stress.',
-      nav: [
-        { text: 'Wake up later...', action: "recoverFromStressCollapse()" }
-      ]
-    },
-    'arousal_max_event': {
-      title: 'Overcome',
-      description: 'A wave of intense pleasure washes over you, so powerful it leaves you breathless and trembling on the floor.',
-      nav: [
-        { text: 'Recover...', action: "recoverFromArousalMax()" }
-      ]
-    },
     'morning_sickness_event': {
       title: 'Morning Sickness',
       description: 'A wave of nausea hits you suddenly, and you barely make it to the nearest receptacle before you\'re sick. The feeling passes after a few moments, leaving you feeling drained and miserable.',
       nav: [
         { text: 'Pull yourself together.', action: "handleMorningSickness()" }
-      ]
-    },
-    'parasite_craving_event': {
-      title: 'Unusual Hunger',
-      description: 'A sudden, ravenous hunger grips you. It\'s not for anything normal. You find yourself craving the taste of metal, the texture of plastic, anything to satisfy the strange gnawing in your gut. You manage to resist the urge, but it leaves you feeling shaken and disturbed.',
-      nav: [
-        { text: 'This is not my body...', action: "handleParasiteCraving()" }
       ]
     },
     'human_water_breaking_event': {
@@ -214,13 +274,6 @@ const scenes = {
       description: 'After a long and exhausting labor, you give birth to a healthy baby. [This is a placeholder event.]',
       nav: [
         { text: 'A new chapter begins.', action: "completeHumanBirth()" }
-      ]
-    },
-    'parasite_takeover_event': {
-      title: 'A Vicious Change',
-      description: 'A sudden, sharp pain lances through your abdomen, far more intense than any cramp you\'ve felt before. You double over, gasping, as a strange, cold sensation spreads from your womb. The subtle warmth of the life you were carrying vanishes, replaced by an alien chill. Something is terribly wrong.',
-      nav: [
-        { text: 'Endure it...', action: "endTakeoverEvent()" }
       ]
     },
     'human_pregnancy_discovery': {
