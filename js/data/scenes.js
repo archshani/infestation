@@ -164,6 +164,7 @@ const scenes = {
       nav: [
         { text: 'back', action: "goToScene('foyer', 30)" },
         { text: 'managePiercings', action: "openManagePiercings()", condition: { type: 'has_piercings' } },
+        { text: 'Wardrobe', action: "openWardrobe()" },
         {
           text: 'nestBirthingPlace',
           action: "goToScene('nestDev', 0)",
