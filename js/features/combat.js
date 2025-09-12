@@ -22,9 +22,9 @@ class CombatManager {
             clothing: {}
         };
 
-        if (id === 'player') {
+        if (id === state.playerName) {
             if (Object.keys(state.playerBody).length > 0) {
-                actor.bodyParts = state.playerBody;
+                actor.bodyParts = JSON.parse(JSON.stringify(state.playerBody));
             } else {
                 console.warn("Player body not found, using default combat body. This may indicate an issue with character creation or game loading.");
                 actor.bodyParts = {
@@ -70,11 +70,11 @@ class CombatManager {
         logContainer.innerHTML = combat.log.map(msg => `<p>${msg}</p>`).join('');
         container.appendChild(logContainer);
 
-        if (combat.turn === 'player') {
+        if (combat.turn === state.playerName) {
             const actionsContainer = document.createElement('div');
             actionsContainer.id = 'combat-actions';
 
-            const availableActions = this.generator.getAvailableActions('player');
+            const availableActions = this.generator.getAvailableActions(state.playerName);
 
             for (const bodyPart in availableActions) {
                 const partActions = availableActions[bodyPart];
@@ -108,19 +108,19 @@ class CombatManager {
     }
 
     processPlayerAction(actionId) {
-        if (state.combat.turn !== 'player') return;
-        const targetId = state.combat.actors.find(a => a.id !== 'player')?.id;
-        this.effects.execute(actionId, 'player', targetId);
+        if (state.combat.turn !== state.playerName) return;
+        const targetId = state.combat.actors.find(a => a.id !== state.playerName)?.id;
+        this.effects.execute(actionId, state.playerName, targetId);
         state.combat.turn = targetId;
         this.renderScene();
     }
 
     npcTurn() {
         const combat = state.combat;
-        if (combat.turn === 'player' || !combat.isActive) return;
+        if (combat.turn === state.playerName || !combat.isActive) return;
 
         const npcId = combat.turn;
-        const player = combat.actors.find(a => a.id === 'player');
+        const player = combat.actors.find(a => a.id === state.playerName);
         const availableActions = this.generator.getAvailableActions(npcId);
 
         const categorizedActions = { grapple: [], sexual: [], defensive: [], neutral: [] };
@@ -146,12 +146,12 @@ class CombatManager {
         }
 
         if (chosenActionId) {
-            this.effects.execute(chosenActionId, npcId, 'player');
+            this.effects.execute(chosenActionId, npcId, state.playerName);
         } else {
             combat.log.push(`${npcId} doesn't know what to do.`);
         }
 
-        combat.turn = 'player';
+        combat.turn = state.playerName;
         this.renderScene();
     }
 

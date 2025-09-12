@@ -504,6 +504,7 @@ function finalizeCharacterFromUI() {
     const hairLengthSlider = document.getElementById('hairLengthSlider');
     const selectedSkinSwatch = document.querySelector('#skin-color-picker .color-swatch.selected');
 
+    state.playerName = "Maya";
     state.appearance.height = parseInt(heightSlider.value, 10);
     state.appearance.hairLength = parseInt(hairLengthSlider.value, 10);
     if (selectedSkinSwatch) {

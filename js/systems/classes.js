@@ -2,6 +2,7 @@ class BodyPart {
     constructor(id, name, adjectives = [], size = 'average') {
         this.id = id; // e.g., 'left_thigh'
         this.name = name; // e.g., 'Left Thigh'
+        this.state = 'free';
         this.descriptor = null; // e.g., 'small', 'large', 'toned'
         this.adjectives = adjectives; // e.g., ['strong', 'scarred']
         this.size = size;

@@ -29,9 +29,7 @@ class ActionGenerator {
         switch (part.state) {
             case 'free':
                 add('Rest', 'rest_left_arm', 'defensive');
-                if (target) {
-                    add(`Grab ${target.id}'s arms`, 'grab_arms_left', 'grapple');
-                }
+                add('Grab Arms', 'grab_arms_left', 'grapple');
                 add('Tease', 'tease_left_arm', 'sexual');
                 break;
             case 'grappling': // New state for when the player is the one grappling
