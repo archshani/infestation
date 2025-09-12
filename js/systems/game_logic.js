@@ -37,9 +37,9 @@ function updateNeedsUI(){
 /* ---------- colour (custom logic) ---------- */
 const inverted = ['stress','trauma','arousal'].includes(k);
 const barColor =
-  k === 'corruption' ? 'purple' :
-  k === 'alcohol' ? 'orange' :
-  k === 'drugs' ? 'lightsalmon' :
+  k === 'corruption' ? '#99009F' :
+  k === 'alcohol' ? '#FFA500' :
+  k === 'drugs' ? '#FFA07A' :
   (() => {
     const r = Math.round(255 * (inverted ? pct/100 : 1-pct/100));
     const g = Math.round(255 * (inverted ? 1-pct/100 : pct/100));

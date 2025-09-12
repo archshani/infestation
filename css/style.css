@@ -262,8 +262,8 @@ body.cheats-enabled .cheatsBtn{margin-left:auto;}
 /* Text styles */
 .eventTitle{font-size:1.8rem;margin-top:0;color:#00ff00;}
 .eventText{margin:1rem 0;line-height:1.4;}
-.link{color:#00ff00;cursor:pointer;text-decoration:underline;}
-.link:hover{color:#33ff33;}
+.link{color:#00ff00;cursor:pointer;text-decoration:none;}
+.link:hover{color:#99009F;}
 
 /* -------------------------------------------------------------
    NAVIGATION COLUMN (absolute, anchored below text)

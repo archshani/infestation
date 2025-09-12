@@ -21,7 +21,7 @@ const scenes = {
     },
     'showering': {
       title: 'Showering',
-      description: 'You strip and take a shower.',
+      description: 'You strip naked and take a shower.',
       nav: [
         { text: 'Finish', action: "finishShower()" }
       ]
@@ -108,12 +108,12 @@ const scenes = {
       ]
     },
     'nestHome': {
-      title: '<span style=\"color:#ff4d4d;\">The Nest</span>',
+      title: '<span style=\"color:#99009F;\">The Nest</span>',
       description: '...',
       nav: [
         { text: 'Go back.', action: "goToScene('home', 0)" },
         {
-          text: '<span style=\"color:#ff4d4d;\">Attempt to birth worms...</span>',
+          text: '<span style=\"color:#99009F;\">Attempt to birth worms...</span>',
           action: "deliverWorms()",
           condition: { type: 'worms_ready_to_birth' }
         }

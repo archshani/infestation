@@ -106,8 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Global Escape key handler
+    // Global key handler
     document.addEventListener('keydown', (e) => {
+        // Don't interfere with text input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
+
         if (e.key === 'Escape') {
             const subOverlay = document.getElementById('sub-overlay');
             if (subOverlay && subOverlay.style.display === 'block') {
@@ -125,6 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const anyOverlayOpen = document.querySelector('.overlay[style*="display: block"]');
             if (anyOverlayOpen) {
                 closeAllOverlays();
+            }
+            return; // Escape's job is done
+        }
+
+        // Scene navigation hotkeys
+        const keyMap = {
+            '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '0': 9, '-': 10, '=': 11
+        };
+        const sceneButtonIndex = keyMap[e.key];
+        if (sceneButtonIndex !== undefined) {
+            const sceneButtons = document.querySelectorAll('.navColumn .link');
+            if (sceneButtons[sceneButtonIndex]) {
+                sceneButtons[sceneButtonIndex].click();
             }
         }
     });
