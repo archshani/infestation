@@ -1,0 +1,13 @@
+:: StoryTitle
+Infestation
+
+:: StoryData
+{
+	"ifid": "A4E9E6B0-0B5C-4F9E-9E8E-4E9E6B0B5C4F",
+	"format": "SugarCube",
+	"format-version": "2.30.0",
+	"start": "TitleScreen"
+}
+
+:: StoryInit
+<<set $player = setup.initPlayer()>>

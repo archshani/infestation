@@ -1,0 +1,23 @@
+:: TitleScreen
+<div id="title-screen">
+	<h1>INFESTATION</h1>
+	<div class="menu">
+		[[NEW GAME|CharacterCreation]]
+	</div>
+</div>
+
+:: CharacterCreation
+<h1>Character Creation</h1>
+<p>Allocate traits to start your journey.</p>
+
+<div class="skills-overview">
+	<h3>Current Skills:</h3>
+	<ul>
+		<li>Fitness: Level $player.skills.fitness.level (XP: $player.skills.fitness.xp/<<print setup.getExpForLevel($player.skills.fitness.level)>>) - Modifier: $player.skills.fitness.xpModifier</li>
+		<li>Strength: Level $player.skills.strength.level (XP: $player.skills.strength.xp/<<print setup.getExpForLevel($player.skills.strength.level)>>) - Modifier: $player.skills.strength.xpModifier</li>
+		<li>Intellect: Level $player.skills.intellect.level (XP: $player.skills.intellect.xp/<<print setup.getExpForLevel($player.skills.intellect.level)>>) - Modifier: $player.skills.intellect.xpModifier</li>
+		<li>Charm: Level $player.skills.charm.level (XP: $player.skills.charm.xp/<<print setup.getExpForLevel($player.skills.charm.level)>>) - Modifier: $player.skills.charm.xpModifier</li>
+	</ul>
+</div>
+
+[[Back to Title|TitleScreen]]
