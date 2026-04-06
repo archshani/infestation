@@ -1,0 +1,111 @@
+:: CharacterCreationTraits
+<div class="creation-container traits-screen">
+    <h2>Select Traits</h2>
+    <div class="points-header">
+        Points: <span @class="$points >= 0 ? 'points-positive' : 'points-negative'"><<print $points>></span>
+    </div>
+
+    <div class="traits-dual-list">
+        <div class="traits-list available">
+            <h3>Available Traits</h3>
+            <div class="traits-scroll">
+                <<for _trait range setup.traits>>
+                    <<if not $selectedTraits.includes(_trait.id)>>
+                        <div class="trait-item available" @title="_trait.description">
+                            <span class="trait-name"><<print _trait.name>></span>
+                            <span class="trait-cost" @class="_trait.cost > 0 ? 'cost-pos' : 'cost-neg'">
+                                <<print _trait.cost > 0 ? '-' + _trait.cost : '+' + Math.abs(_trait.cost)>>
+                            </span>
+                            <<button "+">>
+                                <<set $selectedTraits.push(_trait.id)>>
+                                <<set $points -= _trait.cost>>
+                                <<replace ".traits-screen">><<include "CharacterCreationTraits">><</replace>>
+                            <</button>>
+                        </div>
+                    <</if>>
+                <</for>>
+            </div>
+        </div>
+
+        <div class="traits-list selected">
+            <h3>Selected Traits</h3>
+            <div class="traits-scroll">
+                <<if $selectedTraits.length is 0>>
+                    <p class="empty-msg">No traits selected.</p>
+                <<else>>
+                    <<for _id range $selectedTraits>>
+                        <<set _trait to setup.traits.find(t => t.id === _id)>>
+                        <div class="trait-item selected">
+                            <span class="trait-name"><<print _trait.name>></span>
+                            <<button "-">>
+                                <<set $selectedTraits.delete(_id)>>
+                                <<set $points += _trait.cost>>
+                                <<replace ".traits-screen">><<include "CharacterCreationTraits">><</replace>>
+                            <</button>>
+                        </div>
+                    <</for>>
+                <</if>>
+            </div>
+        </div>
+    </div>
+
+    <div class="build-actions">
+        <<button "Copy Build String">>
+            <<set _buildStr to setup.exportBuild($playerName, $selectedTraits)>>
+            <<script>>
+                const buildStr = State.temporary.buildStr;
+                navigator.clipboard.writeText(buildStr).then(() => {
+                    alert("Build string copied to clipboard!");
+                });
+            <</script>>
+        <</button>>
+        <<button "Import Build String">>
+            <<script>>
+                const b64Str = prompt("Paste your build string:");
+                if (b64Str) {
+                    const data = setup.importBuild(b64Str);
+                    if (data) {
+                        State.variables.playerName = data.name;
+                        State.variables.selectedTraits = data.traits;
+                        // Recalculate points
+                        let points = 5;
+                        data.traits.forEach(id => {
+                            const trait = setup.traits.find(t => t.id === id);
+                            if (trait) points -= trait.cost;
+                        });
+                        State.variables.points = points;
+                        Engine.play("CharacterCreationTraits");
+                    } else {
+                        alert("Invalid build string!");
+                    }
+                }
+            <</script>>
+        <</button>>
+    </div>
+
+    <div class="creation-actions">
+        <<if $points >= 0>>
+            <<button "Finish Creation">>
+                <<script>>
+                    // Apply trait bonuses to skills
+                    State.variables.selectedTraits.forEach(id => {
+                        const trait = setup.traits.find(t => t.id === id);
+                        if (trait.bonuses) {
+                            for (let skillId in trait.bonuses) {
+                                State.variables.skills[skillId].level += trait.bonuses[skillId];
+                            }
+                        }
+                        if (trait.multipliers) {
+                            for (let skillId in trait.multipliers) {
+                                State.variables.skills[skillId].multiplier *= trait.multipliers[skillId];
+                            }
+                        }
+                    });
+                    Engine.play("TestRoom");
+                <</script>>
+            <</button>>
+        <<else>>
+            <p class="error-msg">You need more points to afford these traits!</p>
+        <</if>>
+    </div>
+</div>

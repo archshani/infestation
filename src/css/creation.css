@@ -1,0 +1,64 @@
+.creation-container {
+    padding: 20px;
+    border: 1px solid #444;
+    background-color: #222;
+    margin-top: 20px;
+}
+
+.attribute-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.attribute-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.attr-label {
+    font-size: 1.2em;
+    width: 150px;
+}
+
+.attr-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.attr-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #00ff00;
+    min-width: 30px;
+    text-align: center;
+}
+
+.attr-controls button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.instruction {
+    color: #aaa;
+    font-style: italic;
+}
+
+.stats-display ul {
+    list-style: none;
+    padding: 0;
+}
+
+.stats-display li {
+    margin: 5px 0;
+    font-size: 1.1em;
+}

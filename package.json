@@ -1,0 +1,12 @@
+{
+  "name": "infestation",
+  "version": "0.1.0",
+  "description": "A post-apocalyptic parasite RPG",
+  "scripts": {
+    "build": "./vendor/tweego/tweego -o index.html --head src/head.html src/twee src/js src/css",
+    "watch": "./vendor/tweego/tweego -w -o index.html --head src/head.html src/twee src/js src/css"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

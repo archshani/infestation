@@ -1,0 +1,86 @@
+/* Hide default SugarCube buttons */
+#ui-bar-history, #ui-bar-watch, #menu-core {
+	display: none !important;
+}
+
+#menu-story ul {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+#menu-story li {
+	margin: 10px 0;
+}
+
+#menu-story a {
+	display: block;
+	padding: 10px;
+	background-color: #333;
+	color: #00ff00;
+	border: 1px solid #00ff00;
+	text-decoration: none;
+	text-align: center;
+	font-weight: bold;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+#menu-story a:hover {
+	background-color: #00ff00;
+	color: #111;
+}
+
+/* Base Styles */
+body {
+	background-color: #111;
+	color: #eee;
+	font-family: "Courier New", Courier, monospace;
+}
+
+#ui-bar {
+	background-color: #222;
+	border-right: 1px solid #444;
+}
+
+#passages {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.title-screen {
+	text-align: center;
+	margin-top: 50px;
+}
+
+.ascii-logo {
+	color: #00ff00;
+	font-size: 0.8em;
+	line-height: 1.2;
+	white-space: pre;
+	display: inline-block;
+	text-align: left;
+}
+
+.game-title {
+	font-size: 3em;
+	letter-spacing: 0.2em;
+	margin-top: 20px;
+	color: #00ff00;
+	text-shadow: 0 0 10px #00aa00;
+}
+
+button {
+	background-color: #333;
+	color: #00ff00;
+	border: 1px solid #00ff00;
+	padding: 10px 20px;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 1.1em;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+	background-color: #00ff00;
+	color: #111;
+}
