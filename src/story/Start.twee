@@ -1,0 +1,28 @@
+:: StoryInit
+<<run setup.initPlayer()>>
+
+:: Start
+<div id="title-screen">
+	<h1>infestation</h1>
+	<<button "New Game" "MainGame">><</button>>
+</div>
+
+:: MainGame
+Welcome to Infestation.
+
+<div id="skills">
+Fitness: $player.skills.fitness.level (XP: $player.skills.fitness.xp)
+Strength: $player.skills.strength.level (XP: $player.skills.strength.xp)
+Intellect: $player.skills.intellect.level (XP: $player.skills.intellect.xp)
+Charm: $player.skills.charm.level (XP: $player.skills.charm.xp)
+</div>
+
+<<button "Test Gain XP">>
+	<<run setup.skills.gainXP('fitness', 100)>>
+	<<replace "#skills">>
+		Fitness: $player.skills.fitness.level (XP: $player.skills.fitness.xp)
+		Strength: $player.skills.strength.level (XP: $player.skills.strength.xp)
+		Intellect: $player.skills.intellect.level (XP: $player.skills.intellect.xp)
+		Charm: $player.skills.charm.level (XP: $player.skills.charm.xp)
+	<</replace>>
+<</button>>

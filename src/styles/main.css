@@ -1,0 +1,23 @@
+#title-screen {
+	text-align: center;
+	margin-top: 15%;
+}
+
+#title-screen h1 {
+	font-size: 3em;
+	text-transform: lowercase;
+	margin-bottom: 2rem;
+}
+
+#title-screen button {
+	padding: 10px 20px;
+	font-size: 1.2em;
+	background-color: #333;
+	color: #fff;
+	border: 2px solid #555;
+	cursor: pointer;
+}
+
+#title-screen button:hover {
+	background-color: #555;
+}
