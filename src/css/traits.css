@@ -1,0 +1,124 @@
+.traits-screen {
+    max-width: 1200px;
+}
+
+.points-header {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.points-positive { color: #00ff00; }
+.points-negative { color: #ff0000; }
+
+.traits-layout {
+    display: flex;
+    gap: 15px;
+    height: 600px;
+}
+
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.section-container {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-container.half-height {
+    flex: 0.5;
+}
+
+.scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.scroll-area h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+}
+
+.trait-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    font-size: 0.9em;
+}
+
+.trait-name.selected {
+    color: #00ff00;
+}
+
+.trait-entry button {
+    padding: 2px 8px;
+}
+
+.placeholder-text {
+    color: #888;
+    font-style: italic;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.build-import-export {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.build-import-export button {
+    flex: 1;
+    font-size: 0.8em;
+}
+
+.preview-skill-group {
+    margin-bottom: 10px;
+}
+
+.preview-skill-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 5px;
+}
+
+.preview-skill-row.parent {
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #222;
+}
+
+.preview-skill-row.child {
+    font-size: 0.85em;
+    padding-left: 15px;
+    color: #cccccc;
+}
+
+.preview-level {
+    color: #00ff00;
+}
+
+.creation-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.error-msg {
+    color: #ff6666;
+    font-weight: bold;
+}

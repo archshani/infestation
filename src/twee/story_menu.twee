@@ -1,0 +1,70 @@
+:: StoryMenu
+<<if not $gameStarted>>
+    [[New Game|CharacterCreationName]]
+<<else>>
+    <div class="sidebar-top">
+        <<button "Character" "CharacterSheet">><</button>>
+        <<button "Inventory" "InventoryPlaceholder">><</button>>
+    </div>
+    
+    <div class="sidebar-bottom">
+        <<button "Saves">>
+            <<run UIBar.showSaves()>>
+        <</button>>
+        <<button "Settings">>
+            <<run UIBar.showSettings()>>
+        <</button>>
+        <<button "Reload">>
+            <<run Engine.restart()>>
+        <</button>>
+    </div>
+<</if>>
+
+:: CharacterSheet
+<div class="character-sheet">
+    <h2>Character Sheet</h2>
+    <p><strong>Name:</strong> <<print $playerName>></p>
+    
+    <h3>Traits:</h3>
+    <ul>
+        <<for _id range $selectedTraits>>
+            <li><<print setup.traits.find(t => t.id === _id).name>></li>
+        <</for>>
+    </ul>
+
+    <h3>Skills:</h3>
+    <<set _parents to Object.keys(setup.skills).filter(id => setup.skills[id].parent === null)>>
+    <<for _pId range _parents>>
+        <<set _skill to $skills[_pId]>>
+        <div class="skill-group">
+            <div class="skill-row parent" @onclick="'$(\'#children-' + _pId + '\').toggle()'">
+                <span class="skill-name-label"><<print setup.skills[_pId].name>></span>
+                <span class="skill-level-label"><<print _skill.level>></span>
+                <div class="progress-bar-container">
+                    <<set _percent to (_skill.xp / 100) * 100>>
+                    <div class="progress-bar-fill" @style="'width: ' + _percent + '%'"></div>
+                </div>
+            </div>
+            <div class="skill-children" @id="'children-' + _pId" style="display: none;">
+                <<set _children to Object.keys(setup.skills).filter(id => setup.skills[id].parent === _pId)>>
+                <<for _cId range _children>>
+                    <<set _childSkill to $skills[_cId]>>
+                    <div class="skill-row child">
+                        <span class="skill-name-label"><<print setup.skills[_cId].name>></span>
+                        <span class="skill-level-label"><<print _childSkill.level>></span>
+                        <div class="progress-bar-container small">
+                            <<set _cPercent to (_childSkill.xp / 100) * 100>>
+                            <div class="progress-bar-fill" @style="'width: ' + _cPercent + '%'"></div>
+                        </div>
+                    </div>
+                <</for>>
+            </div>
+        </div>
+    <</for>>
+</div>
+<<button "Back" "TestRoom">><</button>>
+
+:: InventoryPlaceholder
+<h2>Inventory</h2>
+<p>Coming soon...</p>
+<<button "Back" "TestRoom">><</button>>
