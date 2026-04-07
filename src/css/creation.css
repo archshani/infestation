@@ -1,8 +1,13 @@
 .creation-container {
-    padding: 20px;
+    padding: 5px;
     border: 1px solid #444;
     background-color: #222;
-    margin-top: 20px;
+    margin-top: 5px;
+}
+
+.creation-container h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
 }
 
 .attribute-list {

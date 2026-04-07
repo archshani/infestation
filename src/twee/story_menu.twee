@@ -1,21 +1,21 @@
 :: StoryMenu
-<<if not $gameStarted>>
-    [[New Game|CharacterCreationName]]
-<<else>>
+<<if $gameStarted>>
     <div class="sidebar-top">
-        <<button "Character" "CharacterSheet">><</button>>
-        <<button "Inventory" "InventoryPlaceholder">><</button>>
+        <<button "Character">>
+            <<script>>
+                Dialog.setup("Character Sheet", "character-sheet-dialog");
+                Dialog.wiki(Story.get("CharacterSheet").processText());
+                Dialog.open();
+            <</script>>
+        <</button>>
     </div>
     
     <div class="sidebar-bottom">
         <<button "Saves">>
-            <<run UIBar.showSaves()>>
+            <<run UI.saves()>>
         <</button>>
         <<button "Settings">>
-            <<run UIBar.showSettings()>>
-        <</button>>
-        <<button "Reload">>
-            <<run Engine.restart()>>
+            <<run UI.settings()>>
         <</button>>
     </div>
 <</if>>
@@ -62,9 +62,7 @@
         </div>
     <</for>>
 </div>
-<<button "Back" "TestRoom">><</button>>
 
 :: InventoryPlaceholder
 <h2>Inventory</h2>
 <p>Coming soon...</p>
-<<button "Back" "TestRoom">><</button>>

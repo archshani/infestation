@@ -4,3 +4,6 @@
 <<set $skills to setup.getInitialSkills()>>
 <<set $selectedTraits to []>>
 <<set $gameStarted to false>>
+<<set $activeTab to "skills">>
+
+<<run UIBar.hide()>>

@@ -5,20 +5,20 @@ Infestation
 {
 	"ifid": "A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D",
 	"format": "SugarCube",
-	"format-version": "2.36.1"
+	"format-version": "2.30.0"
 }
 
 :: Start
 <div class="title-screen">
-	<pre class="ascii-logo">
-  _____ _   _ ______ ______  _____ _______       _______ _____ ____  _   _ 
- |_   _| \ | |  ____|  ____|/ ____|__   __|     |__   __|_   _/ __ \| \ | |
-   | | |  \| | |__  | |__  | (___    | |    ____   | |    | || |  | |  \| |
-   | | | . ` |  __| |  __|  \___ \   | |   |____|  | |    | || |  | | . ` |
-  _| |_| |\  | |    | |____ ____) |  | |           | |   _| || |__| | |\  |
- |_____|_| \_|_|    |______|_____/   |_|           |_|  |_____\____/|_| \_|
-	</pre>
 	<h1 class="game-title">INFESTATION</h1>
 </div>
 
-<<button "New Game" "CharacterCreationName">><</button>>
+<div class="title-menu">
+	<<button "New Game" "CharacterCreationTraits">><</button>>
+	<<button "Load Game">>
+		<<run UI.saves()>>
+	<</button>>
+	<<button "Import Save">>
+		<<run Save.import()>>
+	<</button>>
+</div>
