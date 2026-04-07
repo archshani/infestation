@@ -1,12 +1,16 @@
 .traits-screen {
-    max-width: 1000px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 40px); /* Adjust based on title and padding */
 }
 
 .points-header {
     font-size: 1em;
-    margin: 2px 0;
+    margin: 5px 0;
     font-weight: bold;
+    text-align: center;
 }
 
 .points-positive { color: #00ff00; }
@@ -15,7 +19,8 @@
 .traits-layout {
     display: flex;
     gap: 4px;
-    height: 550px;
+    flex: 1;
+    min-height: 0; /* Important for flex children with overflow */
 }
 
 .column {
@@ -51,38 +56,62 @@
 .scroll-area {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
+}
+
+/* Minimal scrollbars */
+.scroll-area::-webkit-scrollbar {
+    width: 4px;
+}
+.scroll-area::-webkit-scrollbar-track {
+    background: #111;
+}
+.scroll-area::-webkit-scrollbar-thumb {
+    background: #333;
+}
+.scroll-area::-webkit-scrollbar-thumb:hover {
+    background: #444;
 }
 
 .trait-entry {
     display: block;
     width: 100%;
-    padding: 2px 4px !important;
     margin: 0 !important;
     background-color: #1a1a1a;
     border: 1px solid #222 !important;
     border-radius: 0 !important;
     font-size: 0.8em !important;
-    cursor: pointer;
-    text-align: left;
     font-family: inherit;
-    color: #ccc;
     min-height: 24px;
     line-height: 1.2;
+}
+
+.trait-entry a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 2px 4px !important;
     text-decoration: none !important;
+    color: #ccc;
+    cursor: pointer;
 }
 
 .trait-entry.positive {
     background-color: #0a1a0a !important;
-    color: #8f8 !important;
     border: 1px solid #1a2a1a !important;
+}
+.trait-entry.positive a {
+    color: #8f8 !important;
 }
 
 .trait-entry.negative {
     background-color: #1a0a0a !important;
-    color: #f88 !important;
     border: 1px solid #2a1a1a !important;
+}
+.trait-entry.negative a {
+    color: #f88 !important;
 }
 
 .trait-entry.selected {
@@ -93,6 +122,8 @@
 
 .trait-entry:hover {
     background-color: #333 !important;
+}
+.trait-entry:hover a {
     color: #fff !important;
 }
 
