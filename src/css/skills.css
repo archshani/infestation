@@ -1,73 +1,75 @@
 .skill-group {
-    margin-bottom: 15px;
-    background-color: #222;
-    border: 1px solid #444;
-    border-radius: 4px;
+    margin-bottom: 2px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 0;
 }
 
 .skill-row {
     display: flex;
     align-items: center;
-    padding: 10px;
-    gap: 15px;
+    padding: 1px 4px;
+    gap: 4px;
     cursor: pointer;
 }
 
 .skill-row.parent:hover {
-    background-color: #333;
+    background-color: #222;
 }
 
 .skill-row.child {
-    padding-left: 30px;
-    background-color: #1a1a1a;
-    border-top: 1px solid #333;
+    padding-left: 12px;
+    background-color: #0a0a0a;
+    border-top: 1px solid #222;
     cursor: default;
 }
 
 .skill-name-label {
-    width: 120px;
-    color: #ffffff;
+    width: 100px;
+    color: #eee;
     font-weight: bold;
+    font-size: 0.85em;
 }
 
 .skill-level-label {
-    width: 30px;
-    color: #cccccc;
+    width: 25px;
+    color: #0f0;
     text-align: right;
+    font-size: 0.85em;
 }
 
 .progress-bar-container {
     flex: 1;
-    height: 12px;
-    background-color: #111;
-    border: 1px solid #555;
+    height: 8px;
+    background-color: #000;
+    border: 1px solid #444;
     position: relative;
     overflow: hidden;
 }
 
 .progress-bar-container.small {
-    height: 8px;
+    height: 5px;
 }
 
 .progress-bar-fill {
     height: 100%;
-    background-color: #00ff00;
+    background-color: #008800;
     width: 0%;
     transition: width 0.3s ease;
 }
 
 .skill-children {
-    border-top: 1px solid #444;
+    border-top: 1px solid #333;
 }
 
-.build-summary {
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: #2a2a2a;
-    border: 1px solid #555;
+.character-sheet h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    text-transform: uppercase;
 }
 
-.build-summary h3 {
-    margin-top: 0;
-    color: #00ff00;
+.character-sheet h3 {
+    margin: 10px 0 5px 0;
+    font-size: 0.9em;
+    border-bottom: 1px solid #444;
 }

@@ -1,4 +1,4 @@
-#ui-bar-history, #ui-bar-watch, #menu-core {
+#ui-bar-history, #ui-bar-watch, #menu-core, #ui-bar-stow {
 	display: none !important;
 }
 
@@ -12,41 +12,42 @@
 }
 
 #menu-story li {
-	margin: 5px 0;
+	margin: 2px 0;
 }
 
 #menu-story a, #menu-story button {
 	display: block;
 	width: 100%;
-	padding: 10px;
-	background-color: #333 !important;
-	color: #00ff00 !important;
-	border: 1px solid #00ff00 !important;
+	padding: 4px;
+	background-color: #222 !important;
+	color: #0f0 !important;
+	border: 1px solid #0f0 !important;
 	text-decoration: none;
 	text-align: center;
 	font-weight: bold;
-	transition: background-color 0.3s, color 0.3s;
+	transition: background-color 0.2s, color 0.2s;
     cursor: pointer;
     font-family: inherit;
-    font-size: 1em;
+    font-size: 0.9em;
+    border-radius: 0;
 }
 
 #menu-story a:hover, #menu-story button:hover {
-	background-color: #00ff00 !important;
+	background-color: #0f0 !important;
 	color: #111 !important;
 }
 
 .sidebar-bottom {
     margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #444;
+    padding-top: 10px;
+    border-top: 1px solid #333;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
 }
 
 .sidebar-top {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
 }

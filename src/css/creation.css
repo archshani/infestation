@@ -1,56 +1,68 @@
 .creation-container {
-    padding: 20px;
-    border: 1px solid #444;
-    background-color: #222;
-    margin-top: 20px;
+    padding: 2px;
+    border: 1px solid #333;
+    background-color: #1a1a1a;
+    margin-top: 2px;
+}
+
+.creation-container h2 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 .attribute-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 4px;
+    margin-top: 10px;
 }
 
 .attribute-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #333;
+    padding: 4px 8px;
+    border-bottom: 1px solid #222;
+    background-color: #111;
 }
 
 .attr-label {
-    font-size: 1.2em;
-    width: 150px;
+    font-size: 0.9em;
+    width: 120px;
+    color: #eee;
 }
 
 .attr-controls {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .attr-value {
-    font-size: 1.5em;
+    font-size: 1.1em;
     font-weight: bold;
-    color: #00ff00;
-    min-width: 30px;
+    color: #0f0;
+    min-width: 24px;
     text-align: center;
 }
 
 .attr-controls button {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1em;
+    border-radius: 0;
 }
 
 .instruction {
-    color: #aaa;
+    color: #777;
     font-style: italic;
+    font-size: 0.8em;
 }
 
 .stats-display ul {
@@ -59,6 +71,7 @@
 }
 
 .stats-display li {
-    margin: 5px 0;
-    font-size: 1.1em;
+    margin: 2px 0;
+    font-size: 0.9em;
+    color: #ccc;
 }
