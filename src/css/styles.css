@@ -2,20 +2,13 @@
 	display: none !important;
 }
 
-#menu-story ul {
-	padding: 0;
-	margin: 0;
-	list-style: none;
+#story-caption {
     display: flex;
     flex-direction: column;
-    min-height: 80vh;
+    height: calc(100vh - 200px); /* Fill most of the sidebar height, adjusted for title */
 }
 
-#menu-story li {
-	margin: 2px 0;
-}
-
-#menu-story a, #menu-story button {
+#story-caption a, #story-caption button {
 	display: block;
 	width: 100%;
 	padding: 4px;
@@ -30,16 +23,17 @@
     font-family: inherit;
     font-size: 0.9em;
     border-radius: 0;
+    margin-bottom: 4px;
 }
 
-#menu-story a:hover, #menu-story button:hover {
+#story-caption a:hover, #story-caption button:hover {
 	background-color: #0f0 !important;
 	color: #111 !important;
 }
 
 .sidebar-bottom {
     margin-top: auto;
-    padding-top: 10px;
+    padding: 10px 0;
     border-top: 1px solid #333;
     display: flex;
     flex-direction: column;

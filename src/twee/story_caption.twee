@@ -1,0 +1,21 @@
+:: StoryCaption
+<<if $gameStarted>>
+    <div class="sidebar-top">
+        <<link "Character">>
+            <<script>>
+                Dialog.setup("Character Sheet", "character-sheet-dialog");
+                Dialog.wiki(Story.get("CharacterSheet").processText());
+                Dialog.open();
+            <</script>>
+        <</link>>
+    </div>
+
+    <div class="sidebar-bottom">
+        <<link "Saves">>
+            <<run UI.saves()>>
+        <</link>>
+        <<link "Settings">>
+            <<run UI.settings()>>
+        <</link>>
+    </div>
+<</if>>
