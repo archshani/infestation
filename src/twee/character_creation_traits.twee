@@ -7,27 +7,17 @@
     <div class="creation-tabs">
         <<button "Skills">>
             <<set $activeTab to "skills">>
-            <<replace ".traits-screen">><<include "CharacterCreationTraits">><</replace>>
+            <<replace "#tab-content">><<include "TabContent">><</replace>>
         <</button>>
         <<button "Customization">>
             <<set $activeTab to "customization">>
-            <<replace ".traits-screen">><<include "CharacterCreationTraits">><</replace>>
+            <<replace "#tab-content">><<include "TabContent">><</replace>>
         <</button>>
     </div>
 
-    <<if $activeTab is "skills">>
-        <div id="traits-content">
-            <<include "TraitsContent">>
-        </div>
-    <<else>>
-        <!-- CUSTOMIZATION TAB -->
-        <div class="customization-area">
-            <div class="input-group">
-                <label for="textbox-playername">What is your name, survivor?</label>
-                <<textbox "$playerName" $playerName>>
-            </div>
-        </div>
-    <</if>>
+    <div id="tab-content">
+        <<include "TabContent">>
+    </div>
 
     <div class="creation-actions">
         <<if $points >= 0>>
@@ -55,6 +45,23 @@
         <</if>>
     </div>
 </div>
+<</nobr>>
+
+:: TabContent
+<<nobr>>
+<<if $activeTab is "skills">>
+    <div id="traits-content">
+        <<include "TraitsContent">>
+    </div>
+<<else>>
+    <!-- CUSTOMIZATION TAB -->
+    <div class="customization-area">
+        <div class="input-group">
+            <label for="textbox-playername">What is your name, survivor?</label>
+            <<textbox "$playerName" $playerName>>
+        </div>
+    </div>
+<</if>>
 <</nobr>>
 
 :: TraitsContent

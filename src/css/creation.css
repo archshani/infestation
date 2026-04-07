@@ -1,8 +1,9 @@
 .creation-container {
-    padding: 2px;
+    padding: 4px;
     border: 1px solid #333;
     background-color: #1a1a1a;
-    margin-top: 2px;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 .creation-container h2 {

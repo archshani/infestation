@@ -104,10 +104,11 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 	</div>
 	<!-- UUID://A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D// --><tw-storydata name="Infestation" startnode="3" creator="Tweego" creator-version="2.1.1+81d1d71" ifid="A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D" zoom="1" format="SugarCube" format-version="2.30.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* twine-user-stylesheet #1: "creation.css" */
 .creation-container {
-    padding: 2px;
+    padding: 4px;
     border: 1px solid #333;
     background-color: #1a1a1a;
-    margin-top: 2px;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 .creation-container h2 {
@@ -180,6 +181,7 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
     font-size: 0.9em;
     color: #ccc;
 }
+
 /* twine-user-stylesheet #2: "skills.css" */
 .skill-group {
     margin-bottom: 2px;
@@ -312,11 +314,33 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 }
 /* twine-user-stylesheet #4: "traits.css" */
 .traits-screen {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 40px); /* Adjust based on title and padding */
+    background-color: #111;
+    z-index: 1000;
+}
+
+#tab-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin-top: 10px;
+}
+
+#traits-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .points-header {
@@ -334,6 +358,7 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
     gap: 4px;
     flex: 1;
     min-height: 0; /* Important for flex children with overflow */
+    width: 100%;
 }
 
 .column {
@@ -363,7 +388,7 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 }
 
 .section-container.half-height {
-    flex: 0.5;
+    flex: 1; /* Two flex: 1 elements in a flex-direction: column will take 50% each */
 }
 
 .scroll-area {
@@ -666,27 +691,17 @@ setup.getInitialSkills = function() {
     &lt;div class=&quot;creation-tabs&quot;&gt;
         &lt;&lt;button &quot;Skills&quot;&gt;&gt;
             &lt;&lt;set $activeTab to &quot;skills&quot;&gt;&gt;
-            &lt;&lt;replace &quot;.traits-screen&quot;&gt;&gt;&lt;&lt;include &quot;CharacterCreationTraits&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;
+            &lt;&lt;replace &quot;#tab-content&quot;&gt;&gt;&lt;&lt;include &quot;TabContent&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;
         &lt;&lt;/button&gt;&gt;
         &lt;&lt;button &quot;Customization&quot;&gt;&gt;
             &lt;&lt;set $activeTab to &quot;customization&quot;&gt;&gt;
-            &lt;&lt;replace &quot;.traits-screen&quot;&gt;&gt;&lt;&lt;include &quot;CharacterCreationTraits&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;
+            &lt;&lt;replace &quot;#tab-content&quot;&gt;&gt;&lt;&lt;include &quot;TabContent&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;
         &lt;&lt;/button&gt;&gt;
     &lt;/div&gt;
 
-    &lt;&lt;if $activeTab is &quot;skills&quot;&gt;&gt;
-        &lt;div id=&quot;traits-content&quot;&gt;
-            &lt;&lt;include &quot;TraitsContent&quot;&gt;&gt;
-        &lt;/div&gt;
-    &lt;&lt;else&gt;&gt;
-        &lt;!-- CUSTOMIZATION TAB --&gt;
-        &lt;div class=&quot;customization-area&quot;&gt;
-            &lt;div class=&quot;input-group&quot;&gt;
-                &lt;label for=&quot;textbox-playername&quot;&gt;What is your name, survivor?&lt;/label&gt;
-                &lt;&lt;textbox &quot;$playerName&quot; $playerName&gt;&gt;
-            &lt;/div&gt;
-        &lt;/div&gt;
-    &lt;&lt;/if&gt;&gt;
+    &lt;div id=&quot;tab-content&quot;&gt;
+        &lt;&lt;include &quot;TabContent&quot;&gt;&gt;
+    &lt;/div&gt;
 
     &lt;div class=&quot;creation-actions&quot;&gt;
         &lt;&lt;if $points &gt;= 0&gt;&gt;
@@ -945,6 +960,20 @@ setup.getInitialSkills = function() {
         &lt;/div&gt;
     &lt;/div&gt;
 &lt;/div&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="101" name="TabContent" tags="" position="200,100" size="100,100">&lt;&lt;nobr&gt;&gt;
+&lt;&lt;if $activeTab is &quot;skills&quot;&gt;&gt;
+    &lt;div id=&quot;traits-content&quot;&gt;
+        &lt;&lt;include &quot;TraitsContent&quot;&gt;&gt;
+    &lt;/div&gt;
+&lt;&lt;else&gt;&gt;
+    &lt;!-- CUSTOMIZATION TAB --&gt;
+    &lt;div class=&quot;customization-area&quot;&gt;
+        &lt;div class=&quot;input-group&quot;&gt;
+            &lt;label for=&quot;textbox-playername&quot;&gt;What is your name, survivor?&lt;/label&gt;
+            &lt;&lt;textbox &quot;$playerName&quot; $playerName&gt;&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;&lt;/if&gt;&gt;
 &lt;&lt;/nobr&gt;&gt;</tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
 	/*! SugarCube JS */
