@@ -103,6 +103,7 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
 	<!-- UUID://A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D// --><tw-storydata name="Infestation" startnode="3" creator="Tweego" creator-version="2.1.1+81d1d71" ifid="A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D" zoom="1" format="SugarCube" format-version="2.30.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* src/css/styles.css */
+/* src/css/styles.css */
 #ui-bar-history, #ui-bar-watch, #menu-core, #ui-bar-stow {
 	display: none !important;
 }
@@ -149,6 +150,165 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
     display: flex;
     flex-direction: column;
     gap: 4px;
+}
+
+/* Character Sheet Modal Overrides */
+#ui-dialog {
+    background-color: #111 !important;
+    border: 1px solid #333 !important;
+    max-width: 95vw !important;
+    width: 95vw !important;
+}
+
+#ui-dialog-body.character-sheet-dialog {
+    padding: 0;
+    overflow: hidden;
+    background-color: #111;
+    height: 80vh;
+}
+
+.character-sheet-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    color: #eee;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sheet-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.player-name {
+    margin: 0;
+    font-size: 2em;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.player-description {
+    margin: 5px 0 0;
+    font-size: 1em;
+    color: #aaa;
+    font-style: italic;
+}
+
+.sheet-layout {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+}
+
+.sheet-layout .column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.invisible-col {
+    visibility: hidden;
+}
+
+.skill-group {
+    margin-bottom: 8px;
+}
+
+.skill-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 15px;
+}
+
+.skill-row.parent {
+    font-weight: bold;
+    color: #eee;
+    background-color: #222;
+    font-size: 1em;
+    cursor: pointer;
+    border: 1px solid #333;
+}
+
+.skill-row.child {
+    font-size: 0.9em;
+    padding-left: 25px;
+    color: #ccc;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #222;
+}
+
+.skill-name-label {
+    flex: 1;
+}
+
+.skill-level-label {
+    width: 40px;
+    text-align: right;
+    color: #0f0;
+    font-weight: bold;
+}
+
+.progress-bar-container {
+    width: 150px;
+    height: 10px;
+    background-color: #111;
+    border: 1px solid #333;
+    position: relative;
+}
+
+.progress-bar-container.small {
+    width: 100px;
+    height: 8px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #0f0;
+    width: 0%;
+}
+
+.trait-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 12px;
+    margin-bottom: 4px;
+    font-size: 1em;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+}
+
+.trait-entry.positive {
+    border-left: 4px solid #0f0;
+    color: #8f8;
+}
+
+.trait-entry.negative {
+    border-left: 4px solid #f00;
+    color: #f88;
+}
+
+.trait-cost {
+    color: #777;
+    font-size: 0.9em;
+}
+
+.section-container h3 {
+    margin: 0;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background-color: #222;
+    border: 1px solid #333;
+    border-bottom: none;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 /* src/css/creation.css */
@@ -667,47 +827,72 @@ setup.getInitialSkills = function() {
 	&lt;&lt;button "Import Save"&gt;&gt;
 		&lt;&lt;run Save.import()&gt;&gt;
 	&lt;&lt;/button&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryMenu" tags="" position="475,100" size="100,100">/* Content moved to StoryCaption for better compatibility with standard SugarCube layout */</tw-passagedata><tw-passagedata pid="5" name="CharacterSheet" tags="" position="600,100" size="100,100">&lt;div class=&quot;character-sheet&quot;&gt;
-    &lt;h2&gt;Character Sheet&lt;/h2&gt;
-    &lt;p&gt;&lt;strong&gt;Name:&lt;/strong&gt; &lt;&lt;print $playerName&gt;&gt;&lt;/p&gt;
-    
-    &lt;h3&gt;Traits:&lt;/h3&gt;
-    &lt;ul&gt;
-        &lt;&lt;for _id range $selectedTraits&gt;&gt;
-            &lt;li&gt;&lt;&lt;print setup.traits.find(t =&gt; t.id === _id).name&gt;&gt;&lt;/li&gt;
-        &lt;&lt;/for&gt;&gt;
-    &lt;/ul&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="4" name="StoryMenu" tags="" position="475,100" size="100,100">/* Content moved to StoryCaption for better compatibility with standard SugarCube layout */</tw-passagedata><tw-passagedata pid="5" name="CharacterSheet" tags="" position="600,100" size="100,100">&lt;&lt;nobr&gt;&gt;
+&lt;div class="character-sheet-container"&gt;
+    &lt;div class="sheet-header"&gt;
+        &lt;h2 class="player-name"&gt;&lt;&lt;print $playerName&gt;&gt;&lt;/h2&gt;
+        &lt;p class="player-description"&gt;&lt;&lt;print $playerDescription || "A survivor in the wasteland."&gt;&gt;&lt;/p&gt;
+    &lt;/div&gt;
 
-    &lt;h3&gt;Skills:&lt;/h3&gt;
-    &lt;&lt;set _parents to Object.keys(setup.skills).filter(id =&gt; setup.skills[id].parent === null)&gt;&gt;
-    &lt;&lt;for _pId range _parents&gt;&gt;
-        &lt;&lt;set _skill to $skills[_pId]&gt;&gt;
-        &lt;div class=&quot;skill-group&quot;&gt;
-            &lt;div class=&quot;skill-row parent&quot; @onclick=&quot;&#x27;$(\&#x27;#children-&#x27; + _pId + &#x27;\&#x27;).toggle()&#x27;&quot;&gt;
-                &lt;span class=&quot;skill-name-label&quot;&gt;&lt;&lt;print setup.skills[_pId].name&gt;&gt;&lt;/span&gt;
-                &lt;span class=&quot;skill-level-label&quot;&gt;&lt;&lt;print _skill.level&gt;&gt;&lt;/span&gt;
-                &lt;div class=&quot;progress-bar-container&quot;&gt;
-                    &lt;&lt;set _percent to (_skill.xp / 100) * 100&gt;&gt;
-                    &lt;div class=&quot;progress-bar-fill&quot; @style=&quot;&#x27;width: &#x27; + _percent + &#x27;%&#x27;&quot;&gt;&lt;/div&gt;
+    &lt;div class="sheet-layout"&gt;
+        &lt;!-- LEFT COLUMN: Invisible Offset --&gt;
+        &lt;div class="column invisible-col"&gt;&lt;/div&gt;
+
+        &lt;!-- MIDDLE COLUMN: Traits --&gt;
+        &lt;div class="column middle-col"&gt;
+            &lt;div class="section-container"&gt;
+                &lt;h3&gt;Traits&lt;/h3&gt;
+                &lt;div class="scroll-area"&gt;
+                    &lt;&lt;for _id range $selectedTraits&gt;&gt;
+                        &lt;&lt;set _trait to setup.traits.find(t =&gt; t.id === _id)&gt;&gt;
+                        &lt;div @class="'trait-entry ' + (_trait.cost &gt; 0 ? 'positive' : 'negative')"&gt;
+                            &lt;span class="trait-name"&gt;&lt;&lt;print _trait.name&gt;&gt;&lt;/span&gt;
+                            &lt;span class="trait-cost"&gt;&lt;&lt;print _trait.cost &gt; 0 ? "(" + _trait.cost + ")" : "(+" + Math.abs(_trait.cost) + ")"&gt;&gt;&lt;/span&gt;
+                        &lt;/div&gt;
+                    &lt;&lt;/for&gt;&gt;
                 &lt;/div&gt;
             &lt;/div&gt;
-            &lt;div class=&quot;skill-children&quot; @id=&quot;&#x27;children-&#x27; + _pId&quot; style=&quot;display: none;&quot;&gt;
-                &lt;&lt;set _children to Object.keys(setup.skills).filter(id =&gt; setup.skills[id].parent === _pId)&gt;&gt;
-                &lt;&lt;for _cId range _children&gt;&gt;
-                    &lt;&lt;set _childSkill to $skills[_cId]&gt;&gt;
-                    &lt;div class=&quot;skill-row child&quot;&gt;
-                        &lt;span class=&quot;skill-name-label&quot;&gt;&lt;&lt;print setup.skills[_cId].name&gt;&gt;&lt;/span&gt;
-                        &lt;span class=&quot;skill-level-label&quot;&gt;&lt;&lt;print _childSkill.level&gt;&gt;&lt;/span&gt;
-                        &lt;div class=&quot;progress-bar-container small&quot;&gt;
-                            &lt;&lt;set _cPercent to (_childSkill.xp / 100) * 100&gt;&gt;
-                            &lt;div class=&quot;progress-bar-fill&quot; @style=&quot;&#x27;width: &#x27; + _cPercent + &#x27;%&#x27;&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- RIGHT COLUMN: Skills --&gt;
+        &lt;div class="column right-col"&gt;
+            &lt;div class="section-container"&gt;
+                &lt;h3&gt;Skills&lt;/h3&gt;
+                &lt;div class="scroll-area"&gt;
+                    &lt;&lt;set _parents to Object.keys(setup.skills).filter(id =&gt; setup.skills[id].parent === null)&gt;&gt;
+                    &lt;&lt;for _pId range _parents&gt;&gt;
+                        &lt;&lt;set _skill to $skills[_pId]&gt;&gt;
+                        &lt;div class="skill-group"&gt;
+                            &lt;div class="skill-row parent" @onclick="'$(\'#sheet-children-' + _pId + '\').toggle()'"&gt;
+                                &lt;span class="skill-name-label"&gt;&lt;&lt;print setup.skills[_pId].name&gt;&gt;&lt;/span&gt;
+                                &lt;span class="skill-level-label"&gt;&lt;&lt;print _skill.level&gt;&gt;&lt;/span&gt;
+                                &lt;div class="progress-bar-container"&gt;
+                                    &lt;&lt;set _percent to (_skill.xp / 100) * 100&gt;&gt;
+                                    &lt;div class="progress-bar-fill" @style="'width: ' + _percent + '%'"&gt;&lt;/div&gt;
+                                &lt;/div&gt;
+                            &lt;/div&gt;
+                            &lt;div class="skill-children" @id="'sheet-children-' + _pId" style="display: none;"&gt;
+                                &lt;&lt;set _children to Object.keys(setup.skills).filter(id =&gt; setup.skills[id].parent === _pId)&gt;&gt;
+                                &lt;&lt;for _cId range _children&gt;&gt;
+                                    &lt;&lt;set _childSkill to $skills[_cId]&gt;&gt;
+                                    &lt;div class="skill-row child"&gt;
+                                        &lt;span class="skill-name-label"&gt;&lt;&lt;print setup.skills[_cId].name&gt;&gt;&lt;/span&gt;
+                                        &lt;span class="skill-level-label"&gt;&lt;&lt;print _childSkill.level&gt;&gt;&lt;/span&gt;
+                                        &lt;div class="progress-bar-container small"&gt;
+                                            &lt;&lt;set _cPercent to (_childSkill.xp / 100) * 100&gt;&gt;
+                                            &lt;div class="progress-bar-fill" @style="'width: ' + _cPercent + '%'"&gt;&lt;/div&gt;
+                                        &lt;/div&gt;
+                                    &lt;/div&gt;
+                                &lt;&lt;/for&gt;&gt;
+                            &lt;/div&gt;
                         &lt;/div&gt;
-                    &lt;/div&gt;
-                &lt;&lt;/for&gt;&gt;
+                    &lt;&lt;/for&gt;&gt;
+                &lt;/div&gt;
             &lt;/div&gt;
         &lt;/div&gt;
-    &lt;&lt;/for&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name="InventoryPlaceholder" tags="" position="725,100" size="100,100">&lt;h2&gt;Inventory&lt;/h2&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;&lt;/nobr&gt;&gt;</tw-passagedata><tw-passagedata pid="6" name="InventoryPlaceholder" tags="" position="725,100" size="100,100">&lt;h2&gt;Inventory&lt;/h2&gt;
 &lt;p&gt;Coming soon...&lt;/p&gt;</tw-passagedata><tw-passagedata pid="7" name="TestRoom" tags="" position="850,100" size="100,100">&lt;&lt;run UIBar.show()&gt;&gt;
 &lt;div class="test-room"&gt;
     &lt;h2&gt;Welcome to the Test Room&lt;/h2&gt;
