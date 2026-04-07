@@ -104,63 +104,70 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 	</div>
 	<!-- UUID://A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D// --><tw-storydata name="Infestation" startnode="3" creator="Tweego" creator-version="2.1.1+81d1d71" ifid="A4C3B2D1-E5F6-4A7B-8C9D-0E1F2A3B4C5D" zoom="1" format="SugarCube" format-version="2.30.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* twine-user-stylesheet #1: "creation.css" */
 .creation-container {
-    padding: 5px;
-    border: 1px solid #444;
-    background-color: #222;
-    margin-top: 5px;
+    padding: 2px;
+    border: 1px solid #333;
+    background-color: #1a1a1a;
+    margin-top: 2px;
 }
 
 .creation-container h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 .attribute-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 4px;
+    margin-top: 10px;
 }
 
 .attribute-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #333;
+    padding: 4px 8px;
+    border-bottom: 1px solid #222;
+    background-color: #111;
 }
 
 .attr-label {
-    font-size: 1.2em;
-    width: 150px;
+    font-size: 0.9em;
+    width: 120px;
+    color: #eee;
 }
 
 .attr-controls {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .attr-value {
-    font-size: 1.5em;
+    font-size: 1.1em;
     font-weight: bold;
-    color: #00ff00;
-    min-width: 30px;
+    color: #0f0;
+    min-width: 24px;
     text-align: center;
 }
 
 .attr-controls button {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1em;
+    border-radius: 0;
 }
 
 .instruction {
-    color: #aaa;
+    color: #777;
     font-style: italic;
+    font-size: 0.8em;
 }
 
 .stats-display ul {
@@ -169,85 +176,88 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 }
 
 .stats-display li {
-    margin: 5px 0;
-    font-size: 1.1em;
+    margin: 2px 0;
+    font-size: 0.9em;
+    color: #ccc;
 }
 /* twine-user-stylesheet #2: "skills.css" */
 .skill-group {
-    margin-bottom: 5px;
-    background-color: #222;
-    border: 1px solid #444;
-    border-radius: 2px;
+    margin-bottom: 2px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 0;
 }
 
 .skill-row {
     display: flex;
     align-items: center;
-    padding: 2px 5px;
-    gap: 5px;
+    padding: 1px 4px;
+    gap: 4px;
     cursor: pointer;
 }
 
 .skill-row.parent:hover {
-    background-color: #333;
+    background-color: #222;
 }
 
 .skill-row.child {
-    padding-left: 15px;
-    background-color: #1a1a1a;
-    border-top: 1px solid #333;
+    padding-left: 12px;
+    background-color: #0a0a0a;
+    border-top: 1px solid #222;
     cursor: default;
 }
 
 .skill-name-label {
-    width: 120px;
-    color: #ffffff;
+    width: 100px;
+    color: #eee;
     font-weight: bold;
+    font-size: 0.85em;
 }
 
 .skill-level-label {
-    width: 30px;
-    color: #cccccc;
+    width: 25px;
+    color: #0f0;
     text-align: right;
+    font-size: 0.85em;
 }
 
 .progress-bar-container {
     flex: 1;
-    height: 12px;
-    background-color: #111;
-    border: 1px solid #555;
+    height: 8px;
+    background-color: #000;
+    border: 1px solid #444;
     position: relative;
     overflow: hidden;
 }
 
 .progress-bar-container.small {
-    height: 8px;
+    height: 5px;
 }
 
 .progress-bar-fill {
     height: 100%;
-    background-color: #00ff00;
+    background-color: #008800;
     width: 0%;
     transition: width 0.3s ease;
 }
 
 .skill-children {
-    border-top: 1px solid #444;
+    border-top: 1px solid #333;
 }
 
-.build-summary {
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: #2a2a2a;
-    border: 1px solid #555;
+.character-sheet h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    text-transform: uppercase;
 }
 
-.build-summary h3 {
-    margin-top: 0;
-    color: #00ff00;
+.character-sheet h3 {
+    margin: 10px 0 5px 0;
+    font-size: 0.9em;
+    border-bottom: 1px solid #444;
 }
 /* twine-user-stylesheet #3: "styles.css" */
-#ui-bar-history, #ui-bar-watch, #menu-core {
+#ui-bar-history, #ui-bar-watch, #menu-core, #ui-bar-stow {
 	display: none !important;
 }
 
@@ -261,52 +271,54 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 }
 
 #menu-story li {
-	margin: 5px 0;
+	margin: 2px 0;
 }
 
 #menu-story a, #menu-story button {
 	display: block;
 	width: 100%;
-	padding: 10px;
-	background-color: #333 !important;
-	color: #00ff00 !important;
-	border: 1px solid #00ff00 !important;
+	padding: 4px;
+	background-color: #222 !important;
+	color: #0f0 !important;
+	border: 1px solid #0f0 !important;
 	text-decoration: none;
 	text-align: center;
 	font-weight: bold;
-	transition: background-color 0.3s, color 0.3s;
+	transition: background-color 0.2s, color 0.2s;
     cursor: pointer;
     font-family: inherit;
-    font-size: 1em;
+    font-size: 0.9em;
+    border-radius: 0;
 }
 
 #menu-story a:hover, #menu-story button:hover {
-	background-color: #00ff00 !important;
+	background-color: #0f0 !important;
 	color: #111 !important;
 }
 
 .sidebar-bottom {
     margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #444;
+    padding-top: 10px;
+    border-top: 1px solid #333;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
 }
 
 .sidebar-top {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
 }
 /* twine-user-stylesheet #4: "traits.css" */
 .traits-screen {
-    max-width: 1200px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .points-header {
-    font-size: 1.2em;
-    margin: 5px 0;
+    font-size: 1em;
+    margin: 2px 0;
     font-weight: bold;
 }
 
@@ -315,30 +327,34 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 
 .traits-layout {
     display: flex;
-    gap: 5px;
-    height: 650px;
+    gap: 4px;
+    height: 550px;
 }
 
 .column {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
 }
 
 .section-container {
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    padding: 2px;
+    background-color: #111;
+    border: 1px solid #333;
+    padding: 0;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 .section-container h3 {
-    margin: 2px 0;
-    font-size: 1em;
+    margin: 0;
+    padding: 2px 5px;
+    font-size: 0.85em;
+    background-color: #222;
     border-bottom: 1px solid #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .section-container.half-height {
@@ -348,116 +364,137 @@ var saveAs=saveAs||navigator.msSaveBlob&&navigator.msSaveBlob.bind(navigator)||f
 .scroll-area {
     flex: 1;
     overflow-y: auto;
-    padding-right: 5px;
-}
-
-.scroll-area h3 {
-    margin-top: 0;
-    font-size: 1.2em;
-    border-bottom: 1px solid #333;
-    padding-bottom: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 .trait-entry {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
-    margin-bottom: 5px;
-    background-color: #2a2a2a;
-    border: 1px solid transparent;
-    font-size: 0.9em;
+    display: block;
+    width: 100%;
+    padding: 2px 4px !important;
+    margin: 0 !important;
+    background-color: #1a1a1a;
+    border: 1px solid #222 !important;
+    border-radius: 0 !important;
+    font-size: 0.8em !important;
     cursor: pointer;
-    text-align: center;
+    text-align: left;
+    font-family: inherit;
+    color: #ccc;
+    min-height: 24px;
+    line-height: 1.2;
+    text-decoration: none !important;
 }
 
 .trait-entry.positive {
-    background-color: #052005;
-    color: #aaffaa;
-    border: 1px solid #004400;
+    background-color: #0a1a0a !important;
+    color: #8f8 !important;
+    border: 1px solid #1a2a1a !important;
 }
 
 .trait-entry.negative {
-    background-color: #200505;
-    color: #ffaaaa;
-    border: 1px solid #440000;
+    background-color: #1a0a0a !important;
+    color: #f88 !important;
+    border: 1px solid #2a1a1a !important;
 }
 
 .trait-entry.selected {
-    border: 1px solid #ffff00;
+    outline: 1px solid #ff0 !important;
+    outline-offset: -1px;
+    z-index: 1;
 }
 
 .trait-entry:hover {
-    filter: brightness(1.2);
+    background-color: #333 !important;
+    color: #fff !important;
 }
 
 .creation-tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 2px;
+    margin-bottom: 10px;
 }
 
 .creation-tabs button {
     flex: 1;
+    padding: 4px;
+    font-size: 0.9em;
+    border-radius: 0;
+    background-color: #222;
+    border: 1px solid #444;
+}
+
+.creation-tabs button:hover {
+    background-color: #333;
 }
 
 .customization-area {
-    padding: 40px;
+    padding: 20px;
     text-align: center;
 }
 
 .placeholder-text {
-    color: #888;
+    color: #555;
     font-style: italic;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
+    font-size: 0.8em;
 }
 
 .build-import-export {
     display: flex;
-    gap: 5px;
-    margin-top: 10px;
+    gap: 2px;
+    padding: 2px;
 }
 
 .build-import-export button {
     flex: 1;
-    font-size: 0.8em;
+    font-size: 0.7em;
+    padding: 2px;
 }
 
 .preview-skill-group {
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .preview-skill-row {
     display: flex;
     justify-content: space-between;
-    padding: 2px 5px;
+    padding: 1px 5px;
 }
 
 .preview-skill-row.parent {
     font-weight: bold;
-    color: #ffffff;
+    color: #eee;
     background-color: #222;
+    font-size: 0.85em;
 }
 
 .preview-skill-row.child {
-    font-size: 0.85em;
-    padding-left: 15px;
-    color: #cccccc;
+    font-size: 0.75em;
+    padding-left: 12px;
+    color: #aaa;
+    border-bottom: 1px solid #1a1a1a;
 }
 
 .preview-level {
-    color: #00ff00;
+    color: #0f0;
 }
 
 .creation-actions {
-    margin-top: 20px;
+    margin-top: 10px;
     text-align: center;
 }
 
+.creation-actions button {
+    padding: 5px 20px;
+    font-size: 1em;
+}
+
 .error-msg {
-    color: #ff6666;
+    color: #f66;
     font-weight: bold;
+    font-size: 0.9em;
 }
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">/* twine-user-script #1: "attributes.js" */
 window.setup = window.setup || {};
@@ -606,24 +643,17 @@ setup.getInitialSkills = function() {
     &lt;/div&gt;
 
     &lt;&lt;if $activeTab is &quot;skills&quot;&gt;&gt;
-        &lt;div class=&quot;points-header&quot;&gt;
-            Points: &lt;span @class=&quot;$points &gt;= 0 ? &#39;points-positive&#39; : &#39;points-negative&#39;&quot;&gt;&lt;&lt;print $points&gt;&gt;&lt;/span&gt;
-        &lt;/div&gt;
-
+        &lt;div class=&quot;points-header&quot;&gt;Points: &lt;span @class=&quot;$points &gt;= 0 ? &#39;points-positive&#39; : &#39;points-negative&#39;&quot;&gt;&lt;&lt;print $points&gt;&gt;&lt;/span&gt;&lt;/div&gt;
         &lt;div class=&quot;traits-layout&quot;&gt;
             &lt;!-- LEFT COLUMN: Occupations / Saved Builds --&gt;
             &lt;div class=&quot;column left-col&quot;&gt;
                 &lt;div class=&quot;section-container&quot;&gt;
                     &lt;h3&gt;Occupations&lt;/h3&gt;
-                    &lt;div class=&quot;scroll-area&quot;&gt;
-                        &lt;p class=&quot;placeholder-text&quot;&gt;Coming soon...&lt;/p&gt;
-                    &lt;/div&gt;
+                    &lt;div class=&quot;scroll-area&quot;&gt;&lt;p class=&quot;placeholder-text&quot;&gt;Coming soon...&lt;/p&gt;&lt;/div&gt;
                 &lt;/div&gt;
                 &lt;div class=&quot;section-container&quot;&gt;
                     &lt;h3&gt;Saved Builds&lt;/h3&gt;
-                    &lt;div class=&quot;scroll-area&quot; id=&quot;saved-builds-list&quot;&gt;
-                        &lt;p class=&quot;placeholder-text&quot;&gt;No saved builds found.&lt;/p&gt;
-                    &lt;/div&gt;
+                    &lt;div class=&quot;scroll-area&quot; id=&quot;saved-builds-list&quot;&gt;&lt;p class=&quot;placeholder-text&quot;&gt;No saved builds found.&lt;/p&gt;&lt;/div&gt;
                     &lt;div class=&quot;build-import-export&quot;&gt;
                         &lt;&lt;button &quot;Import&quot;&gt;&gt;
                             &lt;&lt;script&gt;&gt;
@@ -669,23 +699,21 @@ setup.getInitialSkills = function() {
                                 &lt;&lt;capture _trait&gt;&gt;
                                 &lt;&lt;set _isSelected to $selectedTraits.includes(_trait.id)&gt;&gt;
                                 &lt;&lt;set _class to &quot;trait-entry positive&quot; + (_isSelected ? &quot; selected&quot; : &quot;&quot;)&gt;&gt;
-                                &lt;div @class=&quot;_class&quot; @onclick=&quot;&#39;$(this).find(\&#39;button\&#39;).click()&#39;&quot;&gt;
-                                    &lt;span class=&quot;trait-name&quot;&gt;
-                                        &lt;&lt;print _trait.name&gt;&gt; (&lt;&lt;print _trait.cost&gt;&gt;)
-                                    &lt;/span&gt;
-                                    &lt;div style=&quot;display:none&quot;&gt;
-                                        &lt;&lt;button &quot;Toggle&quot;&gt;&gt;
-                                            &lt;&lt;if _isSelected&gt;&gt;
-                                                &lt;&lt;set $selectedTraits.delete(_trait.id)&gt;&gt;
-                                                &lt;&lt;set $points += _trait.cost&gt;&gt;
-                                            &lt;&lt;else&gt;&gt;
-                                                &lt;&lt;set $selectedTraits.push(_trait.id)&gt;&gt;
-                                                &lt;&lt;set $points -= _trait.cost&gt;&gt;
-                                            &lt;&lt;/if&gt;&gt;
-                                            &lt;&lt;replace &quot;.traits-screen&quot;&gt;&gt;&lt;&lt;include &quot;CharacterCreationTraits&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;
-                                        &lt;&lt;/button&gt;&gt;
-                                    &lt;/div&gt;
-                                &lt;/div&gt;
+                                &lt;&lt;link `_trait.name + &quot; (&quot; + _trait.cost + &quot;)&quot;` &quot;CharacterCreationTraits&quot;&gt;&gt;
+                                    &lt;&lt;set $activeTab to &quot;skills&quot;&gt;&gt;
+                                    &lt;&lt;if $selectedTraits.includes(_trait.id)&gt;&gt;
+                                        &lt;&lt;run $selectedTraits.delete(_trait.id)&gt;&gt;
+                                        &lt;&lt;set $points += _trait.cost&gt;&gt;
+                                    &lt;&lt;else&gt;&gt;
+                                        &lt;&lt;run $selectedTraits.push(_trait.id)&gt;&gt;
+                                        &lt;&lt;set $points -= _trait.cost&gt;&gt;
+                                    &lt;&lt;/if&gt;&gt;
+                                    &lt;&lt;script&gt;&gt;
+                                        $(document).one(&#39;:passagerender&#39;, function(ev) {
+                                            $(ev.content).find(&#39;a&#39;).addClass(State.temporary.class).addClass(&#39;trait-entry&#39;);
+                                        });
+                                    &lt;&lt;/script&gt;&gt;
+                                &lt;&lt;/link&gt;&gt;
                                 &lt;&lt;/capture&gt;&gt;
                             &lt;&lt;/if&gt;&gt;
                         &lt;&lt;/for&gt;&gt;
@@ -699,23 +727,21 @@ setup.getInitialSkills = function() {
                                 &lt;&lt;capture _trait&gt;&gt;
                                 &lt;&lt;set _isSelected to $selectedTraits.includes(_trait.id)&gt;&gt;
                                 &lt;&lt;set _class to &quot;trait-entry negative&quot; + (_isSelected ? &quot; selected&quot; : &quot;&quot;)&gt;&gt;
-                                &lt;div @class=&quot;_class&quot; @onclick=&quot;&#39;$(this).find(\&#39;button\&#39;).click()&#39;&quot;&gt;
-                                    &lt;span class=&quot;trait-name&quot;&gt;
-                                        &lt;&lt;print _trait.name&gt;&gt; (+&lt;&lt;print Math.abs(_trait.cost)&gt;&gt;)
-                                    &lt;/span&gt;
-                                    &lt;div style=&quot;display:none&quot;&gt;
-                                        &lt;&lt;button &quot;Toggle&quot;&gt;&gt;
-                                            &lt;&lt;if _isSelected&gt;&gt;
-                                                &lt;&lt;set $selectedTraits.delete(_trait.id)&gt;&gt;
-                                                &lt;&lt;set $points += _trait.cost&gt;&gt;
-                                            &lt;&lt;else&gt;&gt;
-                                                &lt;&lt;set $selectedTraits.push(_trait.id)&gt;&gt;
-                                                &lt;&lt;set $points -= _trait.cost&gt;&gt;
-                                            &lt;&lt;/if&gt;&gt;
-                                            &lt;&lt;replace &quot;.traits-screen&quot;&gt;&gt;&lt;&lt;include &quot;CharacterCreationTraits&quot;&gt;&gt;&lt;&lt;/replace&gt;&gt;
-                                        &lt;&lt;/button&gt;&gt;
-                                    &lt;/div&gt;
-                                &lt;/div&gt;
+                                &lt;&lt;link `_trait.name + &quot; (+&quot; + Math.abs(_trait.cost) + &quot;)&quot;` &quot;CharacterCreationTraits&quot;&gt;&gt;
+                                    &lt;&lt;set $activeTab to &quot;skills&quot;&gt;&gt;
+                                    &lt;&lt;if $selectedTraits.includes(_trait.id)&gt;&gt;
+                                        &lt;&lt;run $selectedTraits.delete(_trait.id)&gt;&gt;
+                                        &lt;&lt;set $points += _trait.cost&gt;&gt;
+                                    &lt;&lt;else&gt;&gt;
+                                        &lt;&lt;run $selectedTraits.push(_trait.id)&gt;&gt;
+                                        &lt;&lt;set $points -= _trait.cost&gt;&gt;
+                                    &lt;&lt;/if&gt;&gt;
+                                    &lt;&lt;script&gt;&gt;
+                                        $(document).one(&#39;:passagerender&#39;, function(ev) {
+                                            $(ev.content).find(&#39;a&#39;).addClass(State.temporary.class).addClass(&#39;trait-entry&#39;);
+                                        });
+                                    &lt;&lt;/script&gt;&gt;
+                                &lt;&lt;/link&gt;&gt;
                                 &lt;&lt;/capture&gt;&gt;
                             &lt;&lt;/if&gt;&gt;
                         &lt;&lt;/for&gt;&gt;
@@ -822,13 +848,6 @@ setup.getInitialSkills = function() {
                 Dialog.open();
             &lt;&lt;/script&gt;&gt;
         &lt;&lt;/button&gt;&gt;
-        &lt;&lt;button &quot;Inventory&quot;&gt;&gt;
-            &lt;&lt;script&gt;&gt;
-                Dialog.setup(&quot;Inventory&quot;, &quot;inventory-dialog&quot;);
-                Dialog.wiki(Story.get(&quot;InventoryPlaceholder&quot;).processText());
-                Dialog.open();
-            &lt;&lt;/script&gt;&gt;
-        &lt;&lt;/button&gt;&gt;
     &lt;/div&gt;
     
     &lt;div class=&quot;sidebar-bottom&quot;&gt;
@@ -837,9 +856,6 @@ setup.getInitialSkills = function() {
         &lt;&lt;/button&gt;&gt;
         &lt;&lt;button &quot;Settings&quot;&gt;&gt;
             &lt;&lt;run UI.settings()&gt;&gt;
-        &lt;&lt;/button&gt;&gt;
-        &lt;&lt;button &quot;Reload&quot;&gt;&gt;
-            &lt;&lt;run Engine.restart()&gt;&gt;
         &lt;&lt;/button&gt;&gt;
     &lt;/div&gt;
 &lt;&lt;/if&gt;&gt;</tw-passagedata><tw-passagedata pid="5" name="CharacterSheet" tags="" position="600,100" size="100,100">&lt;div class=&quot;character-sheet&quot;&gt;
