@@ -1,52 +1,207 @@
-#ui-bar-history, #ui-bar-watch, #menu-core {
+/* src/css/styles.css */
+#ui-bar-history, #ui-bar-watch, #menu-core, #ui-bar-stow {
 	display: none !important;
 }
 
-#menu-story ul {
-	padding: 0;
-	margin: 0;
-	list-style: none;
+#story-caption {
     display: flex;
     flex-direction: column;
-    min-height: 80vh;
+    height: calc(100vh - 200px); /* Fill most of the sidebar height, adjusted for title */
 }
 
-#menu-story li {
-	margin: 5px 0;
-}
-
-#menu-story a, #menu-story button {
+#story-caption a, #story-caption button {
 	display: block;
 	width: 100%;
-	padding: 10px;
-	background-color: #333 !important;
-	color: #00ff00 !important;
-	border: 1px solid #00ff00 !important;
+	padding: 4px;
+	background-color: #222 !important;
+	color: #0f0 !important;
+	border: 1px solid #0f0 !important;
 	text-decoration: none;
 	text-align: center;
 	font-weight: bold;
-	transition: background-color 0.3s, color 0.3s;
+	transition: background-color 0.2s, color 0.2s;
     cursor: pointer;
     font-family: inherit;
-    font-size: 1em;
+    font-size: 0.9em;
+    border-radius: 0;
+    margin-bottom: 4px;
 }
 
-#menu-story a:hover, #menu-story button:hover {
-	background-color: #00ff00 !important;
+#story-caption a:hover, #story-caption button:hover {
+	background-color: #0f0 !important;
 	color: #111 !important;
 }
 
 .sidebar-bottom {
     margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #444;
+    padding: 10px 0;
+    border-top: 1px solid #333;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 4px;
 }
 
 .sidebar-top {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+}
+
+/* Character Sheet Modal Overrides */
+#ui-dialog {
+    background-color: #111 !important;
+    border: 1px solid #333 !important;
+    max-width: 95vw !important;
+    width: 95vw !important;
+}
+
+#ui-dialog-body.character-sheet-dialog {
+    padding: 0;
+    overflow: hidden;
+    background-color: #111;
+    height: 80vh;
+}
+
+.character-sheet-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    color: #eee;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.sheet-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.player-name {
+    margin: 0;
+    font-size: 2em;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.player-description {
+    margin: 5px 0 0;
+    font-size: 1em;
+    color: #aaa;
+    font-style: italic;
+}
+
+.sheet-layout {
+    display: flex;
     gap: 10px;
+    flex: 1;
+    min-height: 0;
+}
+
+.sheet-layout .column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.invisible-col {
+    visibility: hidden;
+}
+
+.skill-group {
+    margin-bottom: 8px;
+}
+
+.skill-row {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 15px;
+}
+
+.skill-row.parent {
+    font-weight: bold;
+    color: #eee;
+    background-color: #222;
+    font-size: 1em;
+    cursor: pointer;
+    border: 1px solid #333;
+}
+
+.skill-row.child {
+    font-size: 0.9em;
+    padding-left: 25px;
+    color: #ccc;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #222;
+}
+
+.skill-name-label {
+    flex: 1;
+}
+
+.skill-level-label {
+    width: 40px;
+    text-align: right;
+    color: #0f0;
+    font-weight: bold;
+}
+
+.progress-bar-container {
+    width: 150px;
+    height: 10px;
+    background-color: #111;
+    border: 1px solid #333;
+    position: relative;
+}
+
+.progress-bar-container.small {
+    width: 100px;
+    height: 8px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #0f0;
+    width: 0%;
+}
+
+.trait-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 12px;
+    margin-bottom: 4px;
+    font-size: 1em;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+}
+
+.trait-entry.positive {
+    border-left: 4px solid #0f0;
+    color: #8f8;
+}
+
+.trait-entry.negative {
+    border-left: 4px solid #f00;
+    color: #f88;
+}
+
+.trait-cost {
+    color: #777;
+    font-size: 0.9em;
+}
+
+.section-container h3 {
+    margin: 0;
+    padding: 5px 10px;
+    font-size: 0.9em;
+    background-color: #222;
+    border: 1px solid #333;
+    border-bottom: none;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }

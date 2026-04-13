@@ -1,7 +1,0 @@
-:: TestRoom
-<div class="test-room">
-    <h2>Welcome to the Test Room</h2>
-    <p>You have successfully initialized your character, <strong><<print $playerName>></strong>.</p>
-    
-    <p>Check the sidebar for your Character Sheet and Skills.</p>
-</div>

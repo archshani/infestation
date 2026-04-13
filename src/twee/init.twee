@@ -1,6 +1,9 @@
 :: StoryInit
-<<set $playerName to "Survivor">>
+<<set $playerName to "Maya">>
 <<set $points to 5>>
 <<set $skills to setup.getInitialSkills()>>
 <<set $selectedTraits to []>>
 <<set $gameStarted to false>>
+<<set $activeTab to "skills">>
+
+<<run UIBar.hide()>>

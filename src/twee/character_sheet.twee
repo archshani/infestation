@@ -1,0 +1,67 @@
+:: CharacterSheet
+<<nobr>>
+<div class="character-sheet-container">
+    <div class="sheet-header">
+        <h2 class="player-name"><<print $playerName>></h2>
+        <p class="player-description"><<print $playerDescription || "A survivor in the wasteland.">></p>
+    </div>
+
+    <div class="sheet-layout">
+        <!-- LEFT COLUMN: Invisible Offset -->
+        <div class="column invisible-col"></div>
+
+        <!-- MIDDLE COLUMN: Traits -->
+        <div class="column middle-col">
+            <div class="section-container">
+                <h3>Traits</h3>
+                <div class="scroll-area">
+                    <<for _id range $selectedTraits>>
+                        <<set _trait to setup.traits.find(t => t.id === _id)>>
+                        <div @class="'trait-entry ' + (_trait.cost > 0 ? 'positive' : 'negative')">
+                            <span class="trait-name"><<print _trait.name>></span>
+                            <span class="trait-cost"><<print _trait.cost > 0 ? "(" + _trait.cost + ")" : "(+" + Math.abs(_trait.cost) + ")">></span>
+                        </div>
+                    <</for>>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Skills -->
+        <div class="column right-col">
+            <div class="section-container">
+                <h3>Skills</h3>
+                <div class="scroll-area">
+                    <<set _parents to Object.keys(setup.skills).filter(id => setup.skills[id].parent === null)>>
+                    <<for _pId range _parents>>
+                        <<set _skill to $skills[_pId]>>
+                        <div class="skill-group">
+                            <div class="skill-row parent" @onclick="'$(\'#sheet-children-' + _pId + '\').toggle()'">
+                                <span class="skill-name-label"><<print setup.skills[_pId].name>></span>
+                                <span class="skill-level-label"><<print _skill.level>></span>
+                                <div class="progress-bar-container">
+                                    <<set _percent to (_skill.xp / 100) * 100>>
+                                    <div class="progress-bar-fill" @style="'width: ' + _percent + '%'"></div>
+                                </div>
+                            </div>
+                            <div class="skill-children" @id="'sheet-children-' + _pId" style="display: none;">
+                                <<set _children to Object.keys(setup.skills).filter(id => setup.skills[id].parent === _pId)>>
+                                <<for _cId range _children>>
+                                    <<set _childSkill to $skills[_cId]>>
+                                    <div class="skill-row child">
+                                        <span class="skill-name-label"><<print setup.skills[_cId].name>></span>
+                                        <span class="skill-level-label"><<print _childSkill.level>></span>
+                                        <div class="progress-bar-container small">
+                                            <<set _cPercent to (_childSkill.xp / 100) * 100>>
+                                            <div class="progress-bar-fill" @style="'width: ' + _cPercent + '%'"></div>
+                                        </div>
+                                    </div>
+                                <</for>>
+                            </div>
+                        </div>
+                    <</for>>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<</nobr>>
